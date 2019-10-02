@@ -1,2 +1,2 @@
-include flaskr/schema.sql
+include api_server/schema.sql
 global-exclude *.pyc
