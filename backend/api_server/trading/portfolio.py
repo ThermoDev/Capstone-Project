@@ -1,73 +1,74 @@
 from collections import defaultdict
 
-from .stock import Stock
-from .stock_transaction import StockTransaction
 
 class Portfolio:
-    '''
+    """
     A class used to represent a stock portfolio
 
     ...
     Attributes
     ----------
-    userId: `str`
+    user_id: `str`
         The user that owns the portfolio
     _cash: `int`
         The available cash in the portfolio
-    _cashTransactions: `list` of `int`
+    _cash_transactions: `list` of `int`
         List of cash deposits and withdrawals
     _holdings: `dict` from `Stock`: `int`
         The holdings in the portfolio - maps Stock to the volume acquired
-    _stockTransactions: `dict` from `Stock`: `list` of `StockTransaction`
-        A history of stock transactions that have taken place for each stock - maps stock to the list of its stock transactions
-        (Necessary to see how the performance of a single stock has affected the performance of a portfolio - otherwise we can only determine the overall performance of the portfolio as a whole
-    '''
-    def __init__(self, userId):
-        self.userId = userId
+    _stock_transactions: `dict` from `Stock`: `list` of `StockTransaction`
+        A history of stock transactions that have taken place for each stock
+        Maps stock to the list of its stock transactions
+        (Necessary to see how the performance of a single stock has affected the performance of a portfolio
+            otherwise we can only determine the overall performance of the portfolio as a whole)
+    """
+    def __init__(self, user_id):
+        self.user_id = user_id
         self._cash = 0
-        self._cashTransactions = []
+        self._cash_transactions = []
         self._holdings = defaultdict(int)
-        self._stockTransactions = defaultdict(list)
+        self._stock_transactions = defaultdict(list)
         # TODO: Establish DB connection?
 
     @property
     def value(self):
-        value = self.cash
+        value = self._cash
         for stock, volume in self._holdings.items():
-            value += volume * self.getPriceForStock(stock)
+            value += volume * self._get_price_for_stock(stock)
 
         return value
 
     @property
     def profit(self):
-        initialValue = 0
-        for cashTransaction in self._cashTransactions:
-            initialValue += cashTransaction
+        initial_value = 0
+        for cash_transaction in self._cash_transactions:
+            initial_value += cash_transaction
 
-        return self.value - initialValue
+        return self.value - initial_value
 
-    def getProfitOfStock(self, stock):
-        currentValue = self._holdings[stock] * self.getPriceForStock(stock)
-        netCash = 0
-        for stockTransaction in self._stockTransactions[stock]:
-            netCash += stockTransaction.volume * stockTransaction.price
+    def get_profit_of_stock(self, stock):
+        current_value = self._holdings[stock] * self._get_price_for_stock(stock)
+        net_cash = 0
+        for stock_transaction in self._stock_transactions[stock]:
+            net_cash += stock_transaction.volume * stock_transaction.price
 
-        return currentValue + netCash
+        return current_value + net_cash
 
-    def depositCash(self, amount):
-        self._processCashTransaction(amount)
+    def deposit_cash(self, amount):
+        self._process_cash_transaction(amount)
 
-    def withdrawCash(self, amount):
-        self._processCashTransaction(-amount)
+    def withdraw_cash(self, amount):
+        self._process_cash_transaction(-amount)
 
-    def _processCashTransaction(self, amount):
+    def _process_cash_transaction(self, amount):
         self._cash += amount
-        self._cashTransactions.append(amount)
+        self._cash_transactions.append(amount)
 
-    def addStockTransaction(self, stockTransaction):
-        self._holdings[stockTransaction.stock] += stockTransaction.volume
-        self._stockTransactions[stockTransaction.stock].append(stockTransaction)
+    def add_stock_transaction(self, stock_transaction):
+        self._holdings[stock_transaction.stock] += stock_transaction.volume
+        self._stock_transactions[stock_transaction.stock].append(stock_transaction)
 
-    def _getPriceForStock(self, stock):
+    @staticmethod
+    def _get_price_for_stock(stock):
         # TODO: Query DataSanitiser/DB for current stock price
         pass
