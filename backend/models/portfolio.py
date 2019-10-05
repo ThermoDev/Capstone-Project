@@ -68,7 +68,6 @@ class Portfolio:
         self._holdings[stock_transaction.stock] += stock_transaction.volume
         self._stock_transactions[stock_transaction.stock].append(stock_transaction)
 
-    @staticmethod
-    def _get_price_for_stock(stock):
+    def _get_price_for_stock(self, stock):
         # TODO: Query DataSanitiser/DB for current stock price
         pass

@@ -1,4 +1,4 @@
-from .stock import Stock
+from backend.models.stock import Stock
 
 
 class StockTransaction:
