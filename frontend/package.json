@@ -1,0 +1,107 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "isomorphic-unfetch": "^3.0.0",
+    "next": "^9.0.8",
+    "nprogress": "^0.2.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "styled-components": "^4.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "babel-plugin-styled-components": "^1.10.6",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "husky": "^3.0.8",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.4.1",
+    "prettier-eslint": "^9.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "//": "This is our babel config, I prefer this over a .babelrc file",
+  "babel": {
+    "env": {
+      "development": {
+        "presets": [
+          "next/babel"
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      },
+      "production": {
+        "presets": [
+          "next/babel"
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      },
+      "test": {
+        "presets": [
+          [
+            "next/babel",
+            {
+              "preset-env": {
+                "modules": "commonjs"
+              }
+            }
+          ]
+        ],
+        "plugins": [
+          [
+            "styled-components",
+            {
+              "ssr": true,
+              "displayName": true
+            }
+          ]
+        ]
+      }
+    }
+  }
+}
