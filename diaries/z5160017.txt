@@ -1,0 +1,12 @@
+Week 2 
+
+Formed group for the project. We chose the project 'Stock Portfolio Management System' and I was assigned the role of developer. For the first meeting, we dicussed ideas for the application, mainly focusing on the main features we would like to implement. Looked at current examples of portfolio trackers to get inspiration and discussed the gaps and possible improvements. Main task for the week was to work on the proposal. We split up the components of the proposal amongst the group. My role was to work on the Epics for the project.  
+
+Had a group call on Sunday night to discuss the progress of our proposal. Agreed on cutting down the length of the proposal especially for the background. The group felt that the current Epics were too big and felt like separate projects. Revised on new Epics with smaller scopes as well as the story points and priorities. My job after the meeting was to flesh out the newly revised Epics. 
+
+
+Week 3 
+
+Had some issues with group formation since we had too many members. To resolve this issue we decided to do a joint project in two groups of 3. A new member joined to make this possible and then we split the 6 members to form two teams. 
+
+We continued working on the proposal. My job for this week was to fix up the Background. Our vision for the project changed quite a bit as we transitioned from a basic portfolio tracker to more of an educational learning tool for portfolio investment. So i did some research on some of the current educational platforms for stock trading and wrote up a brief overview of them for the proposal. 
