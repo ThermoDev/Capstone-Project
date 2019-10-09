@@ -1,4 +1,4 @@
-from ..models import user
+from backend.models.user import User
 
 
 class UserRepository:
