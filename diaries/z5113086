@@ -1,0 +1,31 @@
+   - what was planned for the period since the last work diary entry
+    - what was finished
+    - what were the main technical and non-technical obstacles and how
+    they were overcome (or what was tried and did not work)
+    - what was not finished, why this happened, how this affects the overall
+    project progress and what adjustments (if any) are needed so the success
+    of the project is not endangered
+    - what is planned for the next period (e.g., next week)
+    
+Week 2 
+  - Group formed and project decided (Stock trading portfolio)
+  - Focused on figuring out direction of application
+  - Discussed what roles we would take (Scrum master)
+  - Worked on proposal (mainly Background, objectives, editing)
+  - Brain stormed epics as a team
+
+Week 3
+  - Proposal finished
+  - Helped in reviewing
+  - Wasn't able to attend group meeting because I was at Grace Hopper Conference
+  - New member to team, and new team-member structure discussed
+  - Need to figure out how to delegate user stories between teams
+  
+Week 4 
+  - Co-scrum master with Martin
+  - Discussed how to split up work between the teams
+  - Broke epics and user stories down into further tasks
+  - Started working on tasks (front-end login page)
+  - Need to integrate front-end and back-end for login (web tokens)
+  - Struggling with React because first time touching this framework
+  - Organised cards for team in Github Projects
