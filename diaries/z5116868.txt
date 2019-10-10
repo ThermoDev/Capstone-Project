@@ -1,0 +1,34 @@
+z5116868 Work Diary
+You should also include either in this diary or in the GitHub (or Trello)
+account the following information (if applicable) about the project progress:
+    - what was planned for the period since the last work diary entry
+    - what was finished
+    - what were the main technical and non-technical obstacles and how
+    they were overcome (or what was tried and did not work)
+    - what was not finished, why this happened, how this affects the overall
+    project progress and what adjustments (if any) are needed so the success
+    of the project is not endangered
+    - what is planned for the next period (e.g., next week)
+
+Week 1
+It's Week 1 and we just got introduced to the course and what it entails. We briefly went through some of the group projects in the lecture to see what the requirements of it were from the stakeholder.  We only went through Project 1, the MOOC-O-Bot Project Presentation
+
+Week 2
+We formed team groups in the lab on Wednesday, my team and I chose the Project 6 the Stock Portfolio Management System. We had a group meeting after the lab to discuss about the project and outline what we needed to do. We delegated roles for the Project Proposal that is due at the end of Week 3.
+
+Martin and I are focusing on the frontend since we have experience with React and Anthony, Manlin and Emily are focusing on the backend which will be built in Python. Emily is our Scrum Master.I am researching the software and packages we need to utilise for frontend of the project, Martin and I discussed using Chart.js, Material-UI, Redux and Styled Components for the frontend of the project.
+
+During the rest of Week 2 even though just formed teams on Wednesday, we decided it's best to be proactive about the Project Proposal and finish it as soon as possible, so we can get onto other things. We divided the sections of the Proposal between us and worked on it till Sunday, the end of Week 2. Emily worked on the Background section, Martin worked on the Technical Overview, Manlin worked on the Epics, Martin and Anthony worked on the Architecture Technologies- Backend (Python) and I worked on the Architecture Technologies- Frontend (Javascript) [ETC ETC] . The majority of these sections are finished.
+
+We planned to have a Stand-Up Call on Sunday evening to discuss what we have done, what we are doing and what's blocking our way.
+
+Week 3
+We fixed out 5 group situation and  added other person to make ie. 6 people and made 2 groups of 3 on a joint project. The Project idea is the same, the functionality of the project is split between the 2 groups so that the parts each group is working on can function independently on its own. I give my props to Martin for sorting out the group, finding the new member and sorting it out with the lecturer etc. 
+
+Our group name is now "Shiba Inu Lovers". Were still working on the project proposal, which is during Sunday evening. We can't the Project so the our application would be more of a educational tool for learning rather than just a Stock Portfolio Tracker.
+I was assigned to do miscellaneous stuff like the doing the Project Timeline and proofreading the project proposal. Martin and Anthony started on the code for the assignment. We plan on getting started coding next week.
+
+Week 4
+We finished the Project Proposal last week and submitted it on the time. I proofread it one more time before submission. The Project Proposal was pretty straightforward and we didn't have an obstacles we need to overcome besides delegating sections of the Project Proposal to all the group members.
+
+We met in lab and went through the Epic Stories we were going to focus on Epic 1- Registration and Epic 2- Integrate Stock Data, during Sprint 1 (our sprints will last 1 week). We went through the acceptance criteria which serve as the user stories for each of the epic stories. We delegated the users stories amongst our group members.I am in change of the frontend of the registration form and look at Chart.js and chart and graph components that could go into our Project. We had some co-working time in the lab so that some team-members know how to use the frameworks were using- eg. React. Progress so far on the project is pretty good, I'm optimist at this stage, but after this Sprint, we can better gauge how much progress the team can achieve in one sprint, this will help us plan what were going to do and how much we can achieve until the Project deadline.
