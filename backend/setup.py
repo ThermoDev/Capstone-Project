@@ -10,6 +10,10 @@ setup(
         'flask',
         'python-dotenv',
         'pytest',
-        'coverage'
+        'coverage',
+        'pandas',
+        'matplotlib',
+        'pandas-datareader',
+        'yfinance'
     ],
 )
