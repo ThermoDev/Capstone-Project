@@ -1,0 +1,22 @@
+-- WORK DIARY --
+WEEK 1
+- Understood project requirements
+
+WEEK 2
+- Formed a group.
+- Discussed the various projects and ideation of project architecture.
+- Decided on project 5 as our selected project.
+- Joined Microsoft Teams, GitHub and WebCMS3 group.
+
+WEEK 3
+- Researched different chatbot programs, highlighted their strengths and weaknesses
+- Discussed the various chatbot programs
+- Draft Use Case Diagram
+- LEFT TEAM: MoSCoW
+- JOINED TEAM: Shiba Inu Lovers 1
+- Reviewed early code and understood project requirements relevant for the new project
+- Created a use case diagram to better understand the scope of the new project.
+
+WEEK 4
+- Group meeting: discussed the tasks that were set for this weeks sprint
+- I created the data pipeline module that contains relevant function definitions for retrieving stock data.
