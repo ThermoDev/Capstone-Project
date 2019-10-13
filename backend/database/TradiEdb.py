@@ -8,9 +8,9 @@ c = conn.cursor()
 # creating tables for the database
 def init_tables(conn, c):
 
-    c.execute("DROP TABLE IF EXISTS Users")
+    #c.execute("DROP TABLE IF EXISTS Users")
 
-    c.execute('''CREATE TABLE Users (
+    c.execute('''CREATE TABLE IF NOT EXISTS Users (
                 userID integer PRIMARY KEY autoincrement,
                 lastName text, 
                 firstName text,
@@ -18,26 +18,20 @@ def init_tables(conn, c):
                 passwordHash text)
             ''')
 
-    c.execute("DROP TABLE IF EXISTS Company")
-
-    c.execute('''CREATE TABLE Company (
+    c.execute('''CREATE TABLE IF NOT EXISTS Company (
                 companyCode varchar(10) PRIMARY KEY,
                 companyName text,
                 industry varchar(80),
                 price float)
             ''')
 
-    c.execute("DROP TABLE IF EXISTS Portfolios")
-
-    c.execute('''CREATE TABLE Portfolios (
+    c.execute('''CREATE TABLE IF NOT EXISTS Portfolios (
                 portfolioID integer PRIMARY KEY autoincrement, 
                 value float,
                 return float)
             ''')
 
-    c.execute("DROP TABLE IF EXISTS ContainsStocks")
-
-    c.execute('''CREATE TABLE ContainsStocks (
+    c.execute('''CREATE TABLE IF NOT EXISTS ContainsStocks (
                 portfolioID integer references Portfolios(portfolioID),
                 stock varchar(10) references Company(companyCode),
                 volume integer, 
@@ -45,9 +39,7 @@ def init_tables(conn, c):
                 primary key (portfolioID, stock) )     
             ''')
 
-    c.execute("DROP TABLE IF EXISTS Invests")
-
-    c.execute('''CREATE TABLE Invests (
+    c.execute('''CREATE TABLE IF NOT EXISTS Invests (
                 userID integer references Users(userID),
                 portfolioID integer references Portfolios(portfolioID),
                 primary key (userID, portfolioID))
@@ -60,7 +52,7 @@ def setup_db():
     init_tables(conn, c)
 
     # for testing wll be deleted later
-    c.execute("INSERT INTO Users VALUES (null, 'smith', 'jane', 'janesmith@gmail.com', 'qwert')")
+    '''c.execute("INSERT INTO Users VALUES (null, 'smith', 'jane', 'janesmith@gmail.com', 'qwert')")
     c.execute("INSERT INTO Users VALUES (null, 'chen', 'kris', 'krischen@gmail.com', 'vbghnjm')")
 
     c.execute("INSERT INTO Company VALUES ('APPL', 'Apple', 'Technology', 143.54)")
@@ -69,9 +61,8 @@ def setup_db():
     c.execute("INSERT INTO Invests VALUES('1', '1')")
     #c.execute("Select * from ContainsStocks")
     #c.execute("Select * from Invests")
-    #print(c.fetchall())
+    #print(c.fetchall())'''
     conn.commit()
-
 
 #printing out all users
 def print_users(c):
@@ -81,6 +72,7 @@ def print_users(c):
         print('First Name: ' + str(record[2]))
         print('Last Name: ' + str(record[1]))
         print('Email: ' + str(record[3]))
+    output = []
 
 
 def print_companies(c):
@@ -100,7 +92,7 @@ def print_portfolios(c):
 
 # printing out users by their first, last or full name
 def print_users_by_name(c, firstName=None, lastName=None):
-    if firstName != None and lastName == None:
+    if firstName is not None and lastName is None:
         output = c.execute("Select * from USERS where firstName=firstName")
         output = output.fetchall()
         if output == []:
@@ -111,7 +103,17 @@ def print_users_by_name(c, firstName=None, lastName=None):
                 print('First Name: ' + str(record[2]))
                 print('Last Name: ' + str(record[1]))
                 print('Email: ' + str(record[3]))
-    elif firstName == None and lastName != None:
+    elif firstName is None and lastName is not None:
+        output = c.execute("Select * from USERS where lastName=lastName")
+        if output == []:
+            print("No users found")
+        else:
+            for record in output:
+                print('User ID: ' + str(record[0]))
+                print('First Name: ' + str(record[2]))
+                print('Last Name: ' + str(record[1]))
+                print('Email: ' + str(record[3]))
+    elif firstName is not None and lastName is not None:
         output = c.execute("Select * from USERS where firstName=firstName and lastName=lastName")
         output = output.fetchall()
         if output == []:
@@ -122,17 +124,8 @@ def print_users_by_name(c, firstName=None, lastName=None):
                 print('First Name: ' + str(record[2]))
                 print('Last Name: ' + str(record[1]))
                 print('Email: ' + str(record[3]))
-    elif firstName != None and lastName != None:
-        output = c.execute("Select * from USERS where firstName=firstName and lastName=lastName")
-        output = output.fetchall()
-        if output == []:
-            print("No users found")
-        else:
-            for record in output:
-                print('User ID: ' + str(record[0]))
-                print('First Name: ' + str(record[2]))
-                print('Last Name: ' + str(record[1]))
-                print('Email: ' + str(record[3]))
+
+    output = []
 
 #check to see if a user exists by their email
 def users_by_email(c, email):
@@ -151,8 +144,8 @@ setup_db()
 #print_portfolios(c)
 #print_users(c)
 #bug: printing out everything
-#print_users_by_name(c, 'smith')
-#print_users_by_name(c, 'jane')
+#print_users_by_name(c, None, 'smith')
+print_users_by_name(c, 'jane')
 #print_users_by_name(c, 'bob', 'lee')
 #users_by_email(c, 'asfsf')
 #users_by_email(c, 'janesmith@gmail.com')
