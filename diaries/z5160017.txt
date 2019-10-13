@@ -10,3 +10,7 @@ Week 3
 Had some issues with group formation since we had too many members. To resolve this issue we decided to do a joint project in two groups of 3. A new member joined to make this possible and then we split the 6 members to form two teams. 
 
 We continued working on the proposal. My job for this week was to fix up the Background. Our vision for the project changed quite a bit as we transitioned from a basic portfolio tracker to more of an educational learning tool for portfolio investment. So i did some research on some of the current educational platforms for stock trading and wrote up a brief overview of them for the proposal. 
+
+Week 4
+
+Handed in our proposal. Split up the Epic for registration into frontend and backend tasks. I am working on backend and my task was to set up the database. I drew up an ER diagram to visualise a possible database structure we could have, obviously expanding it and making continual changes as the project progresses. But currently have user, company and portfolio entities with corresponding relationships between them. Then coded up the database using python and sqlite3. Wrote up some functions with sql commands to retrieve data from the database. Have a bug for searching up users using their name as all entries get printed out. Have not yet fixed the bug. 
