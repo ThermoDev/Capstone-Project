@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EmptyState from '@atlaskit/empty-state';
 import errorImage from '../static/404.jpg';
 
 function Error({ statusCode }) {
@@ -8,12 +7,11 @@ function Error({ statusCode }) {
     ? `An error ${statusCode} occurred on server`
     : 'An error occurred on client';
 
-  const props = {
-    header: 'Howdy pardner, you like you could use a hand.',
-    // imageUrl: errorImage,
-  };
-
-  return <EmptyState {...props} />;
+  return (
+    <div>
+      <h1>Howdy pardner, you like you could use a hand.</h1>
+    </div>
+  );
 }
 
 Error.getInitialProps = ({ res, err }) => {
