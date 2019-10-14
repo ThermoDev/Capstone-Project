@@ -1,15 +1,18 @@
 from __future__ import print_function
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import requests, logging, itertools
+
+import os
 from datetime import datetime, timedelta
-from pandas.tseries import offsets
 from typing import Generator, List
 
+import itertools
+import logging
+import numpy as np
+import pandas as pd
+import requests
+import yfinance as yf
+from pandas.tseries import offsets
 # Main libraries that retrieve stock data
 from pandas_datareader import data as pdr
-import yfinance as yf
 
 
 # Given a stock(ticker) symbol and a data source, retrieves its relevant stock information
@@ -21,20 +24,27 @@ def get_data(symbol: str, source: str, start_date: str = '2000-01-01',
     symbol = symbol.upper()
 
     try:
-        # Retrieves the data from pandas_datareader
-        data = pdr.DataReader(
-            name=symbol,
-            data_source=source,
-            start=start_date,
-            end=end_date,
-            api_key=api_key
-        )
+        if api_key:
+            data = pdr.DataReader(
+                name=symbol,
+                data_source=source,
+                start=start_date,
+                end=end_date,
+                api_key=os.getenv(api_key)
+            )
+        else:
+            # Retrieves the data from pandas_datareader
+            data = pdr.DataReader(
+                name=symbol,
+                data_source=source,
+                start=start_date,
+                end=end_date
+            )
 
     except requests.exceptions.ConnectionError:
         logging.exception(f"Could not fetch Data with symbol '{symbol}' on data source '{source}'.")
     except:
-        #logging.exception(f"Could not fetch Data with symbol '{symbol}' on data source '{source}'.")
-        print((f"Could not fetch Data with symbol '{symbol}' on data source '{source}'."))
+        logging.exception(f"Could not fetch Data with symbol '{symbol}' on data source '{source}'.")
         # Returns empty dataframe
         return data
 
