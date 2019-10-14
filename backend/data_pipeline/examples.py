@@ -1,5 +1,5 @@
 # Examples
-from data_pipeline import stockhelper as stk
+from backend.data_pipeline import stockhelper as stk
 
 
 def main():
