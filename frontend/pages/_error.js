@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import errorImage from '../static/404.jpg';
+import ErrorMessage from '../components/Error';
 
 function Error({ statusCode }) {
   const errMessage = statusCode
@@ -9,7 +9,11 @@ function Error({ statusCode }) {
 
   return (
     <div>
-      <h1>Howdy pardner, you like you could use a hand.</h1>
+      <ErrorMessage
+        img="https://res.cloudinary.com/dzowh11b5/image/upload/v1571136274/comp3900/71001170_248544512727444_4239348242610913280_n_rfiygx.jpg"
+        head="Howdy pardner, you like you could use a hand."
+        subhead={errMessage}
+      />
     </div>
   );
 }
@@ -25,7 +29,7 @@ Error.getInitialProps = ({ res, err }) => {
 };
 
 Error.propTypes = {
-  statusCode: PropTypes.string.isRequired,
+  statusCode: PropTypes.number.isRequired,
 };
 
 export default Error;
