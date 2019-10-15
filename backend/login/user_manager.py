@@ -1,0 +1,25 @@
+from typing import Optional
+
+from exception.user.user_already_exists_error import UserAlreadyExistsError
+from exception.user.user_not_found_error import UserNotFoundError
+from models.user import User
+from repository.user_repository import UserRepository
+
+
+class UserManager():
+    def __init__(self):
+        self._user_repository = UserRepository()
+
+    def get_user(self, user_id: str) -> Optional[User]:
+        try:
+            return self._user_repository.get_user(user_id)
+        except UserNotFoundError:
+            return None
+
+    def create_new_user(self, user_id: str, password: str):
+        if self._user_repository.has_user(user_id):
+            raise UserAlreadyExistsError(user_id)
+
+        user = User(user_id)
+        user.password = password
+        self._user_repository.add_user(user)
