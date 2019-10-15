@@ -1,5 +1,7 @@
 import os
 from flask import Flask
+from flask_login import LoginManager
+from login.user_manager import UserManager
 
 
 def create_app(test_config=None):
@@ -40,5 +42,13 @@ def create_app(test_config=None):
 
     from backend.data_pipeline import stockendpoint as stkend
     app.register_blueprint(stkend.bp)
+
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    user_manager = UserManager()
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return user_manager.get_user(user_id)
 
     return app
