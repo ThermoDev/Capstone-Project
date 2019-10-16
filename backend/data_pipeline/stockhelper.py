@@ -1,11 +1,15 @@
 from __future__ import print_function
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import requests, logging, itertools
+
+import os
 from datetime import datetime, timedelta
-from pandas.tseries import offsets
 from typing import Generator, List
+
+import itertools
+import logging
+import numpy as np
+import pandas as pd
+import requests
+from pandas.tseries import offsets
 
 # Main libraries that retrieve stock data
 from pandas_datareader import data as pdr
@@ -21,20 +25,28 @@ def get_data(symbol: str, source: str, start_date: str = '2000-01-01',
     symbol = symbol.upper()
 
     try:
-        # Retrieves the data from pandas_datareader
-        data = pdr.DataReader(
-            name=symbol,
-            data_source=source,
-            start=start_date,
-            end=end_date,
-            api_key=api_key
-        )
+        if api_key:
+            data = pdr.DataReader(
+                name=symbol,
+                data_source=source,
+                start=start_date,
+                end=end_date,
+                api_key=os.getenv(api_key)
+            )
+        else:
+            # Retrieves the data from pandas_datareader
+            data = pdr.DataReader(
+                name=symbol,
+                data_source=source,
+                start=start_date,
+                end=end_date
+            )
 
     except requests.exceptions.ConnectionError:
         logging.exception(f"Could not fetch Data with symbol '{symbol}' on data source '{source}'.")
-    except:
-        #logging.exception(f"Could not fetch Data with symbol '{symbol}' on data source '{source}'.")
-        print((f"Could not fetch Data with symbol '{symbol}' on data source '{source}'."))
+    except Exception as e:
+        print(e)
+        logging.exception(f"Could not fetch Data with symbol '{symbol}' on data source '{source}'.")
         # Returns empty dataframe
         return data
 
@@ -80,33 +92,33 @@ def concatenate_all(all_stocks: List[List[pd.DataFrame]]) -> List:
 
 
 # Retrieves the latest change in percentage calculated on closing price.
-def get_pct_change(symbol: str, data_source: str) -> np.float64:
+def get_pct_change(symbol: str, data_source: str, api_key: str = None) -> np.float64:
     today = datetime.now().date()
     from_date = today - timedelta(days=7)
 
     # Get stock data
-    data = get_data(symbol, data_source, start_date=str(from_date))
+    data = get_data(symbol, data_source, start_date=str(from_date), api_key=api_key)
     # Returns the latest percentage change.
     return round((data["Pct_Change"][-1] * 100), 2)
     # return data
 
 
 # Retrieves the dollar change between today and the day before.
-def get_dollar_change(symbol: str, data_source: str) -> np.float64:
+def get_dollar_change(symbol: str, data_source: str, api_key: str = None) -> np.float64:
     today = datetime.now().date()
     from_date = today - timedelta(days=7)
     # Get_data
-    data = get_data(symbol, data_source, start_date=str(from_date))
+    data = get_data(symbol, data_source, start_date=str(from_date), api_key=api_key)
     return data["Close"][-1] - data["Close"][-2]
 
 
 # Retrieves the percentage return for the stock so far this year.
-def get_ytd(symbol: str, data_source: str) -> np.float64:
+def get_ytd(symbol: str, data_source: str, api_key: str = None) -> np.float64:
     today = datetime.now().date()
     start_of_year = today - offsets.YearBegin()
 
     # Get stock data
-    data = get_data(symbol, data_source, start_date=start_of_year)
+    data = get_data(symbol, data_source, start_date=start_of_year, api_key=api_key)
 
     # Retrieves the start of year stock info and the current day stock info
     first_current = data.iloc[[0, -1]]
@@ -145,3 +157,9 @@ def get_bid_price(symbol: str) -> np.float64:
 # Retrieves the current ask price : Lowest price broker is willing to sell stock
 def get_ask_price(symbol: str) -> np.float64:
     return yf.Ticker(symbol).info["ask"]
+
+
+# Note: only works on Yahoo data source
+# Retrieves the current ask price : Lowest price broker is willing to sell stock
+def get_info(symbol: str) -> np.float64:
+    return yf.Ticker(symbol).info
