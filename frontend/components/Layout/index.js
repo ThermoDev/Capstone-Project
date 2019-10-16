@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 import Meta from './Meta';
-import Navigation from './Navigation';
-import theme from './styles/Theme';
-import '@atlaskit/css-reset';
+import Header from './Header';
+import ThemeProvider from './ThemeProvider';
+
+const StyledPage = styled.div`
+  background: white;
+  color: ${props => props.theme.black};
+`;
 
 const Inner = styled.div`
   max-width: ${props => props.theme.maxWidth};
@@ -16,13 +20,12 @@ class Layout extends Component {
   render() {
     const { children } = this.props;
     return (
-      <ThemeProvider theme={theme}>
-        <div>
+      <ThemeProvider>
+        <StyledPage>
           <Meta />
-          <Navigation>
-            <Inner>{children}</Inner>
-          </Navigation>
-        </div>
+          <Header />
+          <Inner>{children}</Inner>
+        </StyledPage>
       </ThemeProvider>
     );
   }
