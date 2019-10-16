@@ -1,5 +1,4 @@
 import sqlite3
-from backend.models.user import User
 
 # connecting to the database
 conn = sqlite3.connect('TradiE.db')
@@ -93,7 +92,7 @@ def print_portfolios(c):
 # printing out users by their first, last or full name
 def print_users_by_name(c, firstName=None, lastName=None):
     if firstName is not None and lastName is None:
-        output = c.execute("Select * from USERS where firstName=firstName")
+        output = c.execute(f"SELECT * FROM Users WHERE firstName='{firstName}'")
         output = output.fetchall()
         if output == []:
             print("No users found")
@@ -104,7 +103,7 @@ def print_users_by_name(c, firstName=None, lastName=None):
                 print('Last Name: ' + str(record[1]))
                 print('Email: ' + str(record[3]))
     elif firstName is None and lastName is not None:
-        output = c.execute("Select * from USERS where lastName=lastName")
+        output = c.execute(f"Select * from USERS where lastName='{lastName}'")
         if output == []:
             print("No users found")
         else:
@@ -114,7 +113,7 @@ def print_users_by_name(c, firstName=None, lastName=None):
                 print('Last Name: ' + str(record[1]))
                 print('Email: ' + str(record[3]))
     elif firstName is not None and lastName is not None:
-        output = c.execute("Select * from USERS where firstName=firstName and lastName=lastName")
+        output = c.execute(f"Select * from USERS where firstName='{firstName}' and lastName='{lastName}'")
         output = output.fetchall()
         if output == []:
             print("No users found")
@@ -125,11 +124,9 @@ def print_users_by_name(c, firstName=None, lastName=None):
                 print('Last Name: ' + str(record[1]))
                 print('Email: ' + str(record[3]))
 
-    output = []
-
 #check to see if a user exists by their email
 def users_by_email(c, email):
-    output = c.execute("Select * from USERS where email=email")
+    output = c.execute(f"Select * from USERS where email='{email}'")
     output = output.fetchall()
     if output == []:
         print("The user does not exist")
@@ -145,7 +142,7 @@ setup_db()
 #print_users(c)
 #bug: printing out everything
 #print_users_by_name(c, None, 'smith')
-print_users_by_name(c, 'jane')
+print_users_by_name(c, 'jane', None)
 #print_users_by_name(c, 'bob', 'lee')
 #users_by_email(c, 'asfsf')
 #users_by_email(c, 'janesmith@gmail.com')
