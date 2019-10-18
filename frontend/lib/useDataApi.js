@@ -1,5 +1,5 @@
 import { useState, useEffect, useReducer } from 'react';
-import axios from 'axios';
+import fetch from 'isomorphic-unfetch';
 
 const dataFetcher = (state, action) => {
   switch (action.type) {
@@ -27,24 +27,32 @@ const dataFetcher = (state, action) => {
   }
 };
 
-export const useDataApi = (initialUrl = '', initialData) => {
+/*
+  Args: 
+    initialUrl: url of api endpoint
+    initialData: the initial state of your data before it calls the api
+*/
+
+const useDataApi = (initialUrl, initialData) => {
   const [url, setUrl] = useState(initialUrl);
 
   const [state, dispatch] = useReducer(dataFetcher, {
     isLoading: false,
     isError: false,
-    data: initialData || [],
+    data: initialData,
   });
 
   useEffect(() => {
     let didCancel = false;
     const fetchData = async () => {
       dispatch({ type: 'FETCH_INIT' });
-
       try {
-        const result = await axios(url);
+        const result = await fetch(url, {
+          headers: { 'Access-Control-Allow-Origin': '*' },
+        });
+        const data = await result.json();
         if (!didCancel) {
-          dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
+          dispatch({ type: 'FETCH_SUCCESS', payload: data });
         }
       } catch (error) {
         if (!didCancel) {
@@ -62,3 +70,5 @@ export const useDataApi = (initialUrl = '', initialData) => {
 
   return [state, setUrl];
 };
+
+export default useDataApi;

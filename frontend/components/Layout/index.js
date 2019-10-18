@@ -23,7 +23,7 @@ class Layout extends Component {
       <ThemeProvider>
         <StyledPage>
           <Meta />
-          <Header/>
+          <Header />
           <Inner>{children}</Inner>
         </StyledPage>
       </ThemeProvider>
