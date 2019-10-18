@@ -3,6 +3,8 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import Router from 'next/router';
 import NProgress from 'nprogress';
+import logoTurqoise from '../../static/logos/logo-turquoise.png';
+
 
 // Progress Bar
 Router.onRouteChangeStart = () => {
@@ -38,10 +40,9 @@ const Logo = styled.h1`
 
 const StyledHeader = styled.header`
   .bar {
-    border-bottom: 10px solid ${props => props.theme.black};
-    display: grid;
+    display: flex;
     grid-template-columns: auto 1fr;
-    justify-content: space-between;
+    justify-content: centre;
     align-items: stretch;
     @media (max-width: 1300px) {
       grid-template-columns: 1fr;
@@ -58,11 +59,7 @@ const StyledHeader = styled.header`
 const Header = () => (
   <StyledHeader>
     <div className="bar">
-      <Logo>
-        <Link href="/">
-          <a>TradiE</a>
-        </Link>
-      </Logo>
+        <img src={logoTurqoise} alt="Logo" />
     </div>
   </StyledHeader>
 );

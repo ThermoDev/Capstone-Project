@@ -21,7 +21,8 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
 
     return (
-      <Layout>
+      //add layout only when logged in
+      <Layout> 
         <Component {...pageProps} />
       </Layout>
     );
