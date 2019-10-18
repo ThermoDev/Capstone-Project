@@ -12,17 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-<<<<<<< HEAD
     "@material-ui/core": "^4.5.1",
     "@material-ui/icons": "^4.5.1",
-=======
-    "@atlaskit/css-reset": "^5.0.9",
-    "@atlaskit/empty-state": "^6.0.5",
-    "@atlaskit/form": "^6.3.1",
-    "@atlaskit/global-navigation": "^8.0.3",
-    "@atlaskit/icon": "^19.0.8",
-    "@atlaskit/navigation-next": "^6.8.3",
->>>>>>> 6dac774a96fc6be9edec2aa10824aa36e443385c
     "@zeit/next-css": "^1.0.1",
     "chart.js": "^2.8.0",
     "isomorphic-unfetch": "^3.0.0",
@@ -30,6 +21,7 @@
     "nprogress": "^0.2.0",
     "prop-types": "^15.6.0",
     "react": "^16.10.2",
+    "react-chartjs-2": "^2.8.0",
     "react-dom": "^16.10.2",
     "styled-components": "^4.4.0",
     "url-loader": "^2.2.0"
