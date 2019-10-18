@@ -1,41 +1,42 @@
-import Link from 'next/link';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import fetch from 'isomorphic-unfetch';
+import { useEffect } from 'react';
+import useDataApi from '../lib/useDataApi';
+import { endpoint } from '../config';
+import { DefaultError } from '../components/Error';
 
-const StyledHeader = styled.h1`
-  color: ${({ theme }) => theme.grey};
-`;
+const Index = () => {
+  const [state, setUrl] = useDataApi(endpoint, {
+    portfolio: [], // array properties need to be specified in initialState
+  });
 
-const Index = props => {
-  const { shows } = props;
+  useEffect(() => {
+    setUrl(`${endpoint}`);
+  }, []);
+
+  const { isLoading, isError, data } = state;
+
   return (
     <div>
-      <StyledHeader>Home</StyledHeader>
-      <ul>
-        {shows.map(show => (
-          <li key={show.id}>
-            <Link href="/p/[id]" as={`/p/${show.id}`}>
-              <a>{show.name}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {isError && <DefaultError />}
+      {isLoading ? (
+        <h3>Loading...</h3>
+      ) : (
+        <ul>
+          {data.username && data.password && (
+            <li>
+              <h3>{`${data.username} (${data.password})`}</h3>
+            </li>
+          )}
+          {data.portfolio.map((item, index) => (
+            <li>
+              <ul>
+                <li key={index}>{item}</li>
+              </ul>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
-};
-
-Index.getInitialProps = async function() {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
-  const data = await res.json();
-
-  return {
-    shows: data.map(entry => entry.show),
-  };
-};
-
-Index.propTypes = {
-  shows: PropTypes.array,
 };
 
 export default Index;
