@@ -15,6 +15,7 @@ setup(
         'pandas',
         'matplotlib',
         'pandas-datareader',
-        'yfinance'
+        'yfinance',
+        'flask-cors'
     ],
 )
