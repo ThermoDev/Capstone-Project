@@ -5,52 +5,50 @@ def init_db():
     conn = sqlite3.connect('resources/TradiE.db')
     cursor = conn.cursor()
 
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
-                    userID integer PRIMARY KEY autoincrement,
+    cursor.execute('''CREATE TABLE IF NOT EXISTS User (
+                    username varchar(50) PRIMARY KEY not null,
                     lastName text, 
                     firstName text,
                     email text,
-                    passwordHash text)
-                    ''')
-
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Company (
-                    companyCode varchar(10) PRIMARY KEY,
-                    companyName text,
-                    industry varchar(80),
-                    price float)
-                    ''')
-
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Portfolios (
-                    portfolioID integer PRIMARY KEY autoincrement, 
-                    value float,
-                    return float)
-                    ''')
-
-    cursor.execute('''CREATE TABLE IF NOT EXISTS ContainsStocks (
-                    portfolioID integer references Portfolios(portfolioID),
-                    stock varchar(10) references Company(companyCode),
-                    volume integer, 
-                    targetAllocation float,
-                    primary key (portfolioID, stock) )     
-                    ''')
-
-    cursor.execute('''CREATE TABLE IF NOT EXISTS Invests (
-                userID integer references Users(userID),
-                portfolioID integer references Portfolios(portfolioID),
-                primary key (userID, portfolioID))
+                    password datetime)
                 ''')
 
-    # for testing wll be deleted later
-    '''c.execute("INSERT INTO Users VALUES (null, 'smith', 'jane', 'janesmith@gmail.com', 'qwert')")
-    c.execute("INSERT INTO Users VALUES (null, 'chen', 'kris', 'krischen@gmail.com', 'vbghnjm')")
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Company (
+                    ASXCode varchar(10) PRIMARY KEY not null,
+                    name text,
+                    industry varchar(80))
+                ''')
 
-    c.execute("INSERT INTO Company VALUES ('APPL', 'Apple', 'Technology', 143.54)")
-    c.execute("INSERT INTO Portfolios VALUES (null, '34600.32', '23.5')")
-    c.execute("INSERT INTO ContainsStocks VALUES(1, 'APPL', 100, 3.0)")
-    c.execute("INSERT INTO Invests VALUES('1', '1')")
-    #c.execute("Select * from ContainsStocks")
-    #c.execute("Select * from Invests")
-    #print(c.fetchall())'''
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Portfolio (
+                    portfolioID integer PRIMARY KEY autoincrement,
+                    holder varchar(50) references User(username),
+                    cash float)
+                ''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Transactions (
+                    transactionID integer PRIMARY KEY autoincrement,
+                    portfolioID integer references Portfolio(portfolioID),
+                    companyCode varchar(10),
+                    price float,
+                    volume integer,
+                    transacTime datetime)
+                ''')
+
+
+    # for testing wll be deleted later
+    #cursor.execute("INSERT INTO User VALUES ('bobcarl', 'carl', 'bob', 'bobcarl@gmail.com', 'qwert')")
+    #cursor.execute("INSERT INTO User VALUES ('kellyshen', 'shen', 'kelly', 'kellyshen@gmail.com', 'vbghnjm')")
+    #cursor.execute("INSERT INTO Company VALUES ('APPL', 'Apple', 'Technology')")
+    #cursor.execute("INSERT INTO Portfolio VALUES (null, 'bobcarl', 1000000.00)")
+    #cursor.execute("INSERT INTO Transactions VALUES (null, 1, 'APPL', 23.45, 100, current_timestamp)")
+    cursor.execute("Select * from User")
+    print(cursor.fetchall())
+    cursor.execute("Select * from Portfolio")
+    print(cursor.fetchall())
+    cursor.execute("Select * from Transactions")
+    print(cursor.fetchall())
+    cursor.execute("Select * from Company")
+    print(cursor.fetchall())
 
     conn.commit()
     conn.close()

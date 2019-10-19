@@ -10,7 +10,7 @@ class UserRepository:
 
     def get_user(self, user_id: str) -> User:
         cursor = self._connection.cursor()
-        output = cursor.execute(f'SELECT * FROM Users WHERE id="{user_id}"')
+        output = cursor.execute(f'SELECT * FROM User WHERE id="{user_id}"')
         if not output:
             raise UserNotFoundError(user_id)
         result = output.next()
@@ -19,17 +19,17 @@ class UserRepository:
 
     def has_user(self, user_id: str) -> bool:
         cursor = self._connection.cursor()
-        output = cursor.execute(f'SELECT * FROM Users WHERE id="{user_id}"')
+        output = cursor.execute(f'SELECT * FROM User WHERE id="{user_id}"')
         return bool(output)
 
     def add_user(self, user: User):
         cursor = self._connection.cursor()
-        cursor.execute(f'INSERT INTO Users VALUES ({self._unpack_user_for_insert(user)})')
+        cursor.execute(f'INSERT INTO User VALUES ({self._unpack_user_for_insert(user)})')
         self._connection.commit()
 
     def update_user(self, user: User):
         cursor = self._connection.cursor()
-        cursor.execute(f'UPDATE Users Set {self._unpack_user_for_update(user)}')
+        cursor.execute(f'UPDATE User Set {self._unpack_user_for_update(user)}')
         self._connection.commit()
 
     @staticmethod
