@@ -9,7 +9,7 @@ function useProvideAuth() {
 
   const signin = (email, password) => {
     // TODO: Implement signin
-    // 1. send details to api
+    // 1. send details to api unless there is a token in browser, else do a lookup
     // 2. save user token in browser storage with expiration date
     // 3. set user to user object returned from api response
     // 4. return user object
@@ -32,6 +32,8 @@ function useProvideAuth() {
   };
 
   const getUser = token => {
+    // 1. sends user token to api
+    // 2. returns user object
     console.log({ token });
   };
 
