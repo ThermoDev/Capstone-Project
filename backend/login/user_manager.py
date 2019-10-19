@@ -10,11 +10,17 @@ class UserManager():
     def __init__(self):
         self._user_repository = UserRepository()
 
-    def get_user(self, user_id: str) -> Optional[User]:
+    def flask_login_get_user(self, user_id: str) -> Optional[User]:
         try:
-            return self._user_repository.get_user(user_id)
+            return self.get_user(user_id)
         except UserNotFoundError:
             return None
+
+    def get_user(self, user_id: str) -> User:
+        try:
+            return self._user_repository.get_user(user_id)
+        except UserNotFoundError as e:
+            raise e
 
     def create_new_user(self, user_id: str, password: str):
         if self._user_repository.has_user(user_id):
