@@ -1,15 +1,10 @@
+from typing import Optional
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User():
-    def __init__(self, user_id: str):
-        self._user_id = user_id
-        self._first_name = None
-        self._last_name = None
-        self._email = None
-        self._password = None
-
-    def __init__(self, user_id: str, first_name: str, last_name: str, email: str, password: str):
+    def __init__(self, user_id: str, first_name: str, last_name: str, email: str, password: Optional[str]):
         self._user_id = user_id
         self._first_name = first_name
         self._last_name = last_name

@@ -22,10 +22,10 @@ class UserManager():
         except UserNotFoundError as e:
             raise e
 
-    def create_new_user(self, user_id: str, password: str):
+    def create_new_user(self, user_id: str, first_name: str, last_name: str, email: str, password: str):
         if self._user_repository.has_user(user_id):
             raise UserAlreadyExistsError(user_id)
 
-        user = User(user_id)
+        user = User(user_id, first_name, last_name, email, None)
         user.password = password
         self._user_repository.add_user(user)
