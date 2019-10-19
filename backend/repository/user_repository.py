@@ -8,16 +8,6 @@ class UserRepository:
     def __init__(self):
         self._connection = sqlite3.connect('resources/TradiE.db')
 
-        user1234 = User('1234')
-        user1234.password = 'bleargh'
-
-        user5678 = User('5678')
-        user5678.password = 'foobar'
-        self._users = {
-            '1234': user1234,
-            '5678': user5678
-        }
-
     def get_user(self, user_id: str) -> User:
         cursor = self._connection.cursor()
         output = cursor.execute(f'SELECT * FROM Users WHERE id="{user_id}"')
