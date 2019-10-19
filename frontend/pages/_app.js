@@ -1,10 +1,8 @@
 import App from 'next/app';
 import Layout from '../components/Layout';
-// import withData from '../lib/withData'; // replace with redux later
+import { ProvideAuth } from '../lib/useAuth';
 
-// This is where you include your redux or apollo store if you want state to persist between pages.
 class MyApp extends App {
-  // Fires our queries and mutations before the first render of our components.
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {};
     // Crawls all our pages and fetches data
@@ -17,17 +15,17 @@ class MyApp extends App {
     return { pageProps };
   }
 
+  // TODO: hide layout if user not logged in
   render() {
     const { Component, pageProps } = this.props;
-
     return (
-      //add layout only when logged in
-      <Layout> 
-        <Component {...pageProps} />
-      </Layout>
+      <ProvideAuth>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ProvideAuth>
     );
   }
 }
 
 export default MyApp;
-// export default withData(MyApp);

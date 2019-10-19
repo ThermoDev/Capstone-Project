@@ -33,6 +33,9 @@ const dataFetcher = (state, action) => {
     initialData: the initial state of your data before it calls the api
 */
 
+// TODO: hook must check if user token is in browser storage
+// TODO: add extra parameter in function called urlPayload and modify the fetch request based on the
+// presence of this variable
 const useDataApi = (initialUrl, initialData) => {
   const [url, setUrl] = useState(initialUrl);
 

@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import logoTurqoise from '../static/logos/logo-turquoise.png';
 
+// TODO: if session token in browser, get user
 class Login extends Component {
   componentDidMount() {
     // need login
