@@ -43,12 +43,15 @@ def create_app(test_config=None):
     from backend.data_pipeline import stockendpoint as stkend
     app.register_blueprint(stkend.bp)
 
+    from repository import setup
+    setup.init_db()
+
     login_manager = LoginManager()
     login_manager.init_app(app)
     user_manager = UserManager()
 
     @login_manager.user_loader
     def load_user(user_id):
-        return user_manager.get_user(user_id)
+        return user_manager.flask_login_get_user(user_id)
 
     return app
