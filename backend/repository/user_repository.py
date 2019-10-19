@@ -22,8 +22,9 @@ class UserRepository:
         output = cursor.execute(f'SELECT * FROM Users WHERE id="{user_id}"')
         if not output:
             raise UserNotFoundError(user_id)
+        result = output.next()
 
-        return User(*(output[0]))
+        return User(*result)
 
     def has_user(self, user_id: str) -> bool:
         cursor = self._connection.cursor()
