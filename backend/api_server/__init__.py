@@ -43,6 +43,9 @@ def create_app(test_config=None):
     from backend.data_pipeline import stockendpoint as stkend
     app.register_blueprint(stkend.bp)
 
+    from backend.login import api as login_api
+    app.register_blueprint(login_api.bp)
+
     from repository import setup
     setup.init_db()
 
