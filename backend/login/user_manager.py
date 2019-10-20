@@ -6,7 +6,7 @@ from models.user import User
 from repository.user_repository import UserRepository
 
 
-class UserManager():
+class UserManager:
     def __init__(self):
         self._user_repository = UserRepository()
 
@@ -22,10 +22,12 @@ class UserManager():
         except UserNotFoundError as e:
             raise e
 
-    def create_new_user(self, user_id: str, first_name: str, last_name: str, email: str, password: str):
+    def create_new_user(self, user_id: str, first_name: str, last_name: str, email: str, password: str) -> User:
         if self._user_repository.has_user(user_id):
             raise UserAlreadyExistsError(user_id)
 
         user = User(user_id, first_name, last_name, email, None)
         user.password = password
         self._user_repository.add_user(user)
+
+        return user
