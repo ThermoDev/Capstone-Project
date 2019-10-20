@@ -1,6 +1,6 @@
 # Examples
 from backend.data_pipeline import stockhelper as stkh
-import os
+
 
 def main():
     # Retrieves a single data stock
@@ -36,6 +36,6 @@ def main():
     symbols = stkh.get_stock_symbols()
     print(symbols.head())
 
-import json
+
 if __name__ == "__main__":
     main()

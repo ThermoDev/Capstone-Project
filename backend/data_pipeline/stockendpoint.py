@@ -1,14 +1,12 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, Response
 )
-
-quandl_api_key = "JFyyk4MvK4j83jschxUi"
-
-
 # IMPORT FUNCTIONS HERE
 from backend.data_pipeline import stockhelper as stkh
 
 bp = Blueprint('stock', __name__, url_prefix='/stock')
+
+quandl_api_key = "JFyyk4MvK4j83jschxUi"
 
 # Docs: https://docs.google.com/document/d/1R1z88DVgySPoQ_UNPwn9ulASJtNr0T6grSgKmDcSGxU/edit?usp=sharing
 
