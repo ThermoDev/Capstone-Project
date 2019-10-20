@@ -10,7 +10,7 @@ bp = Blueprint('login', __name__, url_prefix='/login')
 user_manager = UserManager()
 
 # Login Routes
-@bp.route('/', methods=['POST'])
+@bp.route('', methods=['POST'])
 def login():
     user_id = request.form.get('user_id')
     password = request.form.get('password')

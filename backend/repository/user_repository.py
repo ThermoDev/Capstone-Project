@@ -10,17 +10,19 @@ class UserRepository:
 
     def get_user(self, user_id: str) -> User:
         cursor = self._connection.cursor()
-        output = cursor.execute(f'SELECT * FROM User WHERE id="{user_id}"')
-        if not output:
+        output = cursor.execute(f'SELECT * FROM User WHERE username="{user_id}"')
+        result = output.fetchone()
+        if not result:
             raise UserNotFoundError(user_id)
-        result = output.next()
 
         return User(*result)
 
     def has_user(self, user_id: str) -> bool:
         cursor = self._connection.cursor()
-        output = cursor.execute(f'SELECT * FROM User WHERE id="{user_id}"')
-        return bool(output)
+        output = cursor.execute(f'SELECT * FROM User WHERE username="{user_id}"')
+        result = output.fetchone()
+
+        return bool(result)
 
     def add_user(self, user: User):
         cursor = self._connection.cursor()
