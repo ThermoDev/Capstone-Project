@@ -1,9 +1,10 @@
 from exception.user.user_already_exists_error import UserAlreadyExistsError
 from flask import (
-    Blueprint, request, Response
+    Blueprint, request, Response, jsonify
 )
 from flask_login import login_user, logout_user
 from login.user_manager import UserManager
+from utils.serialiser import serialise_properties
 
 bp = Blueprint('login', __name__, url_prefix='/login')
 
@@ -18,7 +19,9 @@ def login():
     if user:
         if user.check_password(password):
             login_user(user)
-            return Response(response="Login successful.", status=200)
+            response = serialise_properties(user)
+
+            return jsonify(response), 200
 
     return Response(response="Authentication failed.", status=401)
 
@@ -31,11 +34,14 @@ def register():
     email = request.form.get('email')
     password = request.form.get('password')
     try:
-        user_manager.create_new_user(user_id, first_name, last_name, email, password)
+        user = user_manager.create_new_user(user_id, first_name, last_name, email, password)
     except UserAlreadyExistsError:
         return Response(response="Username unavailable.", status=409)
 
-    return Response(response="Registration successful.", status=201)
+    response = serialise_properties(user)
+
+    return jsonify(response), 201
+
 
 @bp.route('/logout', methods=['POST'])
 def logout():
