@@ -16,11 +16,6 @@ from pandas_datareader import data as pdr
 import yfinance as yf
 
 
-# TODO: Continue Documentation for Code and Google Docs
-# TODO: Finish Newshelper
-# TODO: Error Handling?
-
-
 def get_data(symbol: str, source: str = "yahoo", start_date: str = '2000-01-01',
              end_date: str = str(datetime.now().date()), api_key: str = None) -> pd.DataFrame:
     """
