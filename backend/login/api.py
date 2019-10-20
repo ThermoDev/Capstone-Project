@@ -2,7 +2,7 @@ from exception.user.user_already_exists_error import UserAlreadyExistsError
 from flask import (
     Blueprint, request, Response, jsonify
 )
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 from login.user_manager import UserManager
 from utils.serialiser import serialise_properties
 
@@ -44,6 +44,7 @@ def register():
 
 
 @bp.route('/logout', methods=['POST'])
+@login_required
 def logout():
     logout_user()
     return Response(response="Logout successful.", status=200)
