@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import logoTurqoise from '../static/logos/logo-turquoise.png';
+import turquoiseBkg from '../static/logos/turquoise-bkg.png';
 
 // TODO: if session token in browser, get user
 class Login extends Component {
@@ -28,14 +28,20 @@ class Login extends Component {
           width: '100%',
           flexDirection: 'column',
           height: '100%',
-          backgroundColor: 'DarkTurquoise',
+          backgroundImage: 'linear-gradient(DarkTurquoise, white)',
           justifyContent: 'center',
         }}
       >
         <Container component="main" maxWidth="xs">
           <CssBaseline />
-          <div>
-            <img src={logoTurqoise} alt="Logo" />
+          <div 
+            style={{ 
+              justifyContent: 'center',
+              alignItems: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              }}>
+            <img src={turquoiseBkg} alt="Logo" />
             <form noValidate>
               <TextField
                 variant="outlined"
