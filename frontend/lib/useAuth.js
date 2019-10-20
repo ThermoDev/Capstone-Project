@@ -1,11 +1,12 @@
 import React, { useState, useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
+import Router from 'next/router';
 
 const authContext = createContext();
 
 // TODO: functions will use useDataApi internally for their calls
 function useProvideAuth() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // ! user not persisting between calls
 
   const signin = (email, password) => {
     // TODO: Implement signin
@@ -15,7 +16,6 @@ function useProvideAuth() {
     // 4. return user object
     localStorage.setItem('token', 12312321321);
     setUser({ username: 'martinle' });
-    console.log({ email });
   };
 
   const signup = (email, password) => {
@@ -28,7 +28,8 @@ function useProvideAuth() {
 
   const signout = () => {
     localStorage.removeItem('token');
-    setUser(false);
+    setUser(null);
+    Router.push('/');
   };
 
   const getUser = token => {
