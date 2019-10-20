@@ -2,7 +2,7 @@ from exception.user.user_already_exists_error import UserAlreadyExistsError
 from flask import (
     Blueprint, request, Response
 )
-from flask_login import login_user
+from flask_login import login_user, logout_user
 from login.user_manager import UserManager
 
 bp = Blueprint('login', __name__, url_prefix='/login')
@@ -24,7 +24,7 @@ def login():
 
 
 @bp.route('/register', methods=['POST'])
-def signup():
+def register():
     user_id = request.form.get('user_id')
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
@@ -36,3 +36,8 @@ def signup():
         return Response(response="Username unavailable.", status=409)
 
     return Response(response="Registration successful.", status=201)
+
+@bp.route('/logout', methods=['POST'])
+def logout():
+    logout_user()
+    return Response(response="Logout successful.", status=200)
