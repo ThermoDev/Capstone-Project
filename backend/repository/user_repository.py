@@ -6,33 +6,37 @@ import sqlite3
 
 class UserRepository:
     def __init__(self):
-        self._connection = sqlite3.connect('resources/TradiE.db')
+        self._db_path = 'resources/TradiE.db'
 
     def get_user(self, user_id: str) -> User:
-        cursor = self._connection.cursor()
-        output = cursor.execute(f'SELECT * FROM User WHERE username="{user_id}"')
-        result = output.fetchone()
-        if not result:
-            raise UserNotFoundError(user_id)
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            output = cursor.execute(f'SELECT * FROM User WHERE username="{user_id}"')
+            result = output.fetchone()
+            if not result:
+                raise UserNotFoundError(user_id)
 
-        return User(*result)
+            return User(*result)
 
     def has_user(self, user_id: str) -> bool:
-        cursor = self._connection.cursor()
-        output = cursor.execute(f'SELECT * FROM User WHERE username="{user_id}"')
-        result = output.fetchone()
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            output = cursor.execute(f'SELECT * FROM User WHERE username="{user_id}"')
+            result = output.fetchone()
 
-        return bool(result)
+            return bool(result)
 
     def add_user(self, user: User):
-        cursor = self._connection.cursor()
-        cursor.execute(f'INSERT INTO User VALUES ({self._unpack_user_for_insert(user)})')
-        self._connection.commit()
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute(f'INSERT INTO User VALUES ({self._unpack_user_for_insert(user)})')
+            connection.commit()
 
     def update_user(self, user: User):
-        cursor = self._connection.cursor()
-        cursor.execute(f'UPDATE User Set {self._unpack_user_for_update(user)}')
-        self._connection.commit()
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute(f'UPDATE User Set {self._unpack_user_for_update(user)}')
+            connection.commit()
 
     @staticmethod
     def _unpack_user_for_insert(user: User) -> str:
