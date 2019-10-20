@@ -43,4 +43,7 @@ def create_app(test_config=None):
     from backend.data_pipeline import stockendpoint as stkend
     app.register_blueprint(stkend.bp)
 
+    from backend.data_pipeline import newsendpoint as newsend
+    app.register_blueprint(newsend.bp)
+
     return app
