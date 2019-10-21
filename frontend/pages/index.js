@@ -26,7 +26,7 @@ const ButtonContainer = styled.div`
 `;
 
 const Index = () => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   return (
     <ContentBox maxWidth="xs">
       <LargeLogo
@@ -34,7 +34,7 @@ const Index = () => {
         alt="Tradie logo"
       />
       <ButtonContainer>
-        <Link href={user ? '/dashboard' : '/login'}>
+        <Link href={isAuthenticated() ? '/dashboard' : '/login'}>
           <LargeButton variant="contained" color="secondary">
             Login
           </LargeButton>
