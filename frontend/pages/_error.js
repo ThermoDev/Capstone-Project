@@ -1,19 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EmptyState from '@atlaskit/empty-state';
-import errorImage from '../static/404.jpg';
+import ErrorMessage from '../components/Error';
 
 function Error({ statusCode }) {
   const errMessage = statusCode
     ? `An error ${statusCode} occurred on server`
     : 'An error occurred on client';
 
-  const props = {
-    header: 'Howdy pardner, you like you could use a hand.',
-    // imageUrl: errorImage,
-  };
-
-  return <EmptyState {...props} />;
+  return (
+    <div>
+      <ErrorMessage
+        img="https://res.cloudinary.com/dzowh11b5/image/upload/v1571136274/comp3900/71001170_248544512727444_4239348242610913280_n_rfiygx.jpg"
+        head="Howdy pardner, you like you could use a hand."
+        subhead={errMessage}
+      />
+    </div>
+  );
 }
 
 Error.getInitialProps = ({ res, err }) => {
@@ -27,7 +29,7 @@ Error.getInitialProps = ({ res, err }) => {
 };
 
 Error.propTypes = {
-  statusCode: PropTypes.string.isRequired,
+  statusCode: PropTypes.number.isRequired,
 };
 
 export default Error;
