@@ -29,13 +29,14 @@ class UserRepository:
     def add_user(self, user: User):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            cursor.execute('INSERT INTO Users VALUES (?, ?, ?, ?, ?)', self._unpack_user(user))
+            cursor.execute('INSERT INTO Users (username, firstName, lastName, email, password) VALUES (?, ?, ?, ?, ?)',
+                           self._unpack_user(user))
             connection.commit()
 
     def update_user(self, user: User):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            cursor.execute('UPDATE User SET user_id=?, first_name=?, last_name=?, email=?, password=?',
+            cursor.execute('UPDATE User SET username=?, firstName=?, lastName=?, email=?, password=?',
                            self._unpack_user(user))
             connection.commit()
 
