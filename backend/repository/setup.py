@@ -10,7 +10,7 @@ def init_db():
                     lastName text, 
                     firstName text,
                     email text,
-                    password datetime)
+                    password varchar(200))
                 ''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Company (
@@ -22,6 +22,7 @@ def init_db():
     cursor.execute('''CREATE TABLE IF NOT EXISTS Portfolio (
                     portfolioID integer PRIMARY KEY autoincrement,
                     holder varchar(50) references User(username),
+                    name text,
                     cash float)
                 ''')
 
@@ -31,7 +32,7 @@ def init_db():
                     companyCode varchar(10),
                     price float,
                     volume integer,
-                    transacTime datetime)
+                    transactionTime datetime)
                 ''')
 
 
