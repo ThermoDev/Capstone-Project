@@ -14,8 +14,8 @@ user_manager = UserManager()
 # Login Routes
 @bp.route('', methods=['POST'])
 def login():
-    user_id = request.form.get('user_id')
-    password = request.form.get('password')
+    user_id = request.json.get('user_id')
+    password = request.json.get('password')
     try:
         user = user_manager.get_user(user_id)
     except UserNotFoundError:
@@ -32,11 +32,11 @@ def login():
 
 @bp.route('/register', methods=['POST'])
 def register():
-    user_id = request.form.get('user_id')
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    email = request.form.get('email')
-    password = request.form.get('password')
+    user_id = request.json.get('user_id')
+    first_name = request.json.get('first_name')
+    last_name = request.json.get('last_name')
+    email = request.json.get('email')
+    password = request.json.get('password')
     try:
         user = user_manager.create_new_user(user_id, first_name, last_name, email, password)
     except UserAlreadyExistsError:

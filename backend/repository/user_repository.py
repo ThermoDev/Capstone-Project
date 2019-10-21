@@ -1,12 +1,13 @@
 from backend.models.user import User
 from exception.user.user_not_found_error import UserNotFoundError
+import os
 
 import sqlite3
 
 
 class UserRepository:
     def __init__(self):
-        self._db_path = 'resources/TradiE.db'
+        self._db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources/TradiE.db')
 
     def get_user(self, user_id: str) -> User:
         with sqlite3.connect(self._db_path) as connection:
