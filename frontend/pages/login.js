@@ -1,99 +1,125 @@
-import React, { Fragment, Component } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import turquoiseBkg from '../static/logos/turquoise-bkg.png';
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import Router from 'next/router';
+import Link from 'next/link';
+import LinkMui from '@material-ui/core/Link';
+import {
+  Grid,
+  Container,
+  Paper,
+  Typography,
+  Button,
+  TextField,
+} from '@material-ui/core';
+import { LargeLogo } from '../components/Logo';
+import { useAuth } from '../lib/useAuth';
 
-// TODO: if session token in browser, get user
-class Login extends Component {
-  componentDidMount() {
-    // need login
-  }
+const StyledPaper = styled(Paper)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+`;
 
-  render() {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'column',
-          height: '100%',
-          backgroundImage: 'linear-gradient(DarkTurquoise, white)',
-          justifyContent: 'center',
-        }}
-      >
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <div 
-            style={{ 
-              justifyContent: 'center',
-              alignItems: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              }}>
-            <img src={turquoiseBkg} alt="Logo" />
-            <form noValidate>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
+const ContentBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
+const StyledForm = styled.form`
+  width: '100%';
+  margin-top: ${({ theme }) => `${theme.mui.spacing(1)}px`};
+`;
+
+const StyledLargeLogo = styled(LargeLogo)`
+  margin-top: ${({ theme }) => `${theme.mui.spacing(8)}px`};
+`;
+
+const SubmitButton = styled(Button)`
+  margin: ${({ theme }) => theme.mui.spacing(3, 0, 2)};
+`;
+
+const StyledTextField = styled(TextField)`
+  font-size: ${({ theme }) => theme.font.md};
+`;
+
+const Login = () => {
+  const { login, user, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      Router.push('/dashboard');
+    }
+  }, [user]);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    login(email, password);
+  };
+
+  return (
+    <Container component="main" maxWidth="xs">
+      <ContentBox>
+        <StyledLargeLogo />
+        <StyledPaper>
+          <Typography component="h1" variant="h4">
+            Sign in
+          </Typography>
+          <StyledForm noValidate onSubmit={handleSubmit}>
+            <StyledTextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <StyledTextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <SubmitButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+            >
+              Sign In
+            </SubmitButton>
+            <Grid container>
+              <Grid item xs>
+                <Link href="/">
+                  <LinkMui component="button" variant="caption">
                     Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    Don't have an account? Sign Up
-                  </Link>
-                </Grid>
+                  </LinkMui>
+                </Link>
               </Grid>
-            </form>
-          </div>
-        </Container>
-      </div>
-    );
-  }
-}
-
-Login.propTypes = {};
+              <Grid item>
+                <Link href="/register">
+                  <LinkMui component="button" variant="caption">
+                    Don't have an account? Sign Up
+                  </LinkMui>
+                </Link>
+              </Grid>
+            </Grid>
+          </StyledForm>
+        </StyledPaper>
+      </ContentBox>
+    </Container>
+  );
+};
 
 export default Login;

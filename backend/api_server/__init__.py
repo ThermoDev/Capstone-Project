@@ -1,6 +1,8 @@
 import os
 from flask import Flask
 from flask_cors import CORS
+from flask_login import LoginManager
+from login.user_manager import UserManager
 
 
 def create_app(test_config=None):
@@ -43,7 +45,21 @@ def create_app(test_config=None):
     from backend.data_pipeline import stockendpoint as stkend
     app.register_blueprint(stkend.bp)
 
+    from backend.login import api as login_api
+    app.register_blueprint(login_api.bp)
+
     from backend.data_pipeline import newsendpoint as newsend
     app.register_blueprint(newsend.bp)
+
+    from repository import setup
+    setup.init_db()
+
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    user_manager = UserManager()
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return user_manager.flask_login_get_user(user_id)
 
     return app

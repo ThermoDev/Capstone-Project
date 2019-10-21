@@ -1,7 +1,6 @@
 import React from 'react';
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import turquoiseBkg from '../../static/logos/turquoise-bkg.png';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -14,6 +13,7 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import ListItemText from '@material-ui/core/ListItemText';
+import turquoiseBkg from '../../static/logos/turquoise-bkg.png';
 
 // Progress Bar
 Router.onRouteChangeStart = () => {
@@ -25,7 +25,6 @@ Router.onRouteChangeComplete = () => {
 Router.onRouteChangeError = () => {
   NProgress.done();
 };
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   icon: {
     maxHeight: '50px',
   },
-  emptyDiv:{
+  emptyDiv: {
     minWidth: '38px',
   },
   list: {
@@ -65,7 +64,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: '15px',
-  }
+  },
 }));
 
 export default function Header() {
@@ -75,7 +74,10 @@ export default function Header() {
   });
 
   const toggleDrawer = (side, open) => event => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
       return;
     }
     setState({ ...state, [side]: open });
@@ -103,16 +105,20 @@ export default function Header() {
     </div>
   );
 
-
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar className={classes.toolbar}>
-            <IconButton  onClick={toggleDrawer('left', true)} className={classes.menuButton}  color="inherit" aria-label="menu">
-              <MenuIcon style={{ fontSize: 38 }} />
-            </IconButton>
-            <img src={turquoiseBkg} className={classes.icon} alt="Logo"/>
-            <div  className={classes.emptyDiv}></div>
+          <IconButton
+            onClick={toggleDrawer('left', true)}
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+          >
+            <MenuIcon style={{ fontSize: 38 }} />
+          </IconButton>
+          <img src={turquoiseBkg} className={classes.icon} alt="Logo" />
+          <div className={classes.emptyDiv} />
         </Toolbar>
       </AppBar>
       <Drawer open={state.left} onClose={toggleDrawer('left', false)}>

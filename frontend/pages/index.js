@@ -1,64 +1,51 @@
-import { useEffect } from 'react';
-import useDataApi from '../lib/useDataApi';
+import React from 'react';
+import { Container } from '@material-ui/core';
+import styled from 'styled-components';
+import Link from 'next/link';
 import { useAuth } from '../lib/useAuth';
-import { endpoint } from '../config';
-import { DefaultError } from '../components/Error';
+import { LargeButton } from '../components/Button';
+
+const ContentBox = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: ${({ theme }) => `${theme.mui.spacing(8)}px`};
+`;
+
+const LargeLogo = styled.img`
+  width: 500px;
+  height: 100%;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+
+  & > * {
+    margin: 1rem;
+  }
+`;
 
 const Index = () => {
-  const [state, setUrl] = useDataApi(endpoint, {
-    portfolio: [], // array properties need to be specified in initialState
-  });
-
-  const auth = useAuth();
-
-  useEffect(() => {
-    setUrl(`${endpoint}`);
-  }, []);
-
-  const { isLoading, isError, data } = state;
-
+  const { isAuthenticated } = useAuth();
   return (
-    <div>
-      {!auth.user ? (
-        <button type="button" onClick={() => auth.signin('martin', 'le')}>
-          Login
-        </button>
-      ) : (
-        <button type="button" onClick={() => auth.signout()}>
-          Logout
-        </button>
-      )}
-
-      {auth.user ? (
-        <div>
-          <h3>{auth.user.username}</h3>
-          <h3>{auth.user.token}</h3>
-        </div>
-      ) : (
-        <h3>not signed in</h3>
-      )}
-
-      {isError && <DefaultError />}
-      {isLoading ? (
-        <h3>Loading...</h3>
-      ) : (
-        <ul>
-          {data.username && data.password && (
-            <li>
-              <h3>{`${data.username} (${data.password})`}</h3>
-            </li>
-          )}
-          {data.portfolio.map((item, index) => (
-            <li>
-              <ul>
-                <li key={index}>{item}</li>
-              </ul>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ContentBox maxWidth="xs">
+      <LargeLogo
+        src="https://res.cloudinary.com/dzowh11b5/image/upload/v1571582804/comp3900/logo-turquoise_h2ssgm.png"
+        alt="Tradie logo"
+      />
+      <ButtonContainer>
+        <Link href={isAuthenticated() ? '/dashboard' : '/login'}>
+          <LargeButton variant="contained" color="secondary">
+            Login
+          </LargeButton>
+        </Link>
+        <Link href="/register">
+          <LargeButton variant="contained" color="secondary">
+            Register
+          </LargeButton>
+        </Link>
+      </ButtonContainer>
+    </ContentBox>
   );
 };
-
 export default Index;

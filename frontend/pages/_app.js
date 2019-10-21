@@ -1,6 +1,6 @@
 import App from 'next/app';
 import Layout from '../components/Layout';
-import { ProvideAuth } from '../lib/useAuth';
+import { AuthProvider } from '../lib/useAuth';
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -15,15 +15,14 @@ class MyApp extends App {
     return { pageProps };
   }
 
-  // TODO: hide layout if user not logged in
   render() {
     const { Component, pageProps } = this.props;
     return (
-      <ProvideAuth>
+      <AuthProvider>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </ProvideAuth>
+      </AuthProvider>
     );
   }
 }
