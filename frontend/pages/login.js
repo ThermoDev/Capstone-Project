@@ -11,6 +11,7 @@ import {
   Button,
   TextField,
 } from '@material-ui/core';
+import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
 
 const StyledPaper = styled(Paper)`
@@ -31,7 +32,7 @@ const StyledForm = styled.form`
   margin-top: ${({ theme }) => `${theme.mui.spacing(1)}px`};
 `;
 
-const LargeLogo = styled.img`
+const StyledLargeLogo = styled(LargeLogo)`
   margin-top: ${({ theme }) => `${theme.mui.spacing(8)}px`};
 `;
 
@@ -62,12 +63,9 @@ const Login = () => {
   return (
     <Container component="main" maxWidth="xs">
       <ContentBox>
-        <LargeLogo
-          src="https://res.cloudinary.com/dzowh11b5/image/upload/v1571582804/comp3900/logo-turquoise_h2ssgm.png"
-          alt="Logo"
-        />
+        <StyledLargeLogo />
         <StyledPaper>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h4">
             Sign in
           </Typography>
           <StyledForm noValidate onSubmit={handleSubmit}>

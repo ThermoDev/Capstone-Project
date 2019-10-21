@@ -1,72 +1,65 @@
-// https://github.com/mui-org/material-ui/tree/master/docs/src/pages/getting-started/templates/sign-up
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import Router from 'next/router';
+import Link from 'next/link';
+import LinkMui from '@material-ui/core/Link';
+import {
+  Container,
+  Paper,
+  Typography,
+  Grid,
+  TextField,
+  Button,
+} from '@material-ui/core';
+import { LargeLogo } from '../components/Logo';
+import { useAuth } from '../lib/useAuth';
 
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+const StyledPaper = styled(Paper)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+`;
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      Copyright ©
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const StyledForm = styled.form`
+  width: '100%';
+  margin-top: ${({ theme }) => `${theme.mui.spacing(1)}px`};
+`;
 
-const useStyles = makeStyles(theme => ({
-  '@global': {
-    body: {
-      backgroundColor: theme.palette.common.white,
-    },
-  },
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+const SubmitButton = styled(Button)`
+  margin: ${({ theme }) => theme.mui.spacing(3, 0, 2)};
+`;
 
-export default function SignUp() {
-  const classes = useStyles();
+const Register = () => {
+  const { user, isAuthenticated, register } = useAuth();
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const firstName = e.target.firstName.value;
+    const lastName = e.target.lastName.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    register(email, firstName, lastName, password);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      Router.push('/dashboard');
+    }
+  }, [user]);
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h3">
+      <LargeLogo />
+      <StyledPaper>
+        <Typography
+          component="h1"
+          variant="h4"
+          style={{ paddingBottom: '1rem' }}
+        >
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <StyledForm noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -114,34 +107,27 @@ export default function SignUp() {
                 autoComplete="current-password"
               />
             </Grid>
-            <Grid item xs={12}>
-              {/* <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              /> */}
-            </Grid>
           </Grid>
-          <Button
+          <SubmitButton
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
           >
             Sign Up
-          </Button>
-          <Grid container justify="flex-end">
+          </SubmitButton>
+          <Grid container justify="center">
             <Grid item>
-              <Link href="#" variant="body2">
-                Already have an account? Sign in
+              <Link href="/login">
+                <LinkMui component="button" variant="body2">
+                  Already have an account? Sign in
+                </LinkMui>
               </Link>
             </Grid>
           </Grid>
-        </form>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
+        </StyledForm>
+      </StyledPaper>
     </Container>
   );
-}
+};
+export default Register;
