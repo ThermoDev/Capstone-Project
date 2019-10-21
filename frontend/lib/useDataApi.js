@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer } from 'react';
 import fetch from 'isomorphic-unfetch';
+import { endpoint } from '../config';
 
 const dataFetcher = (state, action) => {
   switch (action.type) {
@@ -36,7 +37,7 @@ const dataFetcher = (state, action) => {
 // TODO: hook must check if user token is in browser storage
 // TODO: add extra parameter in function called urlPayload and modify the fetch request based on the
 // presence of this variable
-const useDataApi = (initialUrl, initialData) => {
+const useDataApi = (initialUrl, initialData, postPayload = null) => {
   const [url, setUrl] = useState(initialUrl);
 
   const [state, dispatch] = useReducer(dataFetcher, {
@@ -50,9 +51,21 @@ const useDataApi = (initialUrl, initialData) => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_INIT' });
       try {
-        const result = await fetch(url, {
-          headers: { 'Access-Control-Allow-Origin': '*' },
-        });
+        let result;
+        if (postPayload) {
+          result = await fetch(`${endpoint}${url}`, {
+            method: 'POST',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(postPayload),
+          });
+        } else {
+          result = await fetch(`${endpoint}${url}`, {
+            headers: { 'Access-Control-Allow-Origin': '*' },
+          });
+        }
         const data = await result.json();
         if (!didCancel) {
           dispatch({ type: 'FETCH_SUCCESS', payload: data });
@@ -71,7 +84,7 @@ const useDataApi = (initialUrl, initialData) => {
     };
   }, [url]);
 
-  return [state, setUrl];
+  return { state, setUrl };
 };
 
 export default useDataApi;

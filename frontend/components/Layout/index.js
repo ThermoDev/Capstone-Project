@@ -30,10 +30,10 @@ const UnauthenticatedGlobalStyle = createGlobalStyle`
 
 const Layout = props => {
   const { children } = props;
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   return (
     <ThemeProvider>
-      {user ? (
+      {isAuthenticated() ? (
         <StyledPage>
           <Meta />
           <Header />

@@ -44,11 +44,10 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const { user, signin } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    console.log('in effect', user);
-    if (user) {
+    if (isAuthenticated()) {
       Router.push('/dashboard');
     }
   }, [user]);
@@ -57,8 +56,7 @@ const Login = () => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log({ email, password });
-    signin('martin', 'le'); // would be nice is this set state (isError, isLoading)
+    login(email, password);
   };
 
   return (
