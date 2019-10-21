@@ -1,4 +1,5 @@
 from exception.user.user_already_exists_error import UserAlreadyExistsError
+from exception.user.user_not_found_error import UserNotFoundError
 from flask import (
     Blueprint, request, Response, jsonify
 )
@@ -15,13 +16,16 @@ user_manager = UserManager()
 def login():
     user_id = request.form.get('user_id')
     password = request.form.get('password')
-    user = user_manager.get_user(user_id)
-    if user:
-        if user.check_password(password):
-            login_user(user)
-            response = serialise_properties(user)
+    try:
+        user = user_manager.get_user(user_id)
+    except UserNotFoundError:
+        return Response(response="Username not found.", status=401)
 
-            return jsonify(response), 200
+    if user.check_password(password):
+        login_user(user)
+        response = serialise_properties(user)
+
+        return jsonify(response), 200
 
     return Response(response="Authentication failed.", status=401)
 
