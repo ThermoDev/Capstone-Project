@@ -11,7 +11,7 @@ class UserRepository:
     def get_user(self, user_id: str) -> User:
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            output = cursor.execute('SELECT * FROM User WHERE username=?', (user_id, ))
+            output = cursor.execute('SELECT * FROM Users WHERE username=?', (user_id, ))
             result = output.fetchone()
             if not result:
                 raise UserNotFoundError(user_id)
@@ -21,7 +21,7 @@ class UserRepository:
     def has_user(self, user_id: str) -> bool:
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            output = cursor.execute('SELECT * FROM User WHERE username=?', (user_id, ))
+            output = cursor.execute('SELECT * FROM Users WHERE username=?', (user_id, ))
             result = output.fetchone()
 
             return bool(result)
@@ -29,7 +29,7 @@ class UserRepository:
     def add_user(self, user: User):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            cursor.execute('INSERT INTO User VALUES (?, ?, ?, ?, ?)', self._unpack_user(user))
+            cursor.execute('INSERT INTO Users VALUES (?, ?, ?, ?, ?)', self._unpack_user(user))
             connection.commit()
 
     def update_user(self, user: User):
