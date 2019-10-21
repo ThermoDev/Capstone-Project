@@ -44,6 +44,37 @@ export const useAuth = () => {
     dispatch({ type: 'stopAuthenticating' });
   };
 
+  // TODO: might be conflicts in localStorage if multiple users
+  const register = (email, firstname, lastname, password) => {
+    dispatch({ type: 'startAuthenticating' });
+    fetch(`${endpoint}login/register`, {
+      method: 'POST',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: email,
+        first_name: firstname,
+        last_name: lastname,
+        email,
+        password,
+      }),
+    })
+      .then(checkStatus)
+      .then(result => {
+        result.json().then(user => dispatch({ type: 'login', user }));
+      })
+      .catch(err =>
+        err.response
+          .text()
+          .then(body =>
+            dispatch({ type: 'error', errorType: 'regFail', error: body })
+          )
+      )
+      .finally(() => dispatch({ type: 'stopAuthenticating' }));
+  };
+
   const isAuthenticated = () =>
     !!(state.expiresAt && new Date().getTime() < state.expiresAt);
 
@@ -53,6 +84,7 @@ export const useAuth = () => {
     user: state.user,
     login,
     logout,
+    register,
     error: state.error
       ? { error: state.error, errorType: state.errorType }
       : null,
