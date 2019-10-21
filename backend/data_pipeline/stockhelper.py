@@ -15,6 +15,11 @@ from pandas.tseries import offsets
 from pandas_datareader import data as pdr
 import yfinance as yf
 
+data_path = "data_pipeline/data"
+stocks_path = "data_pipeline/data/stocks.csv"
+industries_path = "data_pipeline/data/industries.csv"
+stocks_and_industries_path = "data_pipeline/data/stocks_and_industries.csv"
+
 
 def get_data(symbol: str, source: str = "yahoo", start_date: str = '2000-01-01',
              end_date: str = str(datetime.now().date()), api_key: str = None) -> pd.DataFrame:
@@ -85,8 +90,8 @@ def retrieve_stocks(symbols: List, data_source: str = "yahoo", start_date: str =
 
     Returns
     -------
-    pandas.DataFrame
-        A Pandas DataFrame that returns matched search term
+    Generator
+        returns a generator yielding all stocks from the list of symbols
     """
     for symbol in symbols:
         stock = get_data(symbol, data_source, start_date, end_date, api_key)
@@ -121,7 +126,7 @@ def concatenate(stocks: List) -> pd.DataFrame:
      Returns
      -------
      pandas.DataFrame
-         A Pandas DataFrame that returns matched search term
+         A Pandas DataFrame that returns concatenated DataFrame
      """
     concatenated = pd.concat(stocks)
     concatenated.sort_index(inplace=True)
@@ -234,6 +239,41 @@ def get_ytd(symbol: str, data_source: str = "yahoo", api_key: str = None) -> np.
         pass
 
 
+def save(data: pd.DataFrame, path: str):
+    """
+    Retrieves the Year To Date percentage return for a particular stock
+
+    Parameters
+    ----------
+    data: pandas.DataFrame
+        A pandas DataFrame that will be saved as a csv file
+    path: str, optional
+        The path to save the DataFrame
+    """
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
+
+    data.to_csv(path, index=False)
+
+
+def read_stock_data() -> pd.DataFrame:
+    """
+    A simple function to retrieve the stock data
+
+    Returns
+    -------
+    pandas.DataFrame
+        A Pandas DataFrame that stock data
+    """
+    try:
+        data = pd.read_csv(stocks_path)
+    except FileNotFoundError:
+        data = pdr.get_nasdaq_symbols()
+        save(data, stocks_path)
+
+    return data
+
+
 def search_stocks_list(search: str) -> pd.DataFrame:
     """
     A search function that return a pandas.DataFrame that matches the search parameter
@@ -248,7 +288,9 @@ def search_stocks_list(search: str) -> pd.DataFrame:
     pandas.DataFrame
         A Pandas DataFrame that returns matched search term
     """
-    data = pdr.get_nasdaq_symbols()  # API Call
+    data = read_stock_data()  # Retrieve all stock symbols
+    data = add_industries(data)  # Add industry info
+    data["Industry"] = data["Industry"].astype(str)  # Force pandas to recognize Industry as str
     string_mask = (data.applymap(type) == str).all()  # Ensure we only look at String values
     string_data = data[data.columns[string_mask]]  # Retrieves the columns that were Strings using the mask
 
@@ -262,7 +304,34 @@ def search_stocks_list(search: str) -> pd.DataFrame:
     # Returns searched records from the mask
     results = data.loc[search_mask.any(axis=1)]
 
+    results.drop(columns=["CQS Symbol", "NextShares"])
     return results
+
+
+def get_industry(symbol: str) -> str:
+    """
+    Retrieves industry name if it exists.
+
+    Parameters
+    ----------
+    symbol : str
+        The ticker or stock symbol to retrieve the industry from
+
+    Returns
+    -------
+    str
+        A string that returns industry. Nothing returned if string is invalid
+    """
+    data = read_stock_data()  # Retrieve all stock symbols
+    data = add_industries(data)  # Add industry info
+    symbol = symbol.upper()
+    try:
+        industry = str(data[data["NASDAQ Symbol"] == symbol].iloc[0]["Industry"])
+        if not (industry == " " or industry == "nan"):
+            return industry
+        pass
+    except IndexError:
+        pass
 
 
 # Note: only works on Yahoo data source
@@ -313,7 +382,6 @@ def get_ask_price(symbol: str) -> np.float64:
     return yf.Ticker(symbol).info["ask"]
 
 
-# Retrieves A list of available stocks on the NASDAQ market
 def get_stock_symbols() -> pd.DataFrame:
     """
     Retrieves all stock symbols available from the NASDAQ data market
@@ -324,11 +392,14 @@ def get_stock_symbols() -> pd.DataFrame:
     pandas.DataFrame
         A Pandas DataFrame with data available from the NASDAQ market
     """
-    data = pdr.get_nasdaq_symbols()
+    # data = pdr.get_nasdaq_symbols()
+    data = read_stock_data()
 
-    data = data[data["Nasdaq Traded"]]  # Only retrieve Nasdaq Traded values
-    data.drop(["Nasdaq Traded", "Market Category", "NextShares"], axis=1, inplace=True)  # Drops irrelevant columns
-    data.set_index("NASDAQ Symbol", inplace=True)  # Set the index to the NASDAQ symbol
+    # CLean up Data
+    data = data[data["Nasdaq Traded"]]
+    # Drops irrelevant columns
+    data.drop(["Nasdaq Traded", "Market Category", "NextShares", "CQS Symbol", "Financial Status", "Round Lot Size", "Test Issue"], axis=1,
+              inplace=True, errors="ignore")
 
     return data
 
@@ -376,3 +447,90 @@ def validate_dates(dates: list) -> bool:
         return True
     except ValueError:
         return False
+
+
+def get_industry_data() -> pd.DataFrame:
+    """
+    Retrieves stocks industry data in a usable format
+
+    Returns
+    -------
+    DataFrame
+         A DataFrame containing all stock symbols, along with their industries
+    """
+    # URL where data is kept
+    stocks_url = "http://rankandfiled.com/static/export/cik_ticker.csv"
+    industries_url = "http://rankandfiled.com/static/export/sic_naics.csv"
+
+    # Reads in data
+    stocks = pd.read_csv(stocks_url, sep="|")
+    industries = pd.read_csv(industries_url, sep="|")
+
+    # Drop irrelevant value
+    industries.drop(columns=["NAICS", "NAICS_Descrip"], inplace=True)
+    stocks.drop(
+        columns=["Exchange", "CIK", "Business", "Incorporated", "IRS"],
+        inplace=True)
+
+    # Use -1 as placeholder
+    stocks["SIC"].fillna(-1, inplace=True)
+
+    # Convert to int, so when stringed, will only be integers
+    stocks["SIC"] = stocks["SIC"].astype(int)
+    industries["SIC"] = industries["SIC"].astype(int)
+
+    # Strings those SIC values
+    stocks["SIC"] = stocks["SIC"].astype(str)
+    industries["SIC"] = industries["SIC"].astype(str)
+
+    # Drops Duplicates of SIC found in industries data
+    industries.drop_duplicates(subset="SIC", inplace=True)
+
+    # Removes Brackets found in Description to generalize industries better
+    industries["SIC_Descrip"] = industries["SIC_Descrip"].str.replace(r"\s+\(.*\)", "")
+
+    # Merges the records on the SIC
+    merged = pd.merge(stocks, industries, how="left", on="SIC")
+
+    # Fills in nan values with the other records so once we drop duplicates, we will retain more info
+    merged = merged.groupby('Ticker').ffill().groupby('Ticker').bfill().drop_duplicates()
+
+    # Drops the duplicates, and clean up data
+    merged.drop_duplicates(subset="Ticker", inplace=True)
+    merged.drop(columns=["SIC"], inplace=True)
+    merged.rename(columns={"SIC_Descrip": "Industry"}, inplace=True)
+
+    # Saves the file
+    save(merged, industries_path)
+
+    return merged
+
+
+def add_industries(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Given a DataFrame, returns another DataFrame containing industries
+
+    Parameters
+    ----------
+    data : DataFrame
+        A DataFrame containing all stock symbols, without industries
+
+    Returns
+    -------
+    DataFrame
+         A DataFrame containing all stock symbols, with industries
+    """
+    try:
+        industries = pd.read_csv(industries_path)
+    except FileNotFoundError:
+        industries = get_industry_data()
+
+    data_copy = data.copy()
+    industries_copy = industries.copy()
+
+    merged = pd.merge(data_copy, industries_copy, how="left", left_on="NASDAQ Symbol", right_on="Ticker")
+
+    save(merged, stocks_and_industries_path)
+
+    merged.drop(columns="Ticker", inplace=True, errors="ignore")
+    return merged
