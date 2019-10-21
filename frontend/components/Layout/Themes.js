@@ -9,6 +9,12 @@ export const theme = {
   offWhite: '#EDEDED',
   maxWidth: '1000px',
   bs: '0 12px 24px 0 rgba(0, 0, 0, 0.09)',
+  font: {
+    sm: '0.7rem',
+    md: '1.5rem',
+    lg: '2rem',
+    xl: '2.5rem',
+  },
 };
 
 export const muiTheme = responsiveFontSizes(
