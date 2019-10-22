@@ -62,4 +62,7 @@ def create_app(test_config=None):
     def load_user(user_id):
         return user_manager.flask_login_get_user(user_id)
 
+    from backend.portfolio import api as portfolio_api
+    app.register_blueprint(portfolio_api.bp)
+
     return app
