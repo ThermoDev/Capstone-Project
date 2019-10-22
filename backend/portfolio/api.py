@@ -67,6 +67,10 @@ def process_transaction():
 
     try:
         portfolio = portfolio_manager.process_transaction(user_id, portfolio_id, company_code, price, volume)
+    except PortfolioAccessDeniedError as e:
+        return Response(response=e.message, status=403)
+    except PortfolioNotFoundError as e:
+        return Response(response=e.message, status=404)
     except InsufficientCashError as e:
         return Response(response=e.message, status=409)
 
