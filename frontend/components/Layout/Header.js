@@ -1,6 +1,6 @@
 import React from 'react';
-import Router from 'next/router';
-import NProgress from 'nprogress';
+import Link from "next/link";
+import { useAuth } from '../../lib/useAuth';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -15,16 +15,6 @@ import Typography from '@material-ui/core/Typography';
 import ListItemText from '@material-ui/core/ListItemText';
 import turquoiseBkg from '../../static/logos/turquoise-bkg.png';
 
-// Progress Bar
-Router.onRouteChangeStart = () => {
-  NProgress.start();
-};
-Router.onRouteChangeComplete = () => {
-  NProgress.done();
-};
-Router.onRouteChangeError = () => {
-  NProgress.done();
-};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,9 +24,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  menuButton: {
-    alignSelf: 'flex-start',
   },
   title: {
     flexGrow: 1,
@@ -68,10 +55,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Header() {
+  const { logout } = useAuth();
+
   const classes = useStyles();
   const [state, setState] = React.useState({
     left: false,
   });
+
+  const handleSubmit = e => {
+    logout();
+  };
 
   const toggleDrawer = (side, open) => event => {
     if (
@@ -96,11 +89,21 @@ export default function Header() {
       </div>
       <Divider />
       <List>
-        {['Dashboard', 'Settings', 'Logout'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
+        <Link href='Dashboard' passHref>
+          <ListItem button key='Dashboard'>
+            <ListItemText primary='Dashboard' />
           </ListItem>
-        ))}
+        </Link>
+        <Link href='Dashboard' passHref>
+          <ListItem button key='Settings'>
+            <ListItemText primary='Settings' />
+          </ListItem>
+        </Link>
+        <Link href='/'  passHref>
+          <ListItem button key='Logout'  onClick={handleSubmit}>
+            <ListItemText primary='Logout' />
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
@@ -111,7 +114,6 @@ export default function Header() {
         <Toolbar className={classes.toolbar}>
           <IconButton
             onClick={toggleDrawer('left', true)}
-            className={classes.menuButton}
             color="inherit"
             aria-label="menu"
           >

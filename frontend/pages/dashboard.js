@@ -13,10 +13,12 @@ const ColorBox = styled.div`
   `;
 
 class Dashboard extends Component {
+  
+  
   render() {
     return (
       <div>
-        <p>Dashboard</p>
+        <p>hello</p>
         <Container maxWidth="md">
           <ColorBox>Container</ColorBox>
         </Container>

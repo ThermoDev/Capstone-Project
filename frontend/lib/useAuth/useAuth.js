@@ -14,9 +14,10 @@ function checkStatus(response) {
 export const useAuth = () => {
   const { state, dispatch } = useContext(AuthContext);
 
-  const login = (username, password) => {
+  const  login = async (username, password) => {
+    var success = false;
     dispatch({ type: 'startAuthenticating' });
-    fetch(`${endpoint}login`, {
+    await fetch(`${endpoint}login`, {
       method: 'POST',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -27,15 +28,20 @@ export const useAuth = () => {
       .then(checkStatus)
       .then(result => {
         result.json().then(user => dispatch({ type: 'login', user }));
+
+        success = true;
       })
       .catch(err =>
         err.response
           .text()
-          .then(body =>
-            dispatch({ type: 'error', errorType: 'userInfo', error: body })
-          )
+          .then(body =>{
+            dispatch({ type: 'error', errorType: 'userInfo', error: body });
+          })
       )
-      .finally(() => dispatch({ type: 'stopAuthenticating' }));
+      .finally(() =>{ 
+        dispatch({ type: 'stopAuthenticating' })
+      });
+      return success;
   };
 
   const logout = () => {
@@ -45,9 +51,10 @@ export const useAuth = () => {
   };
 
   // TODO: might be conflicts in localStorage if multiple users
-  const register = (email, firstname, lastname, password) => {
+  const register = async (email, firstname, lastname, password) => {
+    var success = false;
     dispatch({ type: 'startAuthenticating' });
-    fetch(`${endpoint}login/register`, {
+    await fetch(`${endpoint}login/register`, {
       method: 'POST',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -64,15 +71,17 @@ export const useAuth = () => {
       .then(checkStatus)
       .then(result => {
         result.json().then(user => dispatch({ type: 'login', user }));
+        success = true;
       })
       .catch(err =>
         err.response
           .text()
-          .then(body =>
-            dispatch({ type: 'error', errorType: 'regFail', error: body })
-          )
+          .then(body =>{
+            dispatch({ type: 'error', errorType: 'regFail', error: body });
+          })
       )
       .finally(() => dispatch({ type: 'stopAuthenticating' }));
+    return success;
   };
 
   const isAuthenticated = () =>

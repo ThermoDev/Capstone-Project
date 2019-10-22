@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Router from 'next/router';
 import Link from 'next/link';
@@ -30,16 +30,35 @@ const SubmitButton = styled(Button)`
   margin: ${({ theme }) => theme.mui.spacing(3, 0, 2)};
 `;
 
+const validateEmail= (email) => {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+
 const Register = () => {
+  const [values, setValues] = useState({invalidEmail: '', invalidPassword: false })
   const { user, isAuthenticated, register } = useAuth();
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     const firstName = e.target.firstName.value;
     const lastName = e.target.lastName.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    register(email, firstName, lastName, password);
+    
+    if (password.length<8 || !validateEmail(email)){
+
+      setValues({...values, 
+        invalidEmail: !validateEmail(email)? 'Invalid Email': '',
+        invalidPassword: (password.length<8)
+      })
+      
+    } else {    
+      const registerSuccess = await register(email, firstName, lastName, password);
+      if (!registerSuccess){
+        setValues({...values, invalidEmail:'Email already exists' })
+      }
+    }
   };
 
   useEffect(() => {
@@ -93,6 +112,9 @@ const Register = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                error={values.invalidEmail}
+                onChange={()=>setValues({...values, invalidEmail:'' })}
+                helperText={values.invalidEmail }
               />
             </Grid>
             <Grid item xs={12}>
@@ -105,6 +127,9 @@ const Register = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                error={values.invalidPassword}
+                onChange={()=>setValues({...values, invalidPassword:false })}
+                helperText={values.invalidPassword ? 'Invalid Password. Must be 8 or more characters':''}
               />
             </Grid>
           </Grid>
