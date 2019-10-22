@@ -59,3 +59,6 @@ class StockTransaction:
     @property
     def transaction_time(self) -> datetime:
         return self._transaction_time
+
+    def update_with_generated_id(self, generated_id: int):
+        self._transaction_id = generated_id

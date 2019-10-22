@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from exception.portfolio.insufficient_cash_error import InsufficientCashError
 from models.stock_transaction import StockTransaction
 
 
@@ -50,3 +51,11 @@ class Portfolio:
 
     def update_with_generated_id(self, generated_id: int):
         self._portfolio_id = generated_id
+
+    def process_transaction(self, transaction: StockTransaction):
+        cash_required = transaction.volume * transaction.price
+        if self.cash < cash_required:
+            raise InsufficientCashError(self.portfolio_id)
+
+        self._cash -= cash_required
+        self._stock_transactions.append(transaction)

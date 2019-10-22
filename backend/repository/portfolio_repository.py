@@ -109,6 +109,40 @@ class PortfolioRepository(BaseRepository):
             connection.commit()
             portfolio.update_with_generated_id(cursor.lastrowid)
 
+    def update_portfolio(self, portfolio: Portfolio):
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            portfolio_query = self.build_update_query(table=PortfoliosTable.TABLE_NAME,
+                                                      columns=(
+                                                          PortfoliosTable.Columns.HOLDER,
+                                                          PortfoliosTable.Columns.NAME,
+                                                          PortfoliosTable.Columns.CASH
+                                                      ),
+                                                      identifiers=(PortfoliosTable.Columns.ID, ))
+            cursor.execute(portfolio_query, (*self._unpack_portfolio(portfolio), portfolio.portfolio_id))
+
+            for stock_transaction in portfolio.stock_transactions:
+                if not stock_transaction.transaction_id:
+                    transaction_query = self.build_insert_query(table=TransactionsTable.TABLE_NAME,
+                                                                columns=(
+                                                                    TransactionsTable.Columns.PORTFOLIO_ID,
+                                                                    TransactionsTable.Columns.COMPANY_CODE,
+                                                                    TransactionsTable.Columns.PRICE,
+                                                                    TransactionsTable.Columns.VOLUME,
+                                                                    TransactionsTable.Columns.TRANSACTION_TIME
+                                                                ))
+                    cursor.execute(transaction_query, self._unpack_transaction(stock_transaction))
+                    connection.commit()
+                    stock_transaction.update_with_generated_id(cursor.lastrowid)
+
     @staticmethod
     def _unpack_portfolio(portfolio: Portfolio) -> tuple:
         return portfolio.holder, portfolio.name, portfolio.cash
+
+    @staticmethod
+    def _unpack_transaction(transaction: StockTransaction) -> tuple:
+        return (transaction.portfolio_id,
+                transaction.company_code,
+                transaction.price,
+                transaction.volume,
+                transaction.transaction_time)

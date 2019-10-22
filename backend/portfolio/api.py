@@ -1,3 +1,4 @@
+from exception.portfolio.insufficient_cash_error import InsufficientCashError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
 from exception.portfolio.portfolio_already_exists_error import PortfolioAlreadyExistsError
 from exception.portfolio.portfolio_not_found_error import PortfolioNotFoundError
@@ -46,6 +47,25 @@ def create():
     try:
         portfolio = portfolio_manager.create_portfolio_for_user(user_id, portfolio_name, initial_cash)
     except PortfolioAlreadyExistsError as e:
+        return Response(response=e.message, status=409)
+
+    return jsonify(serialise_properties(portfolio)), 201
+
+
+@bp.route('process-transaction', methods=['POST'])
+@login_required
+def process_transaction():
+    user_id = current_user.get_id()
+
+    portfolio_id = request.json.get('portfolio_id')
+    transaction_json = request.json.get('transaction')
+    company_code = transaction_json['company_code']
+    price = transaction_json['price']
+    volume = transaction_json['volume']
+
+    try:
+        portfolio = portfolio_manager.process_transaction(user_id, portfolio_id, company_code, price, volume)
+    except InsufficientCashError as e:
         return Response(response=e.message, status=409)
 
     return jsonify(serialise_properties(portfolio)), 201
