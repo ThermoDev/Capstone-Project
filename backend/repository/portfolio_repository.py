@@ -82,3 +82,33 @@ class PortfolioRepository(BaseRepository):
                 stock_transactions.append(StockTransaction(*row))
 
         return stock_transactions
+
+    def has_portfolio_by_user_and_name(self, user_id: str, name: str) -> bool:
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_query(table=PortfoliosTable.TABLE_NAME,
+                                                identifiers=(
+                                                    PortfoliosTable.Columns.HOLDER,
+                                                    PortfoliosTable.Columns.NAME
+                                                ))
+            output = cursor.execute(query, (user_id, name))
+            result = output.fetchone()
+
+            return bool(result)
+
+    def add_portfolio(self, portfolio: Portfolio):
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_insert_query(table=PortfoliosTable.TABLE_NAME,
+                                            columns=(
+                                                PortfoliosTable.Columns.HOLDER,
+                                                PortfoliosTable.Columns.NAME,
+                                                PortfoliosTable.Columns.CASH
+                                            ))
+            cursor.execute(query, self._unpack_portfolio(portfolio))
+            connection.commit()
+            portfolio.update_with_generated_id(cursor.lastrowid)
+
+    @staticmethod
+    def _unpack_portfolio(portfolio: Portfolio) -> tuple:
+        return portfolio.holder, portfolio.name, portfolio.cash

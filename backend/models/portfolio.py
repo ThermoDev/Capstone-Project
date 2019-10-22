@@ -47,3 +47,6 @@ class Portfolio:
     @property
     def stock_transactions(self) -> List[StockTransaction]:
         return self._stock_transactions
+
+    def update_with_generated_id(self, generated_id: int):
+        self._portfolio_id = generated_id
