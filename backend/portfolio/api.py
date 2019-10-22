@@ -24,8 +24,10 @@ def portfolios():
     if portfolio_id:
         try:
             portfolio = portfolio_manager.get_portfolio_for_user_by_id(user_id, portfolio_id)
-        except (PortfolioAccessDeniedError, PortfolioNotFoundError) as e:
+        except PortfolioAccessDeniedError as e:
             return Response(response=e.message, status=403)
+        except PortfolioNotFoundError as e:
+            return Response(response=e.message, status=404)
 
         return jsonify(serialise_properties(portfolio)), 200
 
