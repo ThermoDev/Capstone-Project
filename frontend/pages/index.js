@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useEffect } from 'react';
 import { Container } from '@material-ui/core';
 import styled from 'styled-components';
-import Link from 'next/link';
 import { useAuth } from '../lib/useAuth';
-import { LargeButton } from '../components/Button';
+import Login from './login';
+import Router from 'next/router';
+import Dashboard from './dashboard';
 
 const ContentBox = styled(Container)`
   display: flex;
@@ -26,26 +27,15 @@ const ButtonContainer = styled.div`
 `;
 
 const Index = () => {
-  const { isAuthenticated } = useAuth();
+
+  const { isAuthenticated, user } = useAuth();
+  useEffect(() => {
+    if (isAuthenticated()) {
+      Router.push('/dashboard');
+    } 
+  }, [user]);
   return (
-    <ContentBox maxWidth="xs">
-      <LargeLogo
-        src="https://res.cloudinary.com/dzowh11b5/image/upload/v1571582804/comp3900/logo-turquoise_h2ssgm.png"
-        alt="Tradie logo"
-      />
-      <ButtonContainer>
-        <Link href={isAuthenticated() ? '/dashboard' : '/login'}>
-          <LargeButton variant="contained" color="secondary">
-            Login
-          </LargeButton>
-        </Link>
-        <Link href="/register">
-          <LargeButton variant="contained" color="secondary">
-            Register
-          </LargeButton>
-        </Link>
-      </ButtonContainer>
-    </ContentBox>
+    <Login/>
   );
 };
 export default Index;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Link from "next/link";
 import { useAuth } from '../../lib/useAuth';
 import { makeStyles } from '@material-ui/core/styles';
@@ -55,12 +55,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Header() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const classes = useStyles();
   const [state, setState] = React.useState({
     left: false,
+    userName:'',
   });
+  useEffect(() => {
+    setState({ ...state, userName: user.first_name });
+  }, [user]);
+
+
 
   const handleSubmit = e => {
     logout();
@@ -84,8 +90,8 @@ export default function Header() {
       onKeyDown={toggleDrawer(side, false)}
     >
       <div className={classes.sidebar1}>
-        <Avatar className={classes.avatar}>U</Avatar>
-        <Typography>User</Typography>
+        <Avatar className={classes.avatar}>{state.userName.charAt(0)}</Avatar>
+        <Typography>{state.userName}</Typography>
       </div>
       <Divider />
       <List>

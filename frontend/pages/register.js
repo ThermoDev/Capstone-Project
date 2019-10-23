@@ -36,7 +36,13 @@ const validateEmail= (email) => {
 }
 
 const Register = () => {
-  const [values, setValues] = useState({invalidEmail: '', invalidPassword: false })
+  const [values, setValues] = useState({
+    invalidEmail: '', 
+    invalidPassword: false,
+    invalidFirstName: false,
+    invalidLastName: false,
+   })
+    
   const { user, isAuthenticated, register } = useAuth();
 
   const handleSubmit = async e => {
@@ -46,11 +52,14 @@ const Register = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     
-    if (password.length<8 || !validateEmail(email)){
+    if (password.length<8 || !validateEmail(email) || 
+        !(/^[a-zA-Z]+$/).test(firstName) || !(/^[a-zA-Z]+$/).test(lastName)){
 
       setValues({...values, 
         invalidEmail: !validateEmail(email)? 'Invalid Email': '',
-        invalidPassword: (password.length<8)
+        invalidPassword: (password.length<8),
+        invalidFirstName: !(/^[a-zA-Z]+$/).test(firstName),
+        invalidLastName: !(/^[a-zA-Z]+$/).test(lastName),
       })
       
     } else {    
@@ -90,6 +99,9 @@ const Register = () => {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                error={values.invalidFirstName}
+                onChange={()=>setValues({...values, invalidFirstName:false })}
+                helperText={values.invalidFirstName ? 'Must only contain letters':''}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -101,6 +113,9 @@ const Register = () => {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                error={values.invalidLastName}
+                onChange={()=>setValues({...values, invalidLastName:false })}
+                helperText={values.invalidLastName ? 'Must only contain letters':''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -112,7 +127,7 @@ const Register = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                error={values.invalidEmail}
+                error={values.invalidEmail === '' ? false: true }
                 onChange={()=>setValues({...values, invalidEmail:'' })}
                 helperText={values.invalidEmail }
               />

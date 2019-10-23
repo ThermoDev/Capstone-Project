@@ -46,7 +46,7 @@ const StyledTextField = styled(TextField)`
 
 const Login = () => {
   const [values, setValues] = useState({ failedLogin: false})
-  const { login, user, isAuthenticated, isLoading } = useAuth();
+  const { login, user, isAuthenticated} = useAuth();
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -61,8 +61,9 @@ const Login = () => {
     const loginSuccess = await login(email, password);
     if (!loginSuccess){
       setValues({...values, failedLogin: !isAuthenticated()})
+    } else {
+      Router.push('/dashboard');
     }
-    
     
   };
 

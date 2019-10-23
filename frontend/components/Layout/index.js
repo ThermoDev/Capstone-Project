@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
 import Meta from './Meta';
@@ -45,7 +45,12 @@ const UnauthenticatedGlobalStyle = createGlobalStyle`
 
 const Layout = props => {
   const { children } = props;
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user} = useAuth();
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      Router.push('/login');
+    } 
+  }, [user]);
   return (
     <ThemeProvider>
       {isAuthenticated() ? (
