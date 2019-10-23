@@ -30,19 +30,16 @@ const SubmitButton = styled(Button)`
   margin: ${({ theme }) => theme.mui.spacing(3, 0, 2)};
 `;
 
-const validateEmail= (email) => {
-  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const validateEmail = email => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
-}
+};
 
 const Register = () => {
   const [values, setValues] = useState({
-    invalidEmail: '', 
+    invalidEmail: '',
     invalidPassword: false,
-    invalidFirstName: false,
-    invalidLastName: false,
-   })
-    
+  });
   const { user, isAuthenticated, register } = useAuth();
 
   const handleSubmit = async e => {
@@ -51,21 +48,22 @@ const Register = () => {
     const lastName = e.target.lastName.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    
-    if (password.length<8 || !validateEmail(email) || 
-        !(/^[a-zA-Z]+$/).test(firstName) || !(/^[a-zA-Z]+$/).test(lastName)){
 
-      setValues({...values, 
-        invalidEmail: !validateEmail(email)? 'Invalid Email': '',
-        invalidPassword: (password.length<8),
-        invalidFirstName: !(/^[a-zA-Z]+$/).test(firstName),
-        invalidLastName: !(/^[a-zA-Z]+$/).test(lastName),
-      })
-      
-    } else {    
-      const registerSuccess = await register(email, firstName, lastName, password);
-      if (!registerSuccess){
-        setValues({...values, invalidEmail:'Email already exists' })
+    if (password.length < 8 || !validateEmail(email)) {
+      setValues({
+        ...values,
+        invalidEmail: !validateEmail(email) ? 'Invalid Email' : '',
+        invalidPassword: password.length < 8,
+      });
+    } else {
+      const registerSuccess = await register(
+        email,
+        firstName,
+        lastName,
+        password
+      );
+      if (!registerSuccess) {
+        setValues({ ...values, invalidEmail: 'Email already exists' });
       }
     }
   };
@@ -127,9 +125,9 @@ const Register = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                error={values.invalidEmail === '' ? false: true }
-                onChange={()=>setValues({...values, invalidEmail:'' })}
-                helperText={values.invalidEmail }
+                error={values.invalidEmail}
+                onChange={() => setValues({ ...values, invalidEmail: '' })}
+                helperText={values.invalidEmail}
               />
             </Grid>
             <Grid item xs={12}>
@@ -143,8 +141,14 @@ const Register = () => {
                 id="password"
                 autoComplete="current-password"
                 error={values.invalidPassword}
-                onChange={()=>setValues({...values, invalidPassword:false })}
-                helperText={values.invalidPassword ? 'Invalid Password. Must be 8 or more characters':''}
+                onChange={() =>
+                  setValues({ ...values, invalidPassword: false })
+                }
+                helperText={
+                  values.invalidPassword
+                    ? 'Invalid Password. Must be 8 or more characters'
+                    : ''
+                }
               />
             </Grid>
           </Grid>

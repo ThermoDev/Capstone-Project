@@ -45,13 +45,13 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const [values, setValues] = useState({ failedLogin: false})
-  const { login, user, isAuthenticated} = useAuth();
+  const [values, setValues] = useState({ failedLogin: false });
+  const { login, user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated()) {
       Router.push('/dashboard');
-    } 
+    }
   }, [user]);
 
   const handleSubmit = async e => {
@@ -59,21 +59,10 @@ const Login = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     const loginSuccess = await login(email, password);
-    if (!loginSuccess){
-      setValues({...values, failedLogin: !isAuthenticated()})
-    } else {
-      Router.push('/dashboard');
+    if (!loginSuccess) {
+      setValues({ ...values, failedLogin: !isAuthenticated() });
     }
-    
   };
-
-  const handleInputChange = e => {
-    const {name, value} = e.target
-    setValues({...values, [name]: value})
-    setValues({...values, failedLogin: false})
-
-  };
-  
 
   return (
     <Container component="main" maxWidth="xs">
@@ -94,9 +83,8 @@ const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              onChange={()=> setValues({...values, failedLogin: false})}
+              onChange={() => setValues({ ...values, failedLogin: false })}
               error={values.failedLogin}
-
             />
             <StyledTextField
               variant="outlined"
@@ -109,11 +97,13 @@ const Login = () => {
               id="password"
               autoComplete="current-password"
               error={values.failedLogin}
-              onChange={()=> setValues({...values, failedLogin: false})}
+              onChange={() => setValues({ ...values, failedLogin: false })}
             />
-            {values.failedLogin ? (<Typography color='error' component="h3" variant="body1">
-            Invalid email and password.
-            </Typography>) :(null)}
+            {values.failedLogin ? (
+              <Typography color="error" component="h3" variant="body1">
+                Invalid email and password.
+              </Typography>
+            ) : null}
             <SubmitButton
               type="submit"
               fullWidth

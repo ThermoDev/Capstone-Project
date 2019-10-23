@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
-import Link from "next/link";
-import { useAuth } from '../../lib/useAuth';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -13,52 +12,27 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import ListItemText from '@material-ui/core/ListItemText';
+import { useAuth } from '../../lib/useAuth';
 import turquoiseBkg from '../../static/logos/turquoise-bkg.png';
 
+const StyledToolbar = styled(Toolbar)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  icon: {
-    maxHeight: '50px',
-  },
-  emptyDiv: {
-    minWidth: '38px',
-  },
-  list: {
-    padding: '15px',
-    width: 250,
-  },
-  fullList: {
-    width: 'auto',
-  },
-  avatar: {
-    backgroundColor: '#00ced1',
-    marginBottom: '15px',
-  },
-  sidebar1: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '15px',
-  },
-}));
+const StyledSidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+`;
 
 export default function Header() {
   const { logout, user } = useAuth();
 
-  const classes = useStyles();
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     left: false,
     userName:'',
   });
@@ -68,10 +42,6 @@ export default function Header() {
 
 
 
-  const handleSubmit = e => {
-    logout();
-  };
-
   const toggleDrawer = (side, open) => event => {
     if (
       event.type === 'keydown' &&
@@ -79,45 +49,45 @@ export default function Header() {
     ) {
       return;
     }
-    setState({ ...state, [side]: open });
+    setState({ [side]: open });
   };
 
   const sideList = side => (
     <div
-      className={classes.list}
       role="presentation"
       onClick={toggleDrawer(side, false)}
       onKeyDown={toggleDrawer(side, false)}
+      style={{ padding: '15px', width: 250 }}
     >
-      <div className={classes.sidebar1}>
-        <Avatar className={classes.avatar}>{state.userName.charAt(0)}</Avatar>
+      <StyledSidebar>
+        <Avatar style={{ backgroundColor: '#00ced1', marginBottom: '15px' }}>
+          {user.firstName.charAt(0)}
+        </Avatar>
         <Typography>{state.userName}</Typography>
-      </div>
+      </StyledSidebar>
       <Divider />
       <List>
-        <Link href='Dashboard' passHref>
-          <ListItem button key='Dashboard'>
-            <ListItemText primary='Dashboard' />
+        <Link href="/dashboard">
+          <ListItem button key="Dashboard">
+            <ListItemText primary="Dashboard" />
           </ListItem>
         </Link>
-        <Link href='Dashboard' passHref>
-          <ListItem button key='Settings'>
-            <ListItemText primary='Settings' />
+        <Link href="/dashboard">
+          <ListItem button key="Settings">
+            <ListItemText primary="Settings" />
           </ListItem>
         </Link>
-        <Link href='/'  passHref>
-          <ListItem button key='Logout'  onClick={handleSubmit}>
-            <ListItemText primary='Logout' />
-          </ListItem>
-        </Link>
+        <ListItem button key="Logout" onClick={() => logout()}>
+          <ListItemText primary="Logout" />
+        </ListItem>
       </List>
     </div>
   );
 
   return (
-    <div className={classes.root}>
+    <div style={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
+        <StyledToolbar>
           <IconButton
             onClick={toggleDrawer('left', true)}
             color="inherit"
@@ -125,9 +95,9 @@ export default function Header() {
           >
             <MenuIcon style={{ fontSize: 38 }} />
           </IconButton>
-          <img src={turquoiseBkg} className={classes.icon} alt="Logo" />
-          <div className={classes.emptyDiv} />
-        </Toolbar>
+          <img src={turquoiseBkg} alt="Logo" styled={{ maxHeight: '50px' }} />
+          <div styled={{ minWidth: '38px' }} />
+        </StyledToolbar>
       </AppBar>
       <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
         {sideList('left')}

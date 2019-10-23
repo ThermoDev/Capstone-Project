@@ -1,13 +1,12 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
-import Meta from './Meta';
 import Router from 'next/router';
 import NProgress from 'nprogress';
+import Meta from './Meta';
 import Header from './Header';
 import ThemeProvider from './ThemeProvider';
 import { useAuth } from '../../lib/useAuth';
-
 
 // Progress Bar
 Router.onRouteChangeStart = () => {
@@ -19,7 +18,6 @@ Router.onRouteChangeComplete = () => {
 Router.onRouteChangeError = () => {
   NProgress.done();
 };
-
 
 const StyledPage = styled.div`
   background: white;
@@ -45,12 +43,14 @@ const UnauthenticatedGlobalStyle = createGlobalStyle`
 
 const Layout = props => {
   const { children } = props;
-  const { isAuthenticated, user} = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
   useEffect(() => {
     if (!isAuthenticated()) {
-      Router.push('/login');
-    } 
+      Router.push('/');
+    }
   }, [user]);
+
   return (
     <ThemeProvider>
       {isAuthenticated() ? (
