@@ -14,8 +14,8 @@ function checkStatus(response) {
 export const useAuth = () => {
   const { state, dispatch } = useContext(AuthContext);
 
-  const  login = async (username, password) => {
-    var success = false;
+  const login = async (username, password) => {
+    let success = false;
     dispatch({ type: 'startAuthenticating' });
     await fetch(`${endpoint}login`, {
       method: 'POST',
@@ -32,16 +32,14 @@ export const useAuth = () => {
         success = true;
       })
       .catch(err =>
-        err.response
-          .text()
-          .then(body =>{
-            dispatch({ type: 'error', errorType: 'userInfo', error: body });
-          })
+        err.response.text().then(body => {
+          dispatch({ type: 'error', errorType: 'userInfo', error: body });
+        })
       )
-      .finally(() =>{ 
-        dispatch({ type: 'stopAuthenticating' })
+      .finally(() => {
+        dispatch({ type: 'stopAuthenticating' });
       });
-      return success;
+    return success;
   };
 
   const logout = () => {
@@ -52,7 +50,7 @@ export const useAuth = () => {
 
   // TODO: might be conflicts in localStorage if multiple users
   const register = async (email, firstname, lastname, password) => {
-    var success = false;
+    let success = false;
     dispatch({ type: 'startAuthenticating' });
     await fetch(`${endpoint}login/register`, {
       method: 'POST',
@@ -74,11 +72,9 @@ export const useAuth = () => {
         success = true;
       })
       .catch(err =>
-        err.response
-          .text()
-          .then(body =>{
-            dispatch({ type: 'error', errorType: 'regFail', error: body });
-          })
+        err.response.text().then(body => {
+          dispatch({ type: 'error', errorType: 'regFail', error: body });
+        })
       )
       .finally(() => dispatch({ type: 'stopAuthenticating' }));
     return success;
