@@ -18,8 +18,8 @@ def login():
     password = request.json.get('password')
     try:
         user = user_manager.get_user(user_id)
-    except UserNotFoundError:
-        return Response(response="Username not found.", status=401)
+    except UserNotFoundError as e:
+        return Response(response=e.message, status=401)
 
     if user.check_password(password):
         login_user(user)
@@ -39,8 +39,8 @@ def register():
     password = request.json.get('password')
     try:
         user = user_manager.create_new_user(user_id, first_name, last_name, email, password)
-    except UserAlreadyExistsError:
-        return Response(response="Username unavailable.", status=409)
+    except UserAlreadyExistsError as e:
+        return Response(response=e.message, status=409)
 
     response = serialise_properties(user)
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Router from 'next/router';
 import Link from 'next/link';
@@ -45,6 +45,7 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
+  const [values, setValues] = useState({ failedLogin: false });
   const { login, user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -53,11 +54,14 @@ const Login = () => {
     }
   }, [user]);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    login(email, password);
+    const loginSuccess = await login(email, password);
+    if (!loginSuccess) {
+      setValues({ ...values, failedLogin: !isAuthenticated() });
+    }
   };
 
   return (
@@ -79,6 +83,8 @@ const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={() => setValues({ ...values, failedLogin: false })}
+              error={values.failedLogin}
             />
             <StyledTextField
               variant="outlined"
@@ -90,7 +96,14 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              error={values.failedLogin}
+              onChange={() => setValues({ ...values, failedLogin: false })}
             />
+            {values.failedLogin ? (
+              <Typography color="error" component="h3" variant="body1">
+                Invalid email and password.
+              </Typography>
+            ) : null}
             <SubmitButton
               type="submit"
               fullWidth

@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def serialise_properties(obj):
     if type(obj) in (int, float, bool, str):
         return obj
@@ -11,6 +14,9 @@ def serialise_properties(obj):
             serialised.append((serialise_properties(key), serialise_properties(value)))
 
         return serialised
+
+    if type(obj) is datetime:
+        return obj.isoformat()
 
     serialised = {}
     for key, value in _get_properties(obj):

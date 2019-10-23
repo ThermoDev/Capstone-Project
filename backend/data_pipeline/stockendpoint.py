@@ -8,6 +8,7 @@ bp = Blueprint('stock', __name__, url_prefix='/stock')
 
 quandl_api_key = "JFyyk4MvK4j83jschxUi"
 
+
 # Docs: https://docs.google.com/document/d/1R1z88DVgySPoQ_UNPwn9ulASJtNr0T6grSgKmDcSGxU/edit?usp=sharing
 
 # Index route to retrieve history of a particular stock
@@ -102,6 +103,8 @@ def ytd():
 @bp.route('/getallsymbols', methods=['GET'])
 def get_all_symbols():
     data = stkh.get_stock_symbols()
+
+    data = stkh.add_industries(data)
     list_data = stkh.df_to_list(data, orient="records")
     return jsonify(list_data)
 
@@ -176,3 +179,14 @@ def ask(symbol):
         return Response(str(data))
     except KeyError:
         return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
+
+
+# Retrieves the industry given symbol
+@bp.route('/industry/<symbol>', methods=['GET'])
+def industry(symbol):
+    data = stkh.get_industry(symbol)
+
+    symbol = symbol.upper()
+    if not data:
+        return Response(f"Could not find anything with the symbol : {symbol}.", status=404)
+    return Response(data, status=200)

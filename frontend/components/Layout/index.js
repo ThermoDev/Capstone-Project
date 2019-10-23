@@ -2,10 +2,22 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
 import Router from 'next/router';
+import NProgress from 'nprogress';
 import Meta from './Meta';
 import Header from './Header';
 import ThemeProvider from './ThemeProvider';
 import { useAuth } from '../../lib/useAuth';
+
+// Progress Bar
+Router.onRouteChangeStart = () => {
+  NProgress.start();
+};
+Router.onRouteChangeComplete = () => {
+  NProgress.done();
+};
+Router.onRouteChangeError = () => {
+  NProgress.done();
+};
 
 const StyledPage = styled.div`
   background: white;
