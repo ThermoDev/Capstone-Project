@@ -1,13 +1,34 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import Meta from './Meta';
+import Router from 'next/router';
+import NProgress from 'nprogress';
 import Header from './Header';
 import ThemeProvider from './ThemeProvider';
+import { useAuth } from '../../lib/useAuth';
+
+
+// Progress Bar
+Router.onRouteChangeStart = () => {
+  NProgress.start();
+};
+Router.onRouteChangeComplete = () => {
+  NProgress.done();
+};
+Router.onRouteChangeError = () => {
+  NProgress.done();
+};
+
 
 const StyledPage = styled.div`
   background: white;
   color: ${props => props.theme.black};
+`;
+
+const UnauthenticatedPage = styled.div`
+  color: ${props => props.theme.black};
+  height: 100vh;
 `;
 
 const Inner = styled.div`
@@ -16,20 +37,35 @@ const Inner = styled.div`
   padding: 2rem;
 `;
 
-class Layout extends Component {
-  render() {
-    const { children } = this.props;
-    return (
-      <ThemeProvider>
+const UnauthenticatedGlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${({ theme }) => theme.mui.palette.primary.main};;
+  }
+`;
+
+const Layout = props => {
+  const { children } = props;
+  const { isAuthenticated } = useAuth();
+  return (
+    <ThemeProvider>
+      {isAuthenticated() ? (
         <StyledPage>
           <Meta />
           <Header />
           <Inner>{children}</Inner>
         </StyledPage>
-      </ThemeProvider>
-    );
-  }
-}
+      ) : (
+        <>
+          <UnauthenticatedPage>
+            <Meta />
+            <Inner>{children}</Inner>
+          </UnauthenticatedPage>
+          <UnauthenticatedGlobalStyle />
+        </>
+      )}
+    </ThemeProvider>
+  );
+};
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,

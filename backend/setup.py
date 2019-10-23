@@ -8,6 +8,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
+        'flask-login',
         'numpy',
         'python-dotenv',
         'pytest',
@@ -15,6 +16,7 @@ setup(
         'pandas',
         'matplotlib',
         'pandas-datareader',
-        'yfinance'
+        'yfinance',
+        'flask-cors'
     ],
 )

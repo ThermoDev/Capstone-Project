@@ -32,3 +32,5 @@ sketch
 
 .next/
 .vscode/
+
+*.csv

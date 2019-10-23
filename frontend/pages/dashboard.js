@@ -11,7 +11,19 @@ import watchList from '../images/dashboard-mock-photos/watchlist.png';
 import Iphone from '../images/dashboard-mock-photos/iphone-newsfeed.jpg';
 import FB from '../images/dashboard-mock-photos/fb-stock.jpg';
 
+const ColorBox = styled.div`
+    background-color: ${props => props.bgColor || 'black'}
+    font-family: Montserrat;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    min-height: 5rem;
+    padding: 2rem 0;
+  `;
+
 class Dashboard extends Component {
+  
+  
   render() {
     return (
       <div>
@@ -48,12 +60,3 @@ class Dashboard extends Component {
 
 export default Dashboard;
 
-const ColorBox = styled.div`
-  background-color: ${props => props.bgColor || 'black'}
-  font-family: Montserrat;
-  font-weight: bold;
-  color: black;
-  text-align: center;
-  min-height: 5rem;
-  padding: 2rem 0;
-`;

@@ -21,6 +21,7 @@
     "nprogress": "^0.2.0",
     "prop-types": "^15.6.0",
     "react": "^16.10.2",
+    "react-chartjs-2": "^2.8.0",
     "react-dom": "^16.10.2",
     "styled-components": "^4.4.0",
     "url-loader": "^2.2.0"

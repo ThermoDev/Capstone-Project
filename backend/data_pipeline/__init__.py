@@ -3,4 +3,6 @@ __all__ = [
     'stockhelper',
     'examples',
     'stockendpoint',
+    'newsendpoint',
+    'newshelper'
 ]

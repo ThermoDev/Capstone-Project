@@ -14,3 +14,7 @@ We continued working on the proposal. My job for this week was to fix up the Bac
 Week 4
 
 Handed in our proposal. Split up the Epic for registration into frontend and backend tasks. I am working on backend and my task was to set up the database. I drew up an ER diagram to visualise a possible database structure we could have, obviously expanding it and making continual changes as the project progresses. But currently have user, company and portfolio entities with corresponding relationships between them. Then coded up the database using python and sqlite3. Wrote up some functions with sql commands to retrieve data from the database. Have a bug for searching up users using their name as all entries get printed out. Have not yet fixed the bug. 
+
+Week 5
+
+During our lab, we discussed our program's data model and what exact data needs to be stored and what can be called from the API. Our finalised model was different to the database i had already set up so my job was to go back and fix the database. The biggest change was that there will now be a transactions table that stores all the transactions of a particular portfolio, and the portfolio's performance and value will be calculated from data from the transactions table. We also integrated the database with the user class so that there are functions to manipulate user data. All bugs were fixed and the database fully working. 

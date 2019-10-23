@@ -1,70 +1,131 @@
 import React from 'react';
-import Link from 'next/link';
-import styled from 'styled-components';
-import Router from 'next/router';
-import NProgress from 'nprogress';
+import Link from "next/link";
+import { useAuth } from '../../lib/useAuth';
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import Typography from '@material-ui/core/Typography';
+import ListItemText from '@material-ui/core/ListItemText';
+import turquoiseBkg from '../../static/logos/turquoise-bkg.png';
 
-// Progress Bar
-Router.onRouteChangeStart = () => {
-  NProgress.start();
-};
-Router.onRouteChangeComplete = () => {
-  NProgress.done();
-};
-Router.onRouteChangeError = () => {
-  NProgress.done();
-};
 
-const Logo = styled.h1`
-  font-size: 4rem;
-  margin-left: 2rem;
-  position: relative;
-  z-index: 2;
-  transform: skew(-7deg);
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  icon: {
+    maxHeight: '50px',
+  },
+  emptyDiv: {
+    minWidth: '38px',
+  },
+  list: {
+    padding: '15px',
+    width: 250,
+  },
+  fullList: {
+    width: 'auto',
+  },
+  avatar: {
+    backgroundColor: '#00ced1',
+    marginBottom: '15px',
+  },
+  sidebar1: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '15px',
+  },
+}));
 
-  a {
-    padding: 0.5rem 1rem;
-    background: ${props => props.theme.red};
-    color: white;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
+export default function Header() {
+  const { logout } = useAuth();
 
-  @media (max-width: 1300px) {
-    margin: 0;
-    text-align: center;
-  }
-`;
+  const classes = useStyles();
+  const [state, setState] = React.useState({
+    left: false,
+  });
 
-const StyledHeader = styled.header`
-  .bar {
-    border-bottom: 10px solid ${props => props.theme.black};
-    display: grid;
-    grid-template-columns: auto 1fr;
-    justify-content: space-between;
-    align-items: stretch;
-    @media (max-width: 1300px) {
-      grid-template-columns: 1fr;
-      justify-content: center;
+  const handleSubmit = e => {
+    logout();
+  };
+
+  const toggleDrawer = (side, open) => event => {
+    if (
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return;
     }
-  }
-  .sub-bar {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    border-bottom: 1px solid ${props => props.theme.lightgrey};
-  }
-`;
+    setState({ ...state, [side]: open });
+  };
 
-const Header = () => (
-  <StyledHeader>
-    <div className="bar">
-      <Logo>
-        <Link href="/">
-          <a>TradiE</a>
+  const sideList = side => (
+    <div
+      className={classes.list}
+      role="presentation"
+      onClick={toggleDrawer(side, false)}
+      onKeyDown={toggleDrawer(side, false)}
+    >
+      <div className={classes.sidebar1}>
+        <Avatar className={classes.avatar}>U</Avatar>
+        <Typography>User</Typography>
+      </div>
+      <Divider />
+      <List>
+        <Link href='Dashboard' passHref>
+          <ListItem button key='Dashboard'>
+            <ListItemText primary='Dashboard' />
+          </ListItem>
         </Link>
-      </Logo>
+        <Link href='Dashboard' passHref>
+          <ListItem button key='Settings'>
+            <ListItemText primary='Settings' />
+          </ListItem>
+        </Link>
+        <Link href='/'  passHref>
+          <ListItem button key='Logout'  onClick={handleSubmit}>
+            <ListItemText primary='Logout' />
+          </ListItem>
+        </Link>
+      </List>
     </div>
-  </StyledHeader>
-);
+  );
 
-export default Header;
+  return (
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar className={classes.toolbar}>
+          <IconButton
+            onClick={toggleDrawer('left', true)}
+            color="inherit"
+            aria-label="menu"
+          >
+            <MenuIcon style={{ fontSize: 38 }} />
+          </IconButton>
+          <img src={turquoiseBkg} className={classes.icon} alt="Logo" />
+          <div className={classes.emptyDiv} />
+        </Toolbar>
+      </AppBar>
+      <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
+        {sideList('left')}
+      </Drawer>
+    </div>
+  );
+}

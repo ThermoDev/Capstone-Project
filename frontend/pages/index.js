@@ -1,41 +1,51 @@
-import Link from 'next/link';
-import PropTypes from 'prop-types';
+import React from 'react';
+import { Container } from '@material-ui/core';
 import styled from 'styled-components';
-import fetch from 'isomorphic-unfetch';
+import Link from 'next/link';
+import { useAuth } from '../lib/useAuth';
+import { LargeButton } from '../components/Button';
 
-const StyledHeader = styled.h1`
-  color: ${({ theme }) => theme.grey};
+const ContentBox = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: ${({ theme }) => `${theme.mui.spacing(8)}px`};
 `;
 
-const Index = props => {
-  const { shows } = props;
+const LargeLogo = styled.img`
+  width: 500px;
+  height: 100%;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+
+  & > * {
+    margin: 1rem;
+  }
+`;
+
+const Index = () => {
+  const { isAuthenticated } = useAuth();
   return (
-    <div>
-      <StyledHeader>Home</StyledHeader>
-      <ul>
-        {shows.map(show => (
-          <li key={show.id}>
-            <Link href="/p/[id]" as={`/p/${show.id}`}>
-              <a>{show.name}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ContentBox maxWidth="xs">
+      <LargeLogo
+        src="https://res.cloudinary.com/dzowh11b5/image/upload/v1571582804/comp3900/logo-turquoise_h2ssgm.png"
+        alt="Tradie logo"
+      />
+      <ButtonContainer>
+        <Link href={isAuthenticated() ? '/dashboard' : '/login'}>
+          <LargeButton variant="contained" color="secondary">
+            Login
+          </LargeButton>
+        </Link>
+        <Link href="/register">
+          <LargeButton variant="contained" color="secondary">
+            Register
+          </LargeButton>
+        </Link>
+      </ButtonContainer>
+    </ContentBox>
   );
 };
-
-Index.getInitialProps = async function() {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
-  const data = await res.json();
-
-  return {
-    shows: data.map(entry => entry.show),
-  };
-};
-
-Index.propTypes = {
-  shows: PropTypes.array,
-};
-
 export default Index;

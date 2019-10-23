@@ -1,92 +1,192 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
+    Blueprint, flash, g, redirect, render_template, request, url_for, jsonify, Response
 )
-from werkzeug.exceptions import abort
-
 # IMPORT FUNCTIONS HERE
 from backend.data_pipeline import stockhelper as stkh
 
 bp = Blueprint('stock', __name__, url_prefix='/stock')
 
+quandl_api_key = "JFyyk4MvK4j83jschxUi"
 
-# NEW ROUTES HERE
+
+# Docs: https://docs.google.com/document/d/1R1z88DVgySPoQ_UNPwn9ulASJtNr0T6grSgKmDcSGxU/edit?usp=sharing
+
+# Index route to retrieve history of a particular stock
 @bp.route('/', methods=['GET'])
 def index():
-    # Example: /stock/?ticker=MSFT&source=yahoo
-    ticker = request.args.get("ticker")
-    source = request.args.get("source")
+    # Example: /stock/?symbol=MSFT&source=yahoo
+    symbol = request.args.get("symbol")
+    source = request.args.get("source", default="yahoo")
+
+    # Handle Required Parameter
+    if not symbol:
+        return Response("Please provide a symbol parameter to API call", status=400)
+
+    print(f"Source: {source}, Symbol: {symbol}")
+
+    # Optional start and end dates.
+    start_date = request.args.get("start", default="2000-01-01")
+    end_date = request.args.get("end", default=None)
+
+    if not stkh.validate_dates([start_date, end_date]):
+        return Response("Please provide dates in the format of 'YYYY-MM-DD'. ", status=400)
 
     # Optional if the data source requires an API key
     api_key = request.args.get("api_key")
 
-    data = stkh.get_data(ticker, source, api_key)
-    return data.to_json()
+    data = stkh.get_data(symbol=symbol, source=source, start_date=start_date, end_date=end_date, api_key=api_key)
+    list_data = stkh.df_to_list(data, orient="index")
+
+    if not list_data:
+        return Response("Data not found...", status=404)
+    return jsonify(list_data)
 
 
+# Retrieves the latest percentage change
 @bp.route('/pctchange/', methods=['GET'])
 def pctchange():
-    ticker = request.args.get("ticker")
-    source = request.args.get("source")
-    api_key = request.args.get("api_key")
+    symbol = request.args.get("symbol")
+    source = request.args.get("source", default="yahoo")
+    api_key = request.args.get("api_key", default=None)
 
-    data = stkh.get_pct_change(ticker, source, api_key)
-    return str(data)
+    # Handle Required Parameter
+    if not symbol:
+        return Response("Please provide a symbol parameter to API call", status=400)
+
+    data = stkh.get_pct_change(symbol, source, api_key)
+
+    if not data:
+        return Response("Data not found...", status=404)
+
+    return Response(str(data))
 
 
+# Retrieves the dollar change from today and yesterday
 @bp.route('/dollarchange/', methods=['GET'])
 def dollarchange():
-    ticker = request.args.get("ticker")
-    source = request.args.get("source")
-    api_key = request.args.get("api_key")
+    symbol = request.args.get("symbol")
+    source = request.args.get("source", default="yahoo")
+    api_key = request.args.get("api_key", default=None)
 
-    data = stkh.get_dollar_change(ticker, source, api_key)
-    return str(data)\
+    # Handle Required Parameter
+    if not symbol:
+        return Response("Please provide a symbol parameter to API call", status=400)
+
+    data = stkh.get_dollar_change(symbol, source, api_key)
+
+    if not data:
+        return Response("Data not found...", status=404)
+
+    return Response(str(data))
 
 
-
+# Retrieves Year-to-Date return for a stock
 @bp.route('/ytd/', methods=['GET'])
 def ytd():
-    ticker = request.args.get("ticker")
-    source = request.args.get("source")
-    api_key = request.args.get("api_key")
+    symbol = request.args.get("symbol")
+    source = request.args.get("source", default="yahoo")
+    api_key = request.args.get("api_key", default=None)
 
-    data = stkh.get_ytd(ticker, source, api_key)
-    return str(data)
+    # Handle Required Parameter
+    if not symbol:
+        return Response("Please provide a symbol parameter to API call", status=400)
 
+    data = stkh.get_ytd(symbol, source, api_key)
 
-# -- YAHOO stock info retriever --
-@bp.route('/info/<ticker>', methods=['GET'])
-def info(ticker):
-    data = stkh.get_info(ticker)
-    return jsonify(data)
+    if not data:
+        return Response("Data not found...", status=404)
 
-
-@bp.route('/pe/<ticker>', methods=['GET'])
-def pe(ticker):
-    data = stkh.get_pe_ratio(ticker)
-    return str(data)
+    return Response(str(data))
 
 
-@bp.route('/eps/<ticker>', methods=['GET'])
-def eps(ticker):
-    data = stkh.get_eps(ticker)
-    return str(data)
+# Retrieves all symbols from Nasdaq
+@bp.route('/getallsymbols', methods=['GET'])
+def get_all_symbols():
+    data = stkh.get_stock_symbols()
+
+    data = stkh.add_industries(data)
+    list_data = stkh.df_to_list(data, orient="records")
+    return jsonify(list_data)
 
 
-@bp.route('/marketcap/<ticker>', methods=['GET'])
-def marketcap(ticker):
-    data = stkh.get_market_cap(ticker)
-    return str(data)
+@bp.route('/search/<search_term>', methods=['GET'])
+def search_string(search_term: str):
+    data = stkh.search_stocks_list(search_term)
+    list_data = stkh.df_to_list(data, orient="records")
+
+    if not list_data:
+        return Response(f"Could not find anything with the search term: {search_term}.", status=404)
+    return jsonify(list_data)
 
 
-@bp.route('/bid/<ticker>', methods=['GET'])
-def bid(ticker):
-    data = stkh.get_bid_price(ticker)
-    return str(data)
+# -- YAHOO STOCK INFO RETRIEVER --
+
+# Retrieves all info on a stock
+@bp.route('/info/<symbol>', methods=['GET'])
+def info(symbol):
+    data = stkh.get_info(symbol)
+    if len(data) is not 0:
+        return jsonify(data)
+    else:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
 
 
-@bp.route('/ask/<ticker>', methods=['GET'])
-def ask(ticker):
-    data = stkh.get_ask_price(ticker)
-    return str(data)
+# Retrieves Price-to-Earnings ratio
+@bp.route('/pe/<symbol>', methods=['GET'])
+def pe(symbol):
+    try:
+        data = stkh.get_pe_ratio(symbol)
+        return Response(str(data))
+    except KeyError:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
 
+
+# Retrieves Earnings-per-Share
+@bp.route('/eps/<symbol>', methods=['GET'])
+def eps(symbol: str):
+    try:
+        data = stkh.get_eps(symbol)
+        return Response(str(data))
+    except KeyError:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
+
+
+# Retrieves Market capitalisation
+@bp.route('/marketcap/<symbol>', methods=['GET'])
+def marketcap(symbol):
+    try:
+        data = stkh.get_market_cap(symbol)
+        return Response(str(data))
+    except KeyError:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
+
+
+# Retrieves current bid price
+@bp.route('/bid/<symbol>', methods=['GET'])
+def bid(symbol):
+    try:
+        data = stkh.get_bid_price(symbol)
+        return Response(str(data))
+    except KeyError:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
+
+
+# Retrieves current asking price
+@bp.route('/ask/<symbol>', methods=['GET'])
+def ask(symbol):
+    try:
+        data = stkh.get_ask_price(symbol)
+        return Response(str(data))
+    except KeyError:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
+
+
+# Retrieves the industry given symbol
+@bp.route('/industry/<symbol>', methods=['GET'])
+def industry(symbol):
+    data = stkh.get_industry(symbol)
+
+    symbol = symbol.upper()
+    if not data:
+        return Response(f"Could not find anything with the symbol : {symbol}.", status=404)
+    return Response(data, status=200)

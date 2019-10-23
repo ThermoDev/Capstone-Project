@@ -1,10 +1,8 @@
 import App from 'next/app';
 import Layout from '../components/Layout';
-// import withData from '../lib/withData'; // replace with redux later
+import { AuthProvider } from '../lib/useAuth';
 
-// This is where you include your redux or apollo store if you want state to persist between pages.
 class MyApp extends App {
-  // Fires our queries and mutations before the first render of our components.
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {};
     // Crawls all our pages and fetches data
@@ -19,14 +17,14 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps } = this.props;
-
     return (
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <AuthProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </AuthProvider>
     );
   }
 }
 
 export default MyApp;
-// export default withData(MyApp);
