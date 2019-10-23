@@ -169,7 +169,7 @@ def get_pct_change(symbol: str, data_source: str = "yahoo", api_key: str = None)
     try:
         # Returns the latest percentage change.
         return round((data["Pct_Change"][-1] * 100), 2)
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -200,7 +200,7 @@ def get_dollar_change(symbol: str, data_source: str = "yahoo", api_key: str = No
     data = get_data(symbol, data_source, start_date=str(from_date), end_date=str(today), api_key=api_key)
     try:
         return data["Close"][-1] - data["Close"][-2]
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -235,7 +235,7 @@ def get_ytd(symbol: str, data_source: str = "yahoo", api_key: str = None) -> np.
 
         # Returns percent change from start of year to present day
         return temp[-1]
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -330,7 +330,7 @@ def get_industry(symbol: str) -> str:
         if not (industry == " " or industry == "nan"):
             return industry
         pass
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -356,6 +356,12 @@ def get_info(symbol: str) -> dict:
 # Retrieves the trailing Price-to-Earnings ratio
 def get_pe_ratio(symbol: str) -> np.float64:
     return yf.Ticker(symbol).info['trailingPE']
+
+
+# Note: only works on Yahoo data source
+# Retrieves current close price given a symbol
+def get_cur_close_price(symbol: str) -> np.float64:
+    return yf.Ticker(symbol).info["regularMarketPrice"]
 
 
 # Note: only works on Yahoo data source
@@ -398,7 +404,8 @@ def get_stock_symbols() -> pd.DataFrame:
     # CLean up Data
     data = data[data["Nasdaq Traded"]]
     # Drops irrelevant columns
-    data.drop(["Nasdaq Traded", "Market Category", "NextShares", "CQS Symbol", "Financial Status", "Round Lot Size", "Test Issue"], axis=1,
+    data.drop(["Nasdaq Traded", "Market Category", "NextShares", "CQS Symbol", "Financial Status", "Round Lot Size",
+               "Test Issue"], axis=1,
               inplace=True, errors="ignore")
 
     return data
@@ -492,8 +499,8 @@ def get_industry_data() -> pd.DataFrame:
     # Merges the records on the SIC
     merged = pd.merge(stocks, industries, how="left", on="SIC")
 
-    # Fills in nan values with the other records so once we drop duplicates, we will retain more info
-    merged = merged.groupby('Ticker').ffill().groupby('Ticker').bfill().drop_duplicates()
+    merged["Ticker"].fillna(method='ffill', inplace=True)
+    merged["Ticker"].fillna(method='bfill', inplace=True)
 
     # Drops the duplicates, and clean up data
     merged.drop_duplicates(subset="Ticker", inplace=True)
