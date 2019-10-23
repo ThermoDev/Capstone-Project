@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import Container from '@material-ui/core/Container';
+// import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+
+import stockMarket from '../images/dashboard-mock-photos/stock-market.png';
+// import newsFeed from "../images/dashboard-mock-photos/eg-newsfeed.png";
+import watchList from '../images/dashboard-mock-photos/watchlist.png';
+
+// import newsFeedEg from "../images/dashboard-mock-photos/newsfeed-eg.jpeg";
+import Iphone from '../images/dashboard-mock-photos/iphone-newsfeed.jpg';
+import FB from '../images/dashboard-mock-photos/fb-stock.jpg';
 
 const ColorBox = styled.div`
     background-color: ${props => props.bgColor || 'black'}
@@ -18,13 +27,36 @@ class Dashboard extends Component {
   render() {
     return (
       <div>
-        <p>hello</p>
-        <Container maxWidth="md">
-          <ColorBox>Container</ColorBox>
-        </Container>
+        <p>Dashboard</p>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <ColorBox>
+              <p>Portfolio</p>
+              <img
+                src={stockMarket}
+                alt={stockMarket}
+                width="100%"
+                height="100%"
+              />
+            </ColorBox>
+          </Grid>
+          <Grid item xs={9}>
+            <ColorBox>
+              <p>Newsfeed</p>
+              <img src={Iphone} alt={Iphone} width="100%" height="100%" />
+            </ColorBox>
+          </Grid>
+          <Grid item xs={3}>
+            <ColorBox>
+              <p>Stocks</p>
+              <img src={FB} alt={FB} width="100%" height="100%" />
+            </ColorBox>
+          </Grid>
+        </Grid>
       </div>
     );
   }
 }
 
 export default Dashboard;
+
