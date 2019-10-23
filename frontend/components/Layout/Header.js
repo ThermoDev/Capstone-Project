@@ -1,6 +1,6 @@
-import React from 'react';
-import Router from 'next/router';
-import NProgress from 'nprogress';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -13,63 +13,27 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import Typography from '@material-ui/core/Typography';
 import ListItemText from '@material-ui/core/ListItemText';
+import { useAuth } from '../../lib/useAuth';
 import turquoiseBkg from '../../static/logos/turquoise-bkg.png';
 
-// Progress Bar
-Router.onRouteChangeStart = () => {
-  NProgress.start();
-};
-Router.onRouteChangeComplete = () => {
-  NProgress.done();
-};
-Router.onRouteChangeError = () => {
-  NProgress.done();
-};
+const StyledToolbar = styled(Toolbar)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  menuButton: {
-    alignSelf: 'flex-start',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  icon: {
-    maxHeight: '50px',
-  },
-  emptyDiv: {
-    minWidth: '38px',
-  },
-  list: {
-    padding: '15px',
-    width: 250,
-  },
-  fullList: {
-    width: 'auto',
-  },
-  avatar: {
-    backgroundColor: '#00ced1',
-    marginBottom: '15px',
-  },
-  sidebar1: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '15px',
-  },
-}));
+const StyledSidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+`;
 
 export default function Header() {
-  const classes = useStyles();
-  const [state, setState] = React.useState({
+  const { logout, user } = useAuth();
+
+  const [state, setState] = useState({
     left: false,
   });
 
@@ -80,46 +44,55 @@ export default function Header() {
     ) {
       return;
     }
-    setState({ ...state, [side]: open });
+    setState({ [side]: open });
   };
 
   const sideList = side => (
     <div
-      className={classes.list}
       role="presentation"
       onClick={toggleDrawer(side, false)}
       onKeyDown={toggleDrawer(side, false)}
+      style={{ padding: '15px', width: 250 }}
     >
-      <div className={classes.sidebar1}>
-        <Avatar className={classes.avatar}>U</Avatar>
-        <Typography>User</Typography>
-      </div>
+      <StyledSidebar>
+        <Avatar style={{ backgroundColor: '#00ced1', marginBottom: '15px' }}>
+          {user.firstName.charAt(0)}
+        </Avatar>
+        <Typography>{state.userName}</Typography>
+      </StyledSidebar>
       <Divider />
       <List>
-        {['Dashboard', 'Settings', 'Logout'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemText primary={text} />
+        <Link href="/dashboard">
+          <ListItem button key="Dashboard">
+            <ListItemText primary="Dashboard" />
           </ListItem>
-        ))}
+        </Link>
+        <Link href="/dashboard">
+          <ListItem button key="Settings">
+            <ListItemText primary="Settings" />
+          </ListItem>
+        </Link>
+        <ListItem button key="Logout" onClick={() => logout()}>
+          <ListItemText primary="Logout" />
+        </ListItem>
       </List>
     </div>
   );
 
   return (
-    <div className={classes.root}>
+    <div style={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
+        <StyledToolbar>
           <IconButton
             onClick={toggleDrawer('left', true)}
-            className={classes.menuButton}
             color="inherit"
             aria-label="menu"
           >
             <MenuIcon style={{ fontSize: 38 }} />
           </IconButton>
-          <img src={turquoiseBkg} className={classes.icon} alt="Logo" />
-          <div className={classes.emptyDiv} />
-        </Toolbar>
+          <img src={turquoiseBkg} alt="Logo" styled={{ maxHeight: '50px' }} />
+          <div styled={{ minWidth: '38px' }} />
+        </StyledToolbar>
       </AppBar>
       <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
         {sideList('left')}

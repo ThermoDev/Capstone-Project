@@ -15,7 +15,6 @@ const ColorBox = styled.div`
 
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
-  console.log(isSmall);
   return (
     <div>
       <Container maxWidth="lg">

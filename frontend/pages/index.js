@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from '@material-ui/core';
 import styled from 'styled-components';
 import Link from 'next/link';
+import Router from 'next/router';
 import { useAuth } from '../lib/useAuth';
 import { LargeButton } from '../components/Button';
 
@@ -25,8 +26,16 @@ const ButtonContainer = styled.div`
   }
 `;
 
+// TODO: have a loading page before showing buttons
 const Index = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      Router.push('/dashboard');
+    }
+  }, [user]);
+
   return (
     <ContentBox maxWidth="xs">
       <LargeLogo
@@ -34,7 +43,7 @@ const Index = () => {
         alt="Tradie logo"
       />
       <ButtonContainer>
-        <Link href={isAuthenticated() ? '/dashboard' : '/login'}>
+        <Link href="/login">
           <LargeButton variant="contained" color="secondary">
             Login
           </LargeButton>
