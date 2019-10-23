@@ -51,6 +51,7 @@ def price(symbol: str):
     except KeyError:
         return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
 
+
 # Retrieves the latest percentage change
 @bp.route('/pctchange/', methods=['GET'])
 def pctchange():
@@ -111,9 +112,7 @@ def ytd():
 # Retrieves all symbols from Nasdaq
 @bp.route('/getallsymbols', methods=['GET'])
 def get_all_symbols():
-    data = stkh.get_stock_symbols()
-
-    data = stkh.add_industries(data)
+    data = stkh.get_all_stock_data()
 
     list_data = stkh.df_to_list(data, orient="records")
     return jsonify(list_data)
@@ -200,3 +199,24 @@ def industry(symbol):
     if not data:
         return Response(f"Could not find anything with the symbol : {symbol}.", status=404)
     return Response(data, status=200)
+
+
+# Retrieves random sample of data
+@bp.route('/random/', methods=['GET'])
+def random():
+    number = request.args.get("n", default=10)  # random
+
+    try:
+        if number:
+            number = int(number)
+    except ValueError:
+        return Response(f"Please enter a valid integer for the number n: {number}.", status=404)
+
+    data = stkh.get_random(number)
+    data = stkh.get_random(number)
+    list_data = stkh.df_to_list(data, orient="records")
+
+    if not list_data:
+        return Response(f"Could not find random samples", status=404)  # Uh oh.
+
+    return jsonify(list_data)
