@@ -12,7 +12,12 @@ export const authReducer = (state, action) => {
       }
       return {
         ...state,
-        user,
+        user: {
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          userId: user.user_id,
+        },
         expiresAt,
       };
     }
