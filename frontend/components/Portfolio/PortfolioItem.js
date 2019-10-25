@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { ExpansionPanel, ExpansionPanelDetails, Paper} from '@material-ui/core';
 import styled from 'styled-components';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Typography from '@material-ui/core/Typography';
 import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import TradeStockForm from './TradeStockForm';
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -21,6 +20,10 @@ const ColorBox = styled(Paper)`
   flex-direction: column;
 `;
 
+const StyledDiv = styled.div`
+  display: flex;
+`;
+
 const StyledTypography = styled(Typography)`
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
@@ -28,10 +31,6 @@ const StyledTypography = styled(Typography)`
 
 const StyledPaper = styled(Paper)`
   margin: ${({ theme }) => `${theme.mui.spacing(2)}px`} 0;
-`;
-
-const StyledButton = styled(Button)`
-  margin: 0 ${({ theme }) => `${theme.mui.spacing(1)}px`};
 `;
 
 const ExpansionPanelSummary = withStyles({
@@ -73,21 +72,18 @@ const PortfolioItem = (props) => {
           id="panel1a-header"
           >
               <Typography >Expansion Panel 1 </Typography>
-              <div>
-                <StyledButton variant="contained" color="primary" >Trade</StyledButton>
+              <StyledDiv>
+                <TradeStockForm/>
                 <IconButton  onClick={handleChange}>
                  {isExpanded? (<ExpandLessIcon/>):(<ExpandMoreIcon/>)}
                 </IconButton>
-              </div>
+              </StyledDiv>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-              <StyledTypography>
-                <ColorBox>                  
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                  sit amet blandit leo lobortis eget.
-                </ColorBox>
-
-              </StyledTypography>
+              <ColorBox>                  
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
+                sit amet blandit leo lobortis eget.
+              </ColorBox>
           </ExpansionPanelDetails>
       </ExpansionPanel>
     </StyledPaper>

@@ -29,6 +29,10 @@ const StyledSidebar = styled.div`
   padding: 15px;
 `;
 
+const StyledAppbar = styled(AppBar)`
+  background-color: ${({ theme }) => `${theme.turquoise}`};
+`;
+
 export default function Header() {
   const { logout, user } = useAuth();
 
@@ -80,7 +84,7 @@ export default function Header() {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <StyledAppbar position="static" color="primary">
         <StyledToolbar>
           <IconButton
             onClick={toggleDrawer('left', true)}
@@ -92,7 +96,7 @@ export default function Header() {
           <img src={turquoiseBkg} alt="Logo" styled={{ maxHeight: '50px' }} />
           <div styled={{ minWidth: '38px' }} />
         </StyledToolbar>
-      </AppBar>
+      </StyledAppbar>
       <Drawer open={state.left} onClose={toggleDrawer('left', false)}>
         {sideList('left')}
       </Drawer>

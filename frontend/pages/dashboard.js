@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Container, Grid, useMediaQuery } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import Fab from '@material-ui/core/Fab';
-import { Line } from '../components/Graph';
+import CreatePortfolioForm from '../components/Portfolio/CreatePortfolioForm';
 import Typography from '@material-ui/core/Typography';
 
 import PortfolioItem  from '../components/Portfolio/PortfolioItem';
@@ -33,9 +31,7 @@ const Dashboard = () => {
             <ColorBox>
               <StyledTypography component="h1" variant="h6">Portfolio</StyledTypography>
               <PortfolioItem m={10}/>
-              <Fab color="primary" aria-label="add" size="small" >
-                <AddIcon />
-              </Fab>
+              <CreatePortfolioForm/>
             </ColorBox>
           </Grid>
           <Grid item xs={12} sm={8}>
