@@ -42,6 +42,16 @@ def index():
     return jsonify(list_data)
 
 
+# Retrieve Current Close Price
+@bp.route('/price/<symbol>', methods=['GET'])
+def price(symbol: str):
+    try:
+        data = stkh.get_cur_close_price(symbol)
+        return Response(str(data))
+    except KeyError:
+        return Response(f"Symbol: {symbol.upper()} was not found.", status=404)
+
+
 # Retrieves the latest percentage change
 @bp.route('/pctchange/', methods=['GET'])
 def pctchange():
@@ -102,9 +112,8 @@ def ytd():
 # Retrieves all symbols from Nasdaq
 @bp.route('/getallsymbols', methods=['GET'])
 def get_all_symbols():
-    data = stkh.get_stock_symbols()
+    data = stkh.get_all_stock_data()
 
-    data = stkh.add_industries(data)
     list_data = stkh.df_to_list(data, orient="records")
     return jsonify(list_data)
 
@@ -185,8 +194,28 @@ def ask(symbol):
 @bp.route('/industry/<symbol>', methods=['GET'])
 def industry(symbol):
     data = stkh.get_industry(symbol)
-
     symbol = symbol.upper()
+
     if not data:
         return Response(f"Could not find anything with the symbol : {symbol}.", status=404)
     return Response(data, status=200)
+
+
+# Retrieves random sample of data
+@bp.route('/random/', methods=['GET'])
+def random():
+    number = request.args.get("n", default=10)  # random
+
+    try:
+        if number:
+            number = int(number)
+    except ValueError:
+        return Response(f"Please enter a valid integer for the number n: {number}.", status=404)
+
+    data = stkh.get_random(number)
+    list_data = stkh.df_to_list(data, orient="records")
+
+    if not list_data:
+        return Response(f"Could not find random samples", status=404)  # Uh oh.
+
+    return jsonify(list_data)

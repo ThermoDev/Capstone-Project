@@ -99,8 +99,8 @@ def retrieve_stocks(symbols: List, data_source: str = "yahoo", start_date: str =
             yield stock
 
 
-def get_all_data(symbols: List, data_source: str = "yahoo", start_date: str = None,
-                 end_date: str = None, api_key: str = None) -> List[pd.DataFrame]:
+def get_list_data(symbols: List, data_source: str = "yahoo", start_date: str = None,
+                  end_date: str = None, api_key: str = None) -> List[pd.DataFrame]:
     """
     Using the generator function, retrieves a list of stocks given a list of stock symbols, and a single data source
 
@@ -169,7 +169,7 @@ def get_pct_change(symbol: str, data_source: str = "yahoo", api_key: str = None)
     try:
         # Returns the latest percentage change.
         return round((data["Pct_Change"][-1] * 100), 2)
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -200,7 +200,7 @@ def get_dollar_change(symbol: str, data_source: str = "yahoo", api_key: str = No
     data = get_data(symbol, data_source, start_date=str(from_date), end_date=str(today), api_key=api_key)
     try:
         return data["Close"][-1] - data["Close"][-2]
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -235,7 +235,7 @@ def get_ytd(symbol: str, data_source: str = "yahoo", api_key: str = None) -> np.
 
         # Returns percent change from start of year to present day
         return temp[-1]
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -290,6 +290,7 @@ def search_stocks_list(search: str) -> pd.DataFrame:
     """
     data = read_stock_data()  # Retrieve all stock symbols
     data = add_industries(data)  # Add industry info
+
     data["Industry"] = data["Industry"].astype(str)  # Force pandas to recognize Industry as str
     string_mask = (data.applymap(type) == str).all()  # Ensure we only look at String values
     string_data = data[data.columns[string_mask]]  # Retrieves the columns that were Strings using the mask
@@ -326,11 +327,11 @@ def get_industry(symbol: str) -> str:
     data = add_industries(data)  # Add industry info
     symbol = symbol.upper()
     try:
-        industry = str(data[data["NASDAQ Symbol"] == symbol].iloc[0]["Industry"])
+        industry = str(data[data["Ticker"] == symbol].iloc[0]["Industry"])
         if not (industry == " " or industry == "nan"):
             return industry
         pass
-    except IndexError:
+    except (IndexError, KeyError):
         pass
 
 
@@ -356,6 +357,28 @@ def get_info(symbol: str) -> dict:
 # Retrieves the trailing Price-to-Earnings ratio
 def get_pe_ratio(symbol: str) -> np.float64:
     return yf.Ticker(symbol).info['trailingPE']
+
+
+# Note: only works on Yahoo data source
+# Retrieves current close price given a symbol
+def get_cur_close_price(symbol: str) -> np.float64:
+    try:
+        ticker = yf.Ticker(symbol)
+        price = ticker.history(period="min")["Close"][-1]
+        return price
+    except KeyError:
+        print("Try retrieving from DataFrame instead")
+        today = datetime.now().date()
+        from_date = today - timedelta(days=2)  # Restrict number of values retrieved
+
+        # Get stock data
+        data = get_data(symbol, start_date=str(from_date))
+
+        try:
+            # Returns the latest percentage change.
+            return data["Close"][-1]
+        except (IndexError, KeyError):
+            pass
 
 
 # Note: only works on Yahoo data source
@@ -398,7 +421,8 @@ def get_stock_symbols() -> pd.DataFrame:
     # CLean up Data
     data = data[data["Nasdaq Traded"]]
     # Drops irrelevant columns
-    data.drop(["Nasdaq Traded", "Market Category", "NextShares", "CQS Symbol", "Financial Status", "Round Lot Size", "Test Issue"], axis=1,
+    data.drop(["Nasdaq Traded", "Market Category", "NextShares", "CQS Symbol", "Financial Status", "Round Lot Size",
+               "Test Issue"], axis=1,
               inplace=True, errors="ignore")
 
     return data
@@ -492,8 +516,8 @@ def get_industry_data() -> pd.DataFrame:
     # Merges the records on the SIC
     merged = pd.merge(stocks, industries, how="left", on="SIC")
 
-    # Fills in nan values with the other records so once we drop duplicates, we will retain more info
-    merged = merged.groupby('Ticker').ffill().groupby('Ticker').bfill().drop_duplicates()
+    merged["SIC_Descrip"].fillna(method='ffill', inplace=True)
+    merged["SIC_Descrip"].fillna(method='bfill', inplace=True)
 
     # Drops the duplicates, and clean up data
     merged.drop_duplicates(subset="Ticker", inplace=True)
@@ -528,9 +552,84 @@ def add_industries(data: pd.DataFrame) -> pd.DataFrame:
     data_copy = data.copy()
     industries_copy = industries.copy()
 
-    merged = pd.merge(data_copy, industries_copy, how="left", left_on="NASDAQ Symbol", right_on="Ticker")
+    merged = pd.merge(data_copy, industries_copy, how="inner", left_on="NASDAQ Symbol", right_on="Ticker")
+
+    merged.drop(columns="NASDAQ Symbol", inplace=True, errors="ignore")
+    merged.dropna(subset=["Ticker"], inplace=True)  # Drops unknown Ticker values
 
     save(merged, stocks_and_industries_path)
 
-    merged.drop(columns="Ticker", inplace=True, errors="ignore")
     return merged
+
+
+# Simple function to just get every piece of data available for stocks
+def get_all_stock_data() -> pd.DataFrame:
+    data = get_stock_symbols()
+    data = add_industries(data)
+    return data
+
+
+def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
+    import time
+
+    # yf.Tickers(data["Ticker"])
+    spaced_list = " ".join(list(data["Ticker"].values))
+    tickers = yf.Tickers(spaced_list)
+
+    start_time = time.time()
+
+    ticky = tickers.download()
+    ticky = ticky.iloc[-1]
+    ticky = ticky["Close"]
+    data["Price"] = ticky.values
+
+    print(len(data))
+
+    infos = [ticker.info for ticker in tickers.tickers]
+    info_df = pd.DataFrame(infos)
+
+    print(info_df)
+    print(f"InfoDF{len(info_df)}")
+
+
+    info_df = info_df[[
+        "epsTrailingTwelveMonths",
+        "marketCap",
+        "trailingPE",
+        "bid",
+        "ask",
+    ]]
+
+
+    print(data.head(5))
+    print(info_df.head(5))
+
+    print(f"InfoDF: {len(info_df)}")
+    #data.reset_index(inplace=True) # Need to just reset
+    temp = data.copy()
+    temp = data.reset_index() # Need to reset index for whatever reason (Something to do with index persisting in memory)
+    data = pd.concat([temp, info_df], axis=1)
+
+    #data = pd.concat((data, info_df), axis=1, sort=False)
+
+
+    print(f"Data: {len(data)}")
+
+    data.rename(columns={
+        "epsTrailingTwelveMonths":"Earnings per Share",
+        "marketCap" : "Market Capitalization",
+        "trailingPE" : "Price to Earnings",
+        "bid" : "Bid",
+        "ask" : "Ask"
+    }, inplace=True)
+    print(data.head(5))
+
+    print(f"{time.time() - start_time}")
+    return data
+
+
+def get_random(number: int = 10) -> pd.DataFrame:
+    data = get_all_stock_data()
+    random_data = data.sample(n=number)
+    random_data = add_stock_info(random_data)
+    return random_data
