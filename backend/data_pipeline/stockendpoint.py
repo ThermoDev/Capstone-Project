@@ -213,7 +213,6 @@ def random():
         return Response(f"Please enter a valid integer for the number n: {number}.", status=404)
 
     data = stkh.get_random(number)
-    data = stkh.get_random(number)
     list_data = stkh.df_to_list(data, orient="records")
 
     if not list_data:
