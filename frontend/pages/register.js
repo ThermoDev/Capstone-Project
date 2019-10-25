@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
+import { InlineError } from '../components/Error';
 
 const StyledPaper = styled(Paper)`
   display: flex;
@@ -37,12 +38,12 @@ const validateEmail = email => {
 
 const Register = () => {
   const [values, setValues] = useState({
-    invalidEmail: '',
+    invalidEmail: false,
     invalidPassword: false,
   });
-  const { user, isAuthenticated, register } = useAuth();
+  const { user, isAuthenticated, register, isError, error } = useAuth();
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
     const firstName = e.target.firstName.value;
     const lastName = e.target.lastName.value;
@@ -51,20 +52,15 @@ const Register = () => {
 
     if (password.length < 8 || !validateEmail(email)) {
       setValues({
-        ...values,
-        invalidEmail: !validateEmail(email) ? 'Invalid Email' : '',
+        invalidEmail: !validateEmail(email),
         invalidPassword: password.length < 8,
       });
     } else {
-      const registerSuccess = await register(
-        email,
-        firstName,
-        lastName,
-        password
-      );
-      if (!registerSuccess) {
-        setValues({ ...values, invalidEmail: 'Email already exists' });
-      }
+      setValues({
+        invalidEmail: false,
+        invalidPassword: false,
+      });
+      register(email, firstName, lastName, password);
     }
   };
 
@@ -120,8 +116,7 @@ const Register = () => {
                 name="email"
                 autoComplete="email"
                 error={values.invalidEmail}
-                onChange={() => setValues({ ...values, invalidEmail: '' })}
-                helperText={values.invalidEmail}
+                helperText={values.invalidEmail ? 'Invalid email address.' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -135,9 +130,6 @@ const Register = () => {
                 id="password"
                 autoComplete="current-password"
                 error={values.invalidPassword}
-                onChange={() =>
-                  setValues({ ...values, invalidPassword: false })
-                }
                 helperText={
                   values.invalidPassword
                     ? 'Invalid Password. Must be 8 or more characters'
@@ -146,6 +138,7 @@ const Register = () => {
               />
             </Grid>
           </Grid>
+          {isError && <InlineError error={error} />}
           <SubmitButton
             type="submit"
             fullWidth

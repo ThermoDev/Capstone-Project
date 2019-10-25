@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
+import { InlineError } from '../components/Error';
 
 const StyledPaper = styled(Paper)`
   display: flex;
@@ -45,11 +46,10 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const { login, user, isAuthenticated, error } = useAuth();
+  const { login, user, isAuthenticated, isError, error } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated()) {
-      console.log('authenticated');
       Router.push('/dashboard');
     }
   }, [user]);
@@ -61,8 +61,6 @@ const Login = () => {
     login(email, password);
   };
 
-  console.log(useAuth());
-
   return (
     <Container component="main" maxWidth="xs">
       <ContentBox>
@@ -71,7 +69,7 @@ const Login = () => {
           <Typography component="h1" variant="h4">
             Sign in
           </Typography>
-          <StyledForm noValidate method="POST" onSubmit={handleSubmit}>
+          <StyledForm noValidate onSubmit={handleSubmit}>
             <StyledTextField
               variant="outlined"
               margin="normal"
@@ -82,7 +80,7 @@ const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              error={error && error.errMessage === 'userInfo'}
+              error={isError}
             />
             <StyledTextField
               variant="outlined"
@@ -94,13 +92,9 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              error={error && error.errMessage === 'userInfo'}
+              error={isError}
             />
-            {error && error.errMessage === 'userInfo' ? (
-              <Typography color="error" component="h3" variant="body1">
-                Invalid email and password.
-              </Typography>
-            ) : null}
+            {isError && <InlineError error={error} />}
             <SubmitButton
               type="submit"
               fullWidth

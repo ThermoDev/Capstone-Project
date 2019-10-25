@@ -84,7 +84,7 @@ export const useAuth = () => {
     logout, // function
     register, // function
     error: state.error
-      ? { errMessage: state.error, errorType: state.errorType }
+      ? { message: state.error, errorType: state.errorType }
       : null,
     isError: !!state.error,
   };
