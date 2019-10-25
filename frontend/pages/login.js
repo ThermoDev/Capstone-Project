@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Router from 'next/router';
 import Link from 'next/link';
@@ -45,24 +45,23 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const [values, setValues] = useState({ failedLogin: false });
-  const { login, user, isAuthenticated } = useAuth();
+  const { login, user, isAuthenticated, error } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated()) {
+      console.log('authenticated');
       Router.push('/dashboard');
     }
   }, [user]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const loginSuccess = await login(email, password);
-    if (!loginSuccess) {
-      setValues({ ...values, failedLogin: !isAuthenticated() });
-    }
+    login(email, password);
   };
+
+  console.log(useAuth());
 
   return (
     <Container component="main" maxWidth="xs">
@@ -72,7 +71,7 @@ const Login = () => {
           <Typography component="h1" variant="h4">
             Sign in
           </Typography>
-          <StyledForm noValidate onSubmit={handleSubmit}>
+          <StyledForm noValidate method="POST" onSubmit={handleSubmit}>
             <StyledTextField
               variant="outlined"
               margin="normal"
@@ -83,8 +82,7 @@ const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              onChange={() => setValues({ ...values, failedLogin: false })}
-              error={values.failedLogin}
+              error={error && error.errMessage === 'userInfo'}
             />
             <StyledTextField
               variant="outlined"
@@ -96,10 +94,9 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              error={values.failedLogin}
-              onChange={() => setValues({ ...values, failedLogin: false })}
+              error={error && error.errMessage === 'userInfo'}
             />
-            {values.failedLogin ? (
+            {error && error.errMessage === 'userInfo' ? (
               <Typography color="error" component="h3" variant="body1">
                 Invalid email and password.
               </Typography>

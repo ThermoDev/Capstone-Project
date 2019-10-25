@@ -14,10 +14,9 @@ function checkStatus(response) {
 export const useAuth = () => {
   const { state, dispatch } = useContext(AuthContext);
 
-  const login = async (username, password) => {
-    let success = false;
+  const login = (username, password) => {
     dispatch({ type: 'startAuthenticating' });
-    await fetch(`${endpoint}login`, {
+    fetch(`${endpoint}login`, {
       method: 'POST',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -28,8 +27,6 @@ export const useAuth = () => {
       .then(checkStatus)
       .then(result => {
         result.json().then(user => dispatch({ type: 'login', user }));
-
-        success = true;
       })
       .catch(err =>
         err.response.text().then(body => {
@@ -39,7 +36,6 @@ export const useAuth = () => {
       .finally(() => {
         dispatch({ type: 'stopAuthenticating' });
       });
-    return success;
   };
 
   const logout = () => {
@@ -49,10 +45,9 @@ export const useAuth = () => {
   };
 
   // TODO: might be conflicts in localStorage if multiple users
-  const register = async (email, firstname, lastname, password) => {
-    let success = false;
+  const register = (email, firstname, lastname, password) => {
     dispatch({ type: 'startAuthenticating' });
-    await fetch(`${endpoint}login/register`, {
+    fetch(`${endpoint}login/register`, {
       method: 'POST',
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -69,7 +64,6 @@ export const useAuth = () => {
       .then(checkStatus)
       .then(result => {
         result.json().then(user => dispatch({ type: 'login', user }));
-        success = true;
       })
       .catch(err =>
         err.response.text().then(body => {
@@ -77,21 +71,21 @@ export const useAuth = () => {
         })
       )
       .finally(() => dispatch({ type: 'stopAuthenticating' }));
-    return success;
   };
 
   const isAuthenticated = () =>
     !!(state.expiresAt && new Date().getTime() < state.expiresAt);
 
   return {
-    isLoading: state.isAuthenticating,
-    isAuthenticated,
-    user: state.user,
-    login,
-    logout,
-    register,
+    isLoading: state.isAuthenticating, // boolean
+    isAuthenticated, // function -> boolean
+    user: state.user, // object containing user details (username, email etc)
+    login, // function
+    logout, // function
+    register, // function
     error: state.error
-      ? { error: state.error, errorType: state.errorType }
+      ? { errMessage: state.error, errorType: state.errorType }
       : null,
+    isError: !!state.error,
   };
 };
