@@ -80,7 +80,7 @@ export default function Header() {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar color="primary" position="static">
         <StyledToolbar>
           <IconButton
             onClick={toggleDrawer('left', true)}

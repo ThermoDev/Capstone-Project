@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Router from 'next/router';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
+import { InlineError } from '../components/Error';
 
 const StyledPaper = styled(Paper)`
   display: flex;
@@ -45,8 +46,7 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const [values, setValues] = useState({ failedLogin: false });
-  const { login, user, isAuthenticated } = useAuth();
+  const { login, user, isAuthenticated, isError, error } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -54,14 +54,11 @@ const Login = () => {
     }
   }, [user]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const loginSuccess = await login(email, password);
-    if (!loginSuccess) {
-      setValues({ ...values, failedLogin: !isAuthenticated() });
-    }
+    login(email, password);
   };
 
   return (
@@ -83,8 +80,7 @@ const Login = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              onChange={() => setValues({ ...values, failedLogin: false })}
-              error={values.failedLogin}
+              error={isError}
             />
             <StyledTextField
               variant="outlined"
@@ -96,14 +92,9 @@ const Login = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              error={values.failedLogin}
-              onChange={() => setValues({ ...values, failedLogin: false })}
+              error={isError}
             />
-            {values.failedLogin ? (
-              <Typography color="error" component="h3" variant="body1">
-                Invalid email and password.
-              </Typography>
-            ) : null}
+            {isError && <InlineError error={error} />}
             <SubmitButton
               type="submit"
               fullWidth
