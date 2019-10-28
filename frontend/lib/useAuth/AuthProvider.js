@@ -38,13 +38,14 @@ export const AuthProvider = ({ children }) => {
 
       if (user && expiresAt) {
         dispatch({ type: 'login', user }); // set state with user
-      } else {
-        dispatch({
-          type: 'error',
-          errorType: 'checkSession',
-          error: 'No previous session saved',
-        });
       }
+      // else {
+      //   dispatch({
+      //     type: 'error',
+      //     errorType: 'checkSession',
+      //     error: 'No previous session saved',
+      //   });
+      // }
     }
     dispatch({ type: 'stopAuthenticating' });
   }, []);

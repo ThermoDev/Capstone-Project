@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
 import Router from 'next/router';
@@ -41,15 +41,11 @@ const UnauthenticatedGlobalStyle = createGlobalStyle`
   }
 `;
 
+// TODO: if on pages which require authentication but user does not have authenticaton
+// TODO: send to home page
 const Layout = props => {
   const { children } = props;
-  const { isAuthenticated, user } = useAuth();
-
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      Router.push('/');
-    }
-  }, [user]);
+  const { isAuthenticated } = useAuth();
 
   return (
     <ThemeProvider>
