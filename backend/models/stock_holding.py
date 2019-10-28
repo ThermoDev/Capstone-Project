@@ -13,12 +13,12 @@ class StockHolding:
 
     @property
     def volume(self):
-        return self._company_code
+        return self._volume
 
     @property
     def amount_invested(self):
-        return self._company_code
+        return self._amount_invested
 
-    def add_transaction(self, transaction: StockTransaction):
-        pass
-        #TODO: add to volume and amount invested from transaction price and volume
+    def add_transaction(self, transaction):
+        self._volume = self._volume + transaction.volume
+        self._amount_invested = self._amount_invested + (transaction.price * transaction.volume)
