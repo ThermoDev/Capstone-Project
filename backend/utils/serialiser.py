@@ -1,8 +1,9 @@
 from datetime import datetime
 
+from numpy import float32, float64
 
 def serialise_properties(obj):
-    if type(obj) in (int, float, bool, str):
+    if type(obj) in (int, float, float32, float64, bool, str):
         return obj
 
     if type(obj) in (list, tuple):
