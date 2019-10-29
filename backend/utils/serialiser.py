@@ -10,9 +10,9 @@ def serialise_properties(obj):
         return [serialise_properties(item) for item in obj]
 
     if type(obj) is dict:
-        serialised = []
+        serialised = {}
         for key, value in obj.items():
-            serialised.append((serialise_properties(key), serialise_properties(value)))
+            serialised[serialise_properties(key)] = serialise_properties(value)
 
         return serialised
 
