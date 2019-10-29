@@ -569,10 +569,8 @@ def get_all_stock_data() -> pd.DataFrame:
     return data
 
 
-def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
+def __add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
     spaced_list = " ".join(list(data["Ticker"].values))  # Retrieve space-seperated ticker values
-
-    spaced_list = " ".join(list(data["Ticker"].values))
 
     tickers = yf.Tickers(spaced_list)
     ticky = tickers.download()
@@ -624,5 +622,5 @@ def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
 def get_random(number: int = 10) -> pd.DataFrame:
     data = get_all_stock_data()
     random_data = data.sample(n=number)
-    random_data = add_stock_info(random_data)
+    random_data = __add_stock_info(random_data)
     return random_data
