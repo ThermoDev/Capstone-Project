@@ -21,8 +21,20 @@ export default () => {
       setUrl('portfolios/create');
     };
     return {
-      createResponse: state,
+      createState: state,
       createPortfolio,
+    };
+  };
+
+  const processTransactionApi = () => {
+    const [state, setUrl, setPayload] = useApi('portfolios', null);
+    const processTransaction = (portfolioId, transaction) => {
+      setPayload({ portfolio_id: portfolioId, transaction });
+      setUrl('portfolios/process-transaction');
+    };
+    return {
+      transactionState: state,
+      processTransaction,
     };
   };
 
@@ -30,5 +42,6 @@ export default () => {
     portfoliosApi,
     portfolioApi,
     createPortfolioApi,
+    processTransactionApi,
   };
 };
