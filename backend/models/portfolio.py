@@ -78,6 +78,26 @@ class Portfolio:
     def portfolio_return(self) -> float:
         return sum(stock_holding.return_value for stock_holding in self.stock_holdings.values())
 
+    @property
+    def stock_value_weightings(self) -> dict:
+        total_value = self.portfolio_value
+
+        value_weightings = {}
+        for company_code, stock_holding in self._stock_holdings.items():
+            value_weightings[company_code] = stock_holding.market_value / total_value
+
+        return value_weightings
+
+    @property
+    def stock_volume_weightings(self) -> dict:
+        total_volume = sum(stock_holding.volume for stock_holding in self.stock_holdings.values())
+
+        volume_weightings = {}
+        for company_code, stock_holding in self._stock_holdings.items():
+            volume_weightings[company_code] = stock_holding.volume / total_volume
+
+        return volume_weightings
+
     def update_with_generated_id(self, generated_id: int):
         self._portfolio_id = generated_id
 
