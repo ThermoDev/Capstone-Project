@@ -1,6 +1,8 @@
 from datetime import datetime
 
+from data_pipeline import stockhelper
 from exception.portfolio.insufficient_cash_error import InsufficientCashError
+from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
 from exception.portfolio.portfolio_already_exists_error import PortfolioAlreadyExistsError
 from models.portfolio import Portfolio
@@ -40,6 +42,8 @@ class PortfolioManager:
                             ) -> Portfolio:
         portfolio = self.get_portfolio_for_user_by_id(user_id, portfolio_id)
         transaction = StockTransaction(None, portfolio_id, company_code, price, volume, datetime.now())
+        if not _validate_transaction_price(transaction):
+            raise InvalidTransactionPriceError(transaction.company_code, transaction.price)
 
         try:
             portfolio.process_transaction(transaction)
@@ -49,3 +53,7 @@ class PortfolioManager:
         self._portfolio_repository.update_portfolio(portfolio)
 
         return portfolio
+
+
+def _validate_transaction_price(transaction: StockTransaction) -> bool:
+    return transaction.price == stockhelper.get_cur_close_price(transaction.company_code)
