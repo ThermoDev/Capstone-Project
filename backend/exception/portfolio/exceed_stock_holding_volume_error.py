@@ -1,3 +1,3 @@
 class ExceedStockHoldingVolumeError(Exception):
-    def __init__(self, portfolio_id):
-        self.message = f'Transaction volume exceeds the stock holding volume in portfolio: {portfolio_id}'
+    def __init__(self, portfolio_id, symbol):
+        self.message = f'Portfolio: {portfolio_id} has insufficient holdings in stock: {symbol} to execute transaction'
