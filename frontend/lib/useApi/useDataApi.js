@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from 'react';
 import fetch from 'isomorphic-unfetch';
-import { endpoint } from '../config';
+import { endpoint } from '../../config';
 
 const dataFetcher = (state, action) => {
   switch (action.type) {
@@ -33,12 +33,9 @@ const dataFetcher = (state, action) => {
     initialUrl: url of api endpoint
     initialData: the initial state of your data before it calls the api
 */
-
-// TODO: hook must check if user token is in browser storage
-// TODO: add extra parameter in function called urlPayload and modify the fetch request based on the
-// presence of this variable
-const useDataApi = (initialUrl, initialData, postPayload = null) => {
+const useDataApi = (initialUrl, initialData) => {
   const [url, setUrl] = useState(initialUrl);
+  const [payload, setPayload] = useState(null);
 
   const [state, dispatch] = useReducer(dataFetcher, {
     isLoading: false,
@@ -52,18 +49,20 @@ const useDataApi = (initialUrl, initialData, postPayload = null) => {
       dispatch({ type: 'FETCH_INIT' });
       try {
         let result;
-        if (postPayload) {
+        if (payload) {
           result = await fetch(`${endpoint}${url}`, {
             method: 'POST',
             headers: {
               'Access-Control-Allow-Origin': '*',
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(postPayload),
+            credentials: 'include',
+            body: JSON.stringify(payload),
           });
         } else {
           result = await fetch(`${endpoint}${url}`, {
             headers: { 'Access-Control-Allow-Origin': '*' },
+            credentials: 'include',
           });
         }
         const data = await result.json();
@@ -84,7 +83,7 @@ const useDataApi = (initialUrl, initialData, postPayload = null) => {
     };
   }, [url]);
 
-  return { state, setUrl };
+  return [state, setUrl, setPayload]; // return arrray so that user can define their own names for these variables
 };
 
 export default useDataApi;

@@ -10,7 +10,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 
 const StyledTitle = styled(DialogTitle)`
-  padding-bottom: 0px ;
+  padding-bottom: 0px;
 `;
 
 export default function CreatePortfolioForm() {
@@ -26,10 +26,19 @@ export default function CreatePortfolioForm() {
 
   return (
     <div>
-      <Fab color="primary" aria-label="add" size="small" onClick={handleClickOpen}> 
+      <Fab
+        color="primary"
+        aria-label="add"
+        size="small"
+        onClick={handleClickOpen}
+      >
         <AddIcon />
       </Fab>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
         <StyledTitle id="form-dialog-title">Create Portfolio</StyledTitle>
         <DialogContent>
           <TextField

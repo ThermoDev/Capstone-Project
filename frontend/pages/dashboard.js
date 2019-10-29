@@ -4,6 +4,7 @@ import { Container, Grid, useMediaQuery, Typography } from '@material-ui/core';
 import Router from 'next/router';
 import CreatePortfolioForm from '../components/Portfolio/CreatePortfolioForm';
 import { useAuth } from '../lib/useAuth';
+import useApi from '../lib/useApi';
 
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
 
@@ -25,6 +26,12 @@ const StyledTypography = styled(Typography)`
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
   const { user, isAuthenticated } = useAuth();
+  const { portfoliosApi } = useApi();
+  const { portfolios, getPortfolios } = portfoliosApi();
+
+  useEffect(() => {
+    getPortfolios(); // call this only once on mount
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated()) {
