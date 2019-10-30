@@ -569,28 +569,31 @@ def get_all_stock_data() -> pd.DataFrame:
     return data
 
 
-def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
-    import time
+def __add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
+    spaced_list = " ".join(list(data["Ticker"].values))  # Retrieve space-seperated ticker values
 
-    # yf.Tickers(data["Ticker"])
-    spaced_list = " ".join(list(data["Ticker"].values))
     tickers = yf.Tickers(spaced_list)
-
-    start_time = time.time()
-
     ticky = tickers.download()
-    ticky = ticky.iloc[-1]
-    ticky = ticky["Close"]
-    data["Price"] = ticky.values
 
-    print(len(data))
+    price = ticky["Close"]
+    price = price.iloc[-1]
+    price = pd.DataFrame(price)
+    price.columns = ["Price"]
+    data = data.merge(price, left_on="Ticker", right_index=True)
+
+    price = ticky["Close"]
+    pct_change = price.pct_change()  # Calculate pct_change
+    pct_change = pct_change.iloc[-1]  # Retrieve last row
+    pct_change = pct_change * 100
+    pct_change = pd.DataFrame(pct_change)
+    pct_change.columns = ["PCT Change"]
+    pct_change["PCT Change"] = pct_change["PCT Change"].astype(float)
+    data = data.merge(pct_change, left_on="Ticker", right_index=True)
+
+    data["Is_Up"] = data["PCT Change"] > 0
 
     infos = [ticker.info for ticker in tickers.tickers]
     info_df = pd.DataFrame(infos)
-
-    print(info_df)
-    print(f"InfoDF{len(info_df)}")
-
 
     info_df = info_df[[
         "epsTrailingTwelveMonths",
@@ -600,36 +603,24 @@ def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
         "ask",
     ]]
 
-
-    print(data.head(5))
-    print(info_df.head(5))
-
-    print(f"InfoDF: {len(info_df)}")
-    #data.reset_index(inplace=True) # Need to just reset
     temp = data.copy()
-    temp = data.reset_index() # Need to reset index for whatever reason (Something to do with index persisting in memory)
+    # Need to reset index for whatever reason (Something to do with index persisting in memory)
+    temp = temp.reset_index()
     data = pd.concat([temp, info_df], axis=1)
 
-    #data = pd.concat((data, info_df), axis=1, sort=False)
-
-
-    print(f"Data: {len(data)}")
-
     data.rename(columns={
-        "epsTrailingTwelveMonths":"Earnings per Share",
-        "marketCap" : "Market Capitalization",
-        "trailingPE" : "Price to Earnings",
-        "bid" : "Bid",
-        "ask" : "Ask"
+        "epsTrailingTwelveMonths": "Earnings per Share",
+        "marketCap": "Market Capitalization",
+        "trailingPE": "Price to Earnings",
+        "bid": "Bid",
+        "ask": "Ask"
     }, inplace=True)
-    print(data.head(5))
 
-    print(f"{time.time() - start_time}")
     return data
 
 
 def get_random(number: int = 10) -> pd.DataFrame:
     data = get_all_stock_data()
     random_data = data.sample(n=number)
-    random_data = add_stock_info(random_data)
+    random_data = __add_stock_info(random_data)
     return random_data
