@@ -2,3 +2,6 @@ Week 1: Organised teams, setup communication channels and chose a topic. Did som
 Week 2: Started proposal, discussed how we could split work into individual epic stories. I started writing the technical details section of the report
 Week 3: Setup backend for the project and pushed to Github. Continued to improve and refine proposal draft.
 Week 4: Submitted proposal. Had a sprint planning session and finally assigned tasks to group members. Will be implementing login and importing of api data. The frontend will be working on implementing graphs to display this information.
+Week 5: Implemented authentication hook for frontend. Setup base layout and styling packages for frontend. Worked with backend to reorganise the structure of the application. Discussed features to be implemented during scheduled class time and set tasks on the Github issues tracker.
+Week 6: Fixed issues with authentication hook and fixed merge conflicts on Emily's branch. Integrated these changes into the frontend.
+Week 7: Implemented api hooks and reformatted some of the styling found in the frontend. Discussed switching over to discord during the meeting. Established that our group needed to get all the basic functionality done by this sprint.
