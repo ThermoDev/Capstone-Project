@@ -1,4 +1,5 @@
 from exception.portfolio.insufficient_cash_error import InsufficientCashError
+from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
 from exception.portfolio.portfolio_already_exists_error import PortfolioAlreadyExistsError
 from exception.portfolio.portfolio_not_found_error import PortfolioNotFoundError
@@ -71,6 +72,8 @@ def process_transaction():
         return Response(response=e.message, status=403)
     except PortfolioNotFoundError as e:
         return Response(response=e.message, status=404)
+    except InvalidTransactionPriceError as e:
+        return Response(response=e.message, status=422)
     except InsufficientCashError as e:
         return Response(response=e.message, status=409)
 

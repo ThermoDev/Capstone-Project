@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from data_pipeline import stockhelper
-from exception.portfolio.insufficient_cash_error import InsufficientCashError
 from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
 from exception.portfolio.portfolio_already_exists_error import PortfolioAlreadyExistsError
@@ -45,10 +44,7 @@ class PortfolioManager:
         if not _validate_transaction_price(transaction):
             raise InvalidTransactionPriceError(transaction.company_code, transaction.price)
 
-        try:
-            portfolio.process_transaction(transaction)
-        except InsufficientCashError as e:
-            raise e
+        portfolio.process_transaction(transaction)
 
         self._portfolio_repository.update_portfolio(portfolio)
 
