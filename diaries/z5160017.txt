@@ -18,3 +18,7 @@ Handed in our proposal. Split up the Epic for registration into frontend and bac
 Week 5
 
 During our lab, we discussed our program's data model and what exact data needs to be stored and what can be called from the API. Our finalised model was different to the database i had already set up so my job was to go back and fix the database. The biggest change was that there will now be a transactions table that stores all the transactions of a particular portfolio, and the portfolio's performance and value will be calculated from data from the transactions table. We also integrated the database with the user class so that there are functions to manipulate user data. All bugs were fixed and the database fully working. 
+
+Week 6
+
+Allocated next set of tasks in our lab. As a group we discussed key portfolio performance measures that should be displayed to help users make informed trading decisions. We finalised them as stock return, stock value, stock weightings, portfolio value, portfolio return. My task was to code up the calculations and make updates to the portfolio when transactions are added. 
