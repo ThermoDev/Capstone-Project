@@ -54,6 +54,12 @@ export const authReducer = (state, action) => {
           : error,
       };
     }
+    case 'resetErrors':
+      delete state.errorType;
+      delete state.error;
+      return {
+        ...state,
+      };
     default:
       return state;
   }

@@ -103,7 +103,7 @@ export default () => {
   };
 
   const searchStockApi = () => {
-    const [state, setUrl] = useApi('stock/search/');
+    const [state, setUrl] = useApi('');
     const searchStock = query => {
       setUrl(`stock/search/${query}`);
     };
@@ -136,8 +136,8 @@ export default () => {
   };
 
   const getRandomStocksApi = () => {
-    const [state, setUrl] = useApi('stock/random');
-    const getRandom = () => setUrl('stock/random');
+    const [state, setUrl] = useApi('', []);
+    const getRandom = () => setUrl('stock/random/', []);
     return {
       result: state,
       getRandom,
