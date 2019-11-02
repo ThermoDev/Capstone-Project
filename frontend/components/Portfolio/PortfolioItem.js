@@ -92,6 +92,7 @@ const ColorBox = styled(Paper)`
 const StyledDiv = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
 
 `;
 
@@ -143,6 +144,7 @@ const StyledTypography2 = styled(Typography)`
   margin-right: 7px;
 `;
 
+
 const mapLabelToColors= (labels) => {
   const rgb = 1/labels.length;
   return labels.map( (l, index) =>{
@@ -174,6 +176,11 @@ const PortfolioItem = props => {
         >
           <Typography component="h1" variant="h4" > {item.name} </Typography>
           <StyledDiv>
+            <Typography component="h1" variant="subtitle1"  > {item.percentage_growth.toFixed(4)}%  </Typography>
+            {item.percentage_growth > 0 ? 
+                <ArrowDropUpIcon color="primary"/>:
+                <ArrowDropDownIcon color="error"/>
+              } 
             <TradeStockForm />
             <IconButton onClick={() => handleChange(item.portfolio_id)}>
               {expanded === item.portfolio_id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -187,6 +194,9 @@ const PortfolioItem = props => {
               <Typography variant="h6">${item.portfolio_value.toFixed(2)}</Typography>
               <Typography variant="h5" color="primary">Cash:</Typography>
               <Typography variant="h6">${item.cash.toFixed(2)}</Typography>
+            </StyledSubDiv>
+            <StyledSubDiv>
+              <ColorBox></ColorBox>
             </StyledSubDiv>
             <StyledSubDiv>
                 <Doughnut
@@ -208,6 +218,7 @@ const PortfolioItem = props => {
                   <StyledTypography variant="h6" >{stock.company_code}</StyledTypography> 
                   <Typography variant="subtitle2">{stock.volume} share{stock.volume>1? 's': null} </Typography> 
                 </StyledSubDiv>
+
                 <StyledSubDiv2>
                   <StyledTypography2 variant="h6" >${stock.market_value.toFixed(2)}</StyledTypography2> 
                   <StyledTypography variant="subtitle2" >
