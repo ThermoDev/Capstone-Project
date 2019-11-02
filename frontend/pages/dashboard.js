@@ -39,7 +39,6 @@ const Dashboard = () => {
     }
   }, [user]);
 
-  console.log(portfolios)
 
   return (
     <div>

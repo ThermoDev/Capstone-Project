@@ -24,7 +24,6 @@ export default function CreatePortfolioForm() {
  
   const handleClickOpen = () => {
     setState({ ...state, open: true });
-    console.log(state)
   };
 
   const handleClose = () => {
@@ -32,7 +31,6 @@ export default function CreatePortfolioForm() {
   };
 
   const handleTextFieldChange= (e) =>{
-    console.log(e.target.id);
     setState({ ...state, [e.target.id] :e.target.value });
   };
 
