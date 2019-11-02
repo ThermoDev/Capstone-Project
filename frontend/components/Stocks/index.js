@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -8,6 +9,7 @@ import {
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import styled from 'styled-components';
+import StockModal from '../StockModal';
 
 const StockItemCard = styled(Card)`
   background-color: ${({ theme }) => theme.mui.palette.primary.main};
@@ -43,41 +45,53 @@ const StockItemCard = styled(Card)`
 
 export const StockItem = props => {
   const { name, ticker, price, percentageChange } = props;
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
 
   if (!price || !percentageChange) return null;
 
   return (
-    <StockItemCard>
-      <CardActionArea>
-        <CardContent>
-          <Typography
-            className="title"
-            gutterBottom
-            variant="h5"
-            component="h2"
-          >
-            {`${name} (${ticker})`}
-          </Typography>
-          <div className="price-box">
-            <div className="item">
-              <Typography className="price" variant="h5" component="h2">
-                {`$${price}`}
-              </Typography>
+    <>
+      <StockItemCard>
+        <CardActionArea onClick={handleOpen}>
+          <CardContent>
+            <Typography
+              className="title"
+              gutterBottom
+              variant="h5"
+              component="h2"
+            >
+              {`${name} (${ticker})`}
+            </Typography>
+            <div className="price-box">
+              <div className="item">
+                <Typography className="price" variant="h5" component="h2">
+                  {`$${price}`}
+                </Typography>
+              </div>
+              <div className="item">
+                <Typography className="percent" variant="h5" component="h2">
+                  {`${Math.abs(percentageChange)}%`}
+                </Typography>
+                {percentageChange > 0 ? (
+                  <ArrowDropUpIcon style={{ color: 'green' }} />
+                ) : (
+                  <ArrowDropDownIcon style={{ color: 'red' }} />
+                )}
+              </div>
             </div>
-            <div className="item">
-              <Typography className="percent" variant="h5" component="h2">
-                {`${Math.abs(percentageChange)}%`}
-              </Typography>
-              {percentageChange > 0 ? (
-                <ArrowDropUpIcon style={{ color: 'green' }} />
-              ) : (
-                <ArrowDropDownIcon style={{ color: 'red' }} />
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </CardActionArea>
-    </StockItemCard>
+          </CardContent>
+        </CardActionArea>
+      </StockItemCard>
+      <StockModal
+        open={open}
+        handleClose={handleClose}
+        title={`${name} (${ticker})`}
+      />
+    </>
   );
 };
 

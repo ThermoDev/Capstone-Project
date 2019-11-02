@@ -39,7 +39,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getPortfolios(); // call this only once on mount
-    getRandom();
+    // getRandom();
   }, []);
 
   useEffect(() => {
@@ -47,8 +47,6 @@ const Dashboard = () => {
       Router.push('/');
     }
   }, [user]);
-
-  console.log(result);
 
   return (
     <div>
@@ -76,19 +74,32 @@ const Dashboard = () => {
                 <StyledTypography component="h1" variant="h6">
                   Stocks
                 </StyledTypography>
-                {result.isLoading && <CircularProgress />}
+                {result.isLoading && (
+                  <Grid item>
+                    <CircularProgress />
+                  </Grid>
+                )}
                 <Grid container spacing={1}>
-                  {result.data.map(item => (
-                    <Grid item>
+                  <Grid item xs={12}>
+                    <StockItem
+                      key={1}
+                      name="Microsoft"
+                      ticker="MSFT"
+                      price={22.94}
+                      percentageChange={2.98}
+                    />
+                  </Grid>
+                  {/* {result.data.map(item => (
+                    <Grid item xs={12}>
                       <StockItem
-                        key={item.Ticker}
+                        key={item.index}
                         name={item.Name}
                         ticker={item.Ticker}
                         price={item.Price.toFixed(2)}
                         percentageChange={item['PCT Change'].toFixed(2)}
                       />
                     </Grid>
-                  ))}
+                  ))} */}
                 </Grid>
               </ColorBox>
             </Grid>
