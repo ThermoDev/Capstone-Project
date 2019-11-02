@@ -13,6 +13,22 @@ class TestUserRepository(UserRepository):
 class UserRepositoryTests(unittest.TestCase):
     user_repository = TestUserRepository()
 
+    def setUp(self) -> None:
+        with sqlite3.connect('temp/db') as connection:
+            cursor = connection.cursor()
+            cursor.execute('''DROP TABLE IF EXISTS Users''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
+                            username varchar(50) PRIMARY KEY not null,
+                            firstName text, 
+                            lastName text,
+                            email text,
+                            password varchar(200))
+                        ''')
+            cursor.execute('''INSERT INTO Users VALUES (?, ?, ?, ?, ?)''',
+                           ('test', 'Martin', 'Le', 'minh.le023@gmail.com',
+                            generate_password_hash('test', method='sha256')))
+            connection.commit()
+
     def test_get_user(self):
         user = self.user_repository.get_user('test')
 
@@ -54,19 +70,5 @@ class UserRepositoryTests(unittest.TestCase):
         self.assertEqual(user.email, 'martinle@gmail.com')
         self.assertEqual(user.check_password('ABCD'), True)
 
-if __name__ == '__main__':
-    with sqlite3.connect('temp/db') as connection:
-        cursor = connection.cursor()
-        cursor.execute('''DROP TABLE IF EXISTS Users''')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
-                        username varchar(50) PRIMARY KEY not null,
-                        firstName text, 
-                        lastName text,
-                        email text,
-                        password varchar(200))
-                    ''')
-        cursor.execute('''INSERT INTO Users VALUES (?, ?, ?, ?, ?)''',
-                       ('test', 'Martin', 'Le', 'minh.le023@gmail.com', generate_password_hash('test', method='sha256')))
-        connection.commit()
 
-    unittest.main()
+unittest.main()
