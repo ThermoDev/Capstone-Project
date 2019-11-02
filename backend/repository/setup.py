@@ -21,14 +21,14 @@ def init_db():
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Portfolios (
                     portfolioID integer PRIMARY KEY autoincrement,
-                    holder varchar(50) references User(username),
+                    holder varchar(50) references Users(username),
                     name text,
                     cash float)
                 ''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Transactions (
                     transactionID integer PRIMARY KEY autoincrement,
-                    portfolioID integer references Portfolio(portfolioID),
+                    portfolioID integer references Portfolios(portfolioID),
                     companyCode varchar(10),
                     price float,
                     volume integer,
