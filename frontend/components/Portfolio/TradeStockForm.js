@@ -29,7 +29,7 @@ export default function CreatePortfolioForm() {
 
   return (
     <div>
-      <StyledButton variant="contained" color="primary" onClick={handleClickOpen}>Trade</StyledButton>
+      <StyledButton variant="outlined" color="primary" onClick={handleClickOpen}>Trade</StyledButton>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <StyledTitle id="form-dialog-title">Create Portfolio</StyledTitle>
         <DialogContent>

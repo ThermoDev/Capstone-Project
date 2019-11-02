@@ -39,6 +39,8 @@ const Dashboard = () => {
     }
   }, [user]);
 
+  console.log(portfolios)
+
   return (
     <div>
       <Container maxWidth="lg">
@@ -48,7 +50,7 @@ const Dashboard = () => {
               <StyledTypography component="h1" variant="h6">
                 Portfolio
               </StyledTypography>
-              <PortfolioItem m={10} />
+              <PortfolioItem m={10} data={portfolios.data} />
               <CreatePortfolioForm />
             </ColorBox>
           </Grid>
