@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -43,7 +43,7 @@ const StockItemCard = styled(Card)`
   }
 `;
 
-export const StockItem = props => {
+const StockItem = props => {
   const { name, ticker, price, percentageChange } = props;
   const [open, setOpen] = useState(false);
 
@@ -69,12 +69,12 @@ export const StockItem = props => {
             <div className="price-box">
               <div className="item">
                 <Typography className="price" variant="h5" component="h2">
-                  {`$${price}`}
+                  {`$${price.toFixed(2)}`}
                 </Typography>
               </div>
               <div className="item">
                 <Typography className="percent" variant="h5" component="h2">
-                  {`${Math.abs(percentageChange)}%`}
+                  {`${Math.abs(percentageChange.toFixed(2))}%`}
                 </Typography>
                 {percentageChange > 0 ? (
                   <ArrowDropUpIcon style={{ color: 'green' }} />
@@ -102,3 +102,5 @@ StockItem.propTypes = {
   percentageChange: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     .isRequired,
 };
+
+export default memo(StockItem);

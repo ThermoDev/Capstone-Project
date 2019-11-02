@@ -1,32 +1,56 @@
-// import { Grid, Paper } from '@material-ui/core';
-// import AnnouncementIcon from '@material-ui/icons/Announcement';
+import { memo } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Typography,
+} from '@material-ui/core';
 
-// const NewsItem = props => {
-//   const { primary, secondary } = props;
-//   return (
-//     <Paper>
-//       <Grid container spacing={2}>
-//         <Grid item>
-//           <AnnouncementIcon />
-//         </Grid>
-//         <Grid item xs>
-//           {primary}
-//         </Grid>
-//         <Grid item xs>
-//           {secondary}
-//         </Grid>
-//       </Grid>
-//     </Paper>
-//   );
-// };
+const DEFAULT_IMAGE =
+  'https://res.cloudinary.com/dzowh11b5/image/upload/v1565325720/sickfits/t5dehhuwwlcfkpyatfoo.jpg';
 
-// const Newsfeed = props => {
-//   console.log(props);
-//   return (
-//     <div>
-//       <NewsItem primary="initial news" secondary="more details to come" />
-//     </div>
-//   );
-// };
+const NewsCard = styled(Card)`
+  background-color: ${({ theme }) => theme.mui.palette.background.paper};
+  box-shadow: ${({ theme }) => theme.mui.shadows[5]};
+  width: 100%;
+`;
 
-// export default Newsfeed;
+const NewsItem = props => {
+  const { item } = props;
+  const { title, urlToImage, description, url } = item;
+  return (
+    <NewsCard>
+      <div style={{ display: 'flex' }}>
+        <CardActionArea onClick={() => window.open(url, '_blank')}>
+          <CardMedia
+            title="news image"
+            image={urlToImage || DEFAULT_IMAGE}
+            style={{ height: '200px' }}
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="h2">
+              {title}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {description}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </div>
+    </NewsCard>
+  );
+};
+
+NewsItem.propTypes = {
+  item: PropTypes.shape({
+    title: PropTypes.string,
+    urlToImage: PropTypes.string,
+    description: PropTypes.string,
+    url: PropTypes.string,
+  }).isRequired,
+};
+
+export default memo(NewsItem);

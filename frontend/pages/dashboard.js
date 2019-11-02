@@ -6,12 +6,16 @@ import {
   useMediaQuery,
   Typography,
   CircularProgress,
+  Card,
 } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import Router from 'next/router';
+import get from 'lodash.get';
 import CreatePortfolioForm from '../components/Portfolio/CreatePortfolioForm';
 import { useAuth } from '../lib/useAuth';
 import useApi from '../lib/useApi';
-import { StockItem } from '../components/Stocks';
+import StockItem from '../components/Stocks';
+import NewsItem from '../components/Newsfeed';
 
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
 
@@ -33,13 +37,21 @@ const StyledTypography = styled(Typography)`
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
   const { user, isAuthenticated } = useAuth();
-  const { portfoliosApi, getRandomStocksApi } = useApi();
-  const { portfolios, getPortfolios } = portfoliosApi();
-  const { result, getRandom } = getRandomStocksApi();
+  const { state, getPortfolios, getRandomNews, getRandomStocks } = useApi();
+  const { portfolios, news, randomStocks } = state;
+
+  // loading variables
+  const stocksLoading = get(randomStocks, 'isLoading', true);
+  const newsLoading = get(news, 'isLoading', true);
+
+  // data extraction
+  const stocksData = get(randomStocks, 'data', []);
+  const newsData = get(news, 'data.articles', []);
 
   useEffect(() => {
-    getPortfolios(); // call this only once on mount
-    // getRandom();
+    getPortfolios();
+    getRandomNews();
+    getRandomStocks();
   }, []);
 
   useEffect(() => {
@@ -67,6 +79,23 @@ const Dashboard = () => {
                 <StyledTypography component="h1" variant="h6">
                   Newsfeed
                 </StyledTypography>
+                <Grid container spacing={1}>
+                  {newsLoading ? (
+                    <Card style={{ width: '100%', height: '300px' }}>
+                      <Skeleton variant="rect" height={200} />
+                      <div style={{ padding: '0 0.5rem' }}>
+                        <Skeleton />
+                        <Skeleton />
+                      </div>
+                    </Card>
+                  ) : (
+                    newsData.map((item, idx) => (
+                      <Grid item xs={12} key={idx}>
+                        <NewsItem item={item} />
+                      </Grid>
+                    ))
+                  )}
+                </Grid>
               </ColorBox>
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -74,13 +103,35 @@ const Dashboard = () => {
                 <StyledTypography component="h1" variant="h6">
                   Stocks
                 </StyledTypography>
-                {result.isLoading && (
-                  <Grid item>
-                    <CircularProgress />
-                  </Grid>
-                )}
                 <Grid container spacing={1}>
-                  <Grid item xs={12}>
+                  {(stocksLoading && (
+                    <Grid item xs={12} align="middle">
+                      <Card
+                        style={{
+                          width: '100%',
+                          height: '150px',
+                          backgroundColor: '#00ced1',
+                        }}
+                      >
+                        <div style={{ padding: '0 0.5rem' }}>
+                          <Skeleton />
+                          <Skeleton />
+                          <Skeleton />
+                        </div>
+                      </Card>
+                    </Grid>
+                  )) ||
+                    stocksData.map(item => (
+                      <Grid item xs={12} key={item.index}>
+                        <StockItem
+                          name={item.Name}
+                          ticker={item.Ticker}
+                          price={item.Price}
+                          percentageChange={item['PCT Change']}
+                        />
+                      </Grid>
+                    ))}
+                  {/* <Grid item xs={12}>
                     <StockItem
                       key={1}
                       name="Microsoft"
@@ -88,18 +139,7 @@ const Dashboard = () => {
                       price={22.94}
                       percentageChange={2.98}
                     />
-                  </Grid>
-                  {/* {result.data.map(item => (
-                    <Grid item xs={12}>
-                      <StockItem
-                        key={item.index}
-                        name={item.Name}
-                        ticker={item.Ticker}
-                        price={item.Price.toFixed(2)}
-                        percentageChange={item['PCT Change'].toFixed(2)}
-                      />
-                    </Grid>
-                  ))} */}
+                  </Grid> */}
                 </Grid>
               </ColorBox>
             </Grid>
