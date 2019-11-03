@@ -1,37 +1,70 @@
-import React from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
-import { Container, Grid, useMediaQuery } from '@material-ui/core';
-import { Line } from '../components/Graph';
+import { Container, Grid, useMediaQuery, Typography } from '@material-ui/core';
+import Router from 'next/router';
+import CreatePortfolioForm from '../components/Portfolio/CreatePortfolioForm';
+import { useAuth } from '../lib/useAuth';
+import useApi from '../lib/useApi';
+
+import PortfolioItem from '../components/Portfolio/PortfolioItem';
 
 const ColorBox = styled.div`
-  background-color: orangered;
-  font-family: Montserrat;
-  font-weight: bold;
+  background-color: ${({ theme }) => `${theme.lightgrey}`};
   color: white;
-  text-align: center;
   min-height: 5rem;
-  padding: 2rem 0;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const StyledTypography = styled(Typography)`
+  align-self: flex-start;
 `;
 
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
+  const { user, isAuthenticated } = useAuth();
+  const { portfoliosApi } = useApi();
+  const { portfolios, getPortfolios } = portfoliosApi();
+
+  useEffect(() => {
+    getPortfolios(); // call this only once on mount
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      Router.push('/');
+    }
+  }, [user]);
+
   return (
     <div>
       <Container maxWidth="lg">
         <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
           <Grid item xs={12}>
-            <Line />
+            <ColorBox>
+              <StyledTypography component="h1" variant="h6">
+                Portfolio
+              </StyledTypography>
+              <PortfolioItem m={10} />
+              <CreatePortfolioForm />
+            </ColorBox>
           </Grid>
           <Grid item xs={12} sm={8}>
-            <ColorBox>Container</ColorBox>
+            <ColorBox>
+              <StyledTypography component="h1" variant="h6">
+                Newsfeed
+              </StyledTypography>
+            </ColorBox>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Maiores
-              enim soluta et deleniti placeat eum, cupiditate similique
-              reiciendis explicabo doloribus omnis porro laboriosam, eaque
-              molestias. Corporis optio nostrum facere vero?
-            </p>
+            <ColorBox>
+              <StyledTypography component="h1" variant="h6">
+                Stocks
+              </StyledTypography>
+            </ColorBox>
           </Grid>
         </Grid>
       </Container>

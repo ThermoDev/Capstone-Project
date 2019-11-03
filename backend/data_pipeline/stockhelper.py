@@ -367,7 +367,7 @@ def get_cur_close_price(symbol: str) -> np.float64:
         ticker = yf.Ticker(symbol)
         price = ticker.history(period="min")["Close"][-1]
         return price
-    except KeyError:
+    except (KeyError, ValueError):
         print("Try retrieving from DataFrame instead")
         today = datetime.now().date()
         from_date = today - timedelta(days=2)  # Restrict number of values retrieved
@@ -429,7 +429,7 @@ def get_stock_symbols() -> pd.DataFrame:
     return data
 
 
-def df_to_list(data: pd.DataFrame, orient: str = "columns") -> list:
+def df_to_dict(data: pd.DataFrame, orient: str = "columns") -> dict:
     """
     Given a DataFrame, converts it to list format using json.loads so we can apply jsonify()
 
@@ -466,6 +466,8 @@ def validate_dates(dates: list) -> bool:
     bool
         Returns True if successfully validated.
     """
+    if type(dates) is not list:
+        return False
     try:
         for date in dates:
             datetime.strptime(date, "%Y-%m-%d") if date else None
@@ -565,15 +567,38 @@ def add_industries(data: pd.DataFrame) -> pd.DataFrame:
 
 # Simple function to just get every piece of data available for stocks
 def get_all_stock_data() -> pd.DataFrame:
+    """
+    Function calls to retrieve all stock symbols, and adds their relevant industries as an intersection
+
+    Returns
+    -------
+    DataFrame
+        A DataFrame with all stock info with their relevant industries
+
+    """
     data = get_stock_symbols()
     data = add_industries(data)
     return data
 
 
-def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
-    spaced_list = " ".join(list(data["Ticker"].values))  # Retrieve space-seperated ticker values
+def __add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Private helper function to add relevant stock info, given a DataFrame that is a random sample of get_all_stock_data()
+    This is the live data that is retrieved using API calls
 
-    spaced_list = " ".join(list(data["Ticker"].values))
+    Parameters
+    ----------
+    data : DataFrame
+        A DataFrame with some stock data, without current stock info
+
+    Returns
+    -------
+    DataFrame
+         A DataFrame with some stock data, with current stock info
+
+    """
+
+    spaced_list = " ".join(list(data["Ticker"].values))  # Retrieve space-seperated ticker values
 
     tickers = yf.Tickers(spaced_list)
     ticky = tickers.download()
@@ -593,7 +618,7 @@ def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
     pct_change["PCT Change"] = pct_change["PCT Change"].astype(float)
     data = data.merge(pct_change, left_on="Ticker", right_index=True)
 
-    data["Is_Up"] = data["PCT Change"] > 0
+    data["Is Up"] = data["PCT Change"] > 0
 
     infos = [ticker.info for ticker in tickers.tickers]
     info_df = pd.DataFrame(infos)
@@ -607,7 +632,7 @@ def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
     ]]
 
     temp = data.copy()
-    # Need to reset index for whatever reason (Something to do with index persisting in memory)
+    # Need to reset index as it persists in memory
     temp = temp.reset_index()
     data = pd.concat([temp, info_df], axis=1)
 
@@ -623,7 +648,22 @@ def add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_random(number: int = 10) -> pd.DataFrame:
+    """
+    Function to retrieve a sample of data from the stored data.
+    This will then add all currently known stock info about each of those stocks in the data.
+
+    Parameters
+    ----------
+    number : int
+        The number of data points to sample from stored data
+
+    Returns
+    -------
+    DataFrame
+         A DataFrame with the sampled data, with all current known stock info
+
+    """
     data = get_all_stock_data()
     random_data = data.sample(n=number)
-    random_data = add_stock_info(random_data)
+    random_data = __add_stock_info(random_data)
     return random_data

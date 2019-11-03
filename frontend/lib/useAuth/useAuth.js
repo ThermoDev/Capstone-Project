@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import fetch from 'isomorphic-unfetch';
 import { AuthContext } from './AuthProvider';
 import { endpoint } from '../../config';
 
@@ -22,6 +23,7 @@ export const useAuth = () => {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ user_id: username, password }),
     })
       .then(checkStatus)
@@ -40,11 +42,26 @@ export const useAuth = () => {
 
   const logout = () => {
     dispatch({ type: 'startAuthenticating' });
-    dispatch({ type: 'logout' });
-    dispatch({ type: 'stopAuthenticating' });
+    fetch(`${endpoint}login/logout`, {
+      method: 'POST',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+      .then(checkStatus)
+      .then(dispatch({ type: 'logout' }))
+      .catch(err =>
+        err.response.text().then(body => {
+          dispatch({ type: 'error', errorType: 'logoutError', error: body });
+        })
+      )
+      .finally(() => {
+        dispatch({ type: 'stopAuthenticating' });
+      });
   };
 
-  // TODO: might be conflicts in localStorage if multiple users
   const register = (email, firstname, lastname, password) => {
     dispatch({ type: 'startAuthenticating' });
     fetch(`${endpoint}login/register`, {

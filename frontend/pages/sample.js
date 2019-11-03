@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import useDataApi from '../lib/useDataApi';
+import useDataApi from '../lib/useApi/useDataApi';
 import { useAuth } from '../lib/useAuth';
 import { endpoint } from '../config';
 import { DefaultError } from '../components/Error';

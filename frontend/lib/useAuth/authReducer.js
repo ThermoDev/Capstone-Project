@@ -26,6 +26,7 @@ export const authReducer = (state, action) => {
         localStorage.removeItem('user');
         localStorage.removeItem('expires_at');
       }
+
       return {
         ...state,
         user: {},
