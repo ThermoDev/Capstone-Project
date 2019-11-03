@@ -5,6 +5,7 @@ from flask import (
 # IMPORT FUNCTIONS HERE
 from backend.data_pipeline import newshelper as newsh
 import urllib.parse
+
 bp = Blueprint('news', __name__, url_prefix='/news')
 
 
@@ -19,6 +20,6 @@ def index():
 @bp.route('/search/<query>', methods=['GET'])
 def search(query: str):
     query_decode = urllib.parse.unquote(query)
-    #return query_decode
+    # return query_decode
     searched_articles = newsh.search_news(query_decode)
     return jsonify(searched_articles)
