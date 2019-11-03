@@ -75,6 +75,7 @@ def get_data(symbol: str, source: str = "yahoo", start_date: str = '2000-01-01',
 
     # Calculate percent changes
     data["Pct_Change"] = pd.DataFrame.pct_change(data["Close"])
+    data["Pct_Change"] = data["Pct_Change"] * 100
     # Set symbol for identification of records
     data["Symbol"] = symbol
 
