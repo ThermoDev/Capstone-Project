@@ -363,6 +363,20 @@ def get_pe_ratio(symbol: str) -> np.float64:
 # Note: only works on Yahoo data source
 # Retrieves current close price given a symbol
 def get_cur_close_price(symbol: str) -> np.float64:
+    """
+    Function to retrieve the current close price of a given stock symbol.
+
+    Parameters
+    ----------
+    symbol : str
+        The stock symbol (ticker) to retrieve the current closing price for
+
+    Returns
+    -------
+    numpy.float64
+         The current closing price for the given stock symbol
+
+    """
     try:
         ticker = yf.Ticker(symbol)
         price = ticker.history(period="min")["Close"][-1]
