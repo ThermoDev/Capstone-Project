@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import Link from 'next/link';
 import LinkMui from '@material-ui/core/Link';
 import {
@@ -10,6 +10,7 @@ import {
   Typography,
   Button,
   TextField,
+  CircularProgress,
 } from '@material-ui/core';
 import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
@@ -46,13 +47,18 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const { login, user, isAuthenticated, isError, error } = useAuth();
+  const { login, user, isAuthenticated, isLoading, isError, error } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated()) {
       Router.push('/dashboard');
     }
   }, [user]);
+
+  useEffect(() => {
+    router.prefetch('/dashboard');
+  });
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -66,60 +72,71 @@ const Login = () => {
       <ContentBox>
         <StyledLargeLogo />
         <StyledPaper>
-          <Typography component="h1" variant="h4">
-            Sign in
-          </Typography>
-          <StyledForm noValidate onSubmit={handleSubmit}>
-            <StyledTextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              error={isError}
-            />
-            <StyledTextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              error={isError}
-            />
-            {isError && <InlineError error={error} />}
-            <SubmitButton
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-            >
-              Sign In
-            </SubmitButton>
-            <Grid container>
-              <Grid item xs>
-                <Link href="/">
-                  <LinkMui component="button" variant="caption">
-                    Forgot password?
-                  </LinkMui>
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/register">
-                  <LinkMui component="button" variant="caption">
-                    Don't have an account? Sign Up
-                  </LinkMui>
-                </Link>
-              </Grid>
-            </Grid>
-          </StyledForm>
+          {(isLoading && (
+            <>
+              <Typography component="h1" variant="h4">
+                Signing in
+              </Typography>
+              <CircularProgress />
+            </>
+          )) || (
+            <>
+              <Typography component="h1" variant="h4">
+                Sign in
+              </Typography>
+              <StyledForm noValidate onSubmit={handleSubmit}>
+                <StyledTextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  error={isError}
+                />
+                <StyledTextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  error={isError}
+                />
+                {isError && <InlineError error={error} />}
+                <SubmitButton
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                >
+                  Sign In
+                </SubmitButton>
+                <Grid container>
+                  <Grid item xs>
+                    <Link href="/">
+                      <LinkMui component="button" variant="caption">
+                        Forgot password?
+                      </LinkMui>
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link href="/register">
+                      <LinkMui component="button" variant="caption">
+                        Don't have an account? Sign Up
+                      </LinkMui>
+                    </Link>
+                  </Grid>
+                </Grid>
+              </StyledForm>
+            </>
+          )}
         </StyledPaper>
       </ContentBox>
     </Container>
