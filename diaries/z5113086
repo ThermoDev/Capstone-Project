@@ -36,4 +36,21 @@ Week 5
   - Discussed wireframes and next actions
   - I worked on Navbar and side menu
   - Fixed up wireframes to match clearer requirements
+
+Week 6
+   - Created frontend verification for user input registration page/ sign in page
+   - Added user icon to navbar
+   - Discussed stock calculations on the backend for frontend display
+   
+Week 7
+   - Created base portfolio page
+   - Created and styled forms to create a portfolio and connected to backend
+   - Added a base trade stock form 
+  
+Week 8
+   - Discussed extra features we can afford to add on
+   - Discussed granularity of portfolio API
+   - Worked on creating polishing the portfolio item
+   - Added pie chart, stock data, percentages to portfolio item
+   - Worked on trading stock portfolio page
   
