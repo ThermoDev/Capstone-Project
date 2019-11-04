@@ -8,13 +8,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 const StyledTitle = styled(DialogTitle)`
-  padding-bottom: 0px ;
+  padding-bottom: 0px;
 `;
 
 const StyledButton = styled(Button)`
   margin: 0 ${({ theme }) => `${theme.mui.spacing(1)}px`};
 `;
-
 
 export default function CreatePortfolioForm() {
   const [open, setOpen] = React.useState(false);
@@ -29,8 +28,18 @@ export default function CreatePortfolioForm() {
 
   return (
     <div>
-      <StyledButton variant="outlined" color="primary" onClick={handleClickOpen}>Trade</StyledButton>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <StyledButton
+        variant="outlined"
+        color="primary"
+        onClick={handleClickOpen}
+      >
+        Trade
+      </StyledButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
         <StyledTitle id="form-dialog-title">Create Portfolio</StyledTitle>
         <DialogContent>
           <TextField

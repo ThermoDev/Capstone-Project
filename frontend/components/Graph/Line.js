@@ -1,10 +1,12 @@
+import PropTypes from 'prop-types';
 import { Line } from 'react-chartjs-2';
+import Skeleton from '@material-ui/lab/Skeleton';
 
-const data = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+const getGraphProps = (xLabels, dataLabel, dataPoints) => ({
+  labels: xLabels,
   datasets: [
     {
-      label: 'Portfolio value',
+      label: dataLabel,
       fill: false,
       lineTension: 0.1,
       backgroundColor: 'rgba(75,192,192,0.4)',
@@ -22,11 +24,27 @@ const data = {
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: [65, 59, 80, 81, 56, 55, 40],
+      data: dataPoints,
     },
   ],
+});
+
+const LineGraph = props => {
+  const { xLabels, dataLabel, dataPoints, loading } = props;
+  if (loading) return <Skeleton variant="rect" height={400} />;
+  const graphData = getGraphProps(xLabels, dataLabel, dataPoints);
+  return <Line data={graphData} />;
 };
 
-const LineGraph = () => <Line data={data} />;
+LineGraph.defaultProps = {
+  loading: false,
+};
+
+LineGraph.propTypes = {
+  dataLabel: PropTypes.string.isRequired,
+  xLabels: PropTypes.array.isRequired,
+  dataPoints: PropTypes.array.isRequired,
+  loading: PropTypes.bool,
+};
 
 export default LineGraph;

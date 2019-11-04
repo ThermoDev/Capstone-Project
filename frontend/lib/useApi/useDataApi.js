@@ -34,7 +34,7 @@ const dataFetcher = (state, action) => {
     initialData: the initial state of your data before it calls the api
 */
 const useDataApi = (initialUrl, initialData) => {
-  const [url, setUrl] = useState(initialUrl);
+  const [url, setUrl] = useState(null);
   const [payload, setPayload] = useState(null);
 
   const [state, dispatch] = useReducer(dataFetcher, {

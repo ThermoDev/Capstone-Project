@@ -1,6 +1,4 @@
-import React,  { useEffect } from 'react';
-import useApi from '../../lib/useApi';
-import { useAuth } from '../../lib/useAuth';
+import React from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -10,18 +8,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
-
-
+import useApi from '../../lib/useApi';
 
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
 `;
 
 export default function CreatePortfolioForm() {
-  const [state, setState] = React.useState({open:false, name:'', cash:0});
-  const { createPortfolioApi } = useApi();
-  const { createState, createPortfolio } = createPortfolioApi();
- 
+  const [state, setState] = React.useState({ open: false, name: '', cash: 0 });
+  const { createPortfolio } = useApi();
+
   const handleClickOpen = () => {
     setState({ ...state, open: true });
   };
@@ -30,17 +26,17 @@ export default function CreatePortfolioForm() {
     setState({ ...state, open: false });
   };
 
-  const handleTextFieldChange= (e) =>{
-    setState({ ...state, [e.target.id] :e.target.value });
+  const handleTextFieldChange = e => {
+    setState({ ...state, [e.target.id]: e.target.value });
   };
 
-  const handleCashChange= (e) =>{
-    setState({ ...state, cash :e.target.value });
+  const handleCashChange = e => {
+    setState({ ...state, cash: e.target.value });
   };
 
   const handleSubmit = () => {
-    const name = state.name;
-    const cash = state.cash;
+    const { name } = state;
+    const { cash } = state;
 
     createPortfolio(name, cash);
     setState({ ...state, open: false });
