@@ -11,6 +11,7 @@ class TestPortfolioRepository(PortfolioRepository):
         super().__init__()
         self._db_path = 'temp/db'
 
+
 class PortfolioRepositoryTests(unittest.TestCase):
     portfolio_repository = TestPortfolioRepository()
 
@@ -75,7 +76,6 @@ class PortfolioRepositoryTests(unittest.TestCase):
         self.assertEqual(stock_transactions[0].price, 234.81)
         self.assertEqual(stock_transactions[0].volume, 10)
 
-
     def test_has_portfolio_by_user_and_name(self):
         portfolio = self.portfolio_repository.has_portfolio_by_user_and_name('test', 'myFirstPort')
 
@@ -95,8 +95,9 @@ class PortfolioRepositoryTests(unittest.TestCase):
     def test_update_portfolio(self):
 
         portfolio = Portfolio(1, 'test', 'myFirstPort', 200000.00, [])
-        portfolio = self.portfolio_repository.update_portfolio(portfolio)
+        self.portfolio_repository.update_portfolio(portfolio)
 
+        portfolio = self.portfolio_repository.get_portfolio_by_id(1)
         self.assertEqual(portfolio.portfolio_id, 1)
         self.assertEqual(portfolio.holder, 'test')
         self.assertEqual(portfolio.name, 'myFirstPort')
