@@ -61,7 +61,7 @@ class UserRepository(BaseRepository):
     def update_user(self, user: User):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            query = self.build_update_query(table=UsersTable.TABLE_NAME,
+            query = self.build_replace_query(table=UsersTable.TABLE_NAME,
                                             columns=(
                                                 UsersTable.Columns.USERNAME,
                                                 UsersTable.Columns.FIRST_NAME,

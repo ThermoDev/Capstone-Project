@@ -25,22 +25,7 @@ class BaseRepository:
 
         return query_string
 
-    # def build_update_query(self, table: str,
-    #                        columns: Iterable[str],
-    #                        identifiers: Optional[Iterable[str]] = None) -> str:
-    #     query_string = f'UPDATE {table}\n'
-    #     for index, column in enumerate(columns):
-    #         if index == 0:
-    #             query_string += f'SET {column}=?'
-    #         else:
-    #             query_string += f', {column}=?'
-    #
-    #     if identifiers:
-    #         query_string += '\n' + self._build_identifiers_clause(identifiers)
-    #
-    #     return query_string
-
-    def build_update_query(self, table: str, columns: Iterable[str]) -> str:
+    def build_replace_query(self, table: str, columns: Iterable[str]) -> str:
         columns_string = ''
         values_string = ''
         for index, column in enumerate(columns):

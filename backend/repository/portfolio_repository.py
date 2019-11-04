@@ -112,7 +112,7 @@ class PortfolioRepository(BaseRepository):
     def update_portfolio(self, portfolio: Portfolio):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            portfolio_query = self.build_update_query(table=PortfoliosTable.TABLE_NAME,
+            portfolio_query = self.build_replace_query(table=PortfoliosTable.TABLE_NAME,
                                                       columns=(
                                                           PortfoliosTable.Columns.HOLDER,
                                                           PortfoliosTable.Columns.NAME,
