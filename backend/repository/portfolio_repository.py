@@ -11,7 +11,7 @@ class PortfoliosTable:
     TABLE_NAME = 'Portfolios'
 
     class Columns:
-        ID = 'portfolioId'
+        ID = 'portfolioID'
         HOLDER = 'holder'
         NAME = 'name'
         CASH = 'cash'
@@ -22,7 +22,7 @@ class TransactionsTable:
 
     class Columns:
         ID = 'transactionID'
-        PORTFOLIO_ID = 'portfolioId'
+        PORTFOLIO_ID = 'portfolioID'
         COMPANY_CODE = 'companyCode'
         PRICE = 'price'
         VOLUME = 'volume'
