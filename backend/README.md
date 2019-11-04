@@ -1,5 +1,3 @@
-#Setup
-
 **Assumptions**
 
 1. You have installed Python 3.7.\*
