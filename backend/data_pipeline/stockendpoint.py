@@ -35,7 +35,7 @@ def index():
     api_key = request.args.get("api_key")
 
     data = stkh.get_data(symbol=symbol, source=source, start_date=start_date, end_date=end_date, api_key=api_key)
-    list_data = stkh.df_to_list(data, orient="index")
+    list_data = stkh.df_to_dict(data, orient="index")
 
     if not list_data:
         return Response("Data not found...", status=404)
@@ -114,14 +114,14 @@ def ytd():
 def get_all_symbols():
     data = stkh.get_all_stock_data()
 
-    list_data = stkh.df_to_list(data, orient="records")
+    list_data = stkh.df_to_dict(data, orient="records")
     return jsonify(list_data)
 
 
 @bp.route('/search/<search_term>', methods=['GET'])
 def search_string(search_term: str):
     data = stkh.search_stocks_list(search_term)
-    list_data = stkh.df_to_list(data, orient="records")
+    list_data = stkh.df_to_dict(data, orient="records")
 
     if not list_data:
         return Response(f"Could not find anything with the search term: {search_term}.", status=404)
@@ -210,10 +210,10 @@ def random():
         if number:
             number = int(number)
     except ValueError:
-        return Response(f"Please enter a valid integer for the number n: {number}.", status=404)
+        return Response(f"Please enter a valid integer for the number n: {number}.", status=400)
 
     data = stkh.get_random(number)
-    list_data = stkh.df_to_list(data, orient="records")
+    list_data = stkh.df_to_dict(data, orient="records")
 
     if not list_data:
         return Response(f"Could not find random samples", status=404)  # Uh oh.
