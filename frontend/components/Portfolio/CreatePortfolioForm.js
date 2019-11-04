@@ -8,20 +8,38 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import useApi from '../../lib/useApi';
 
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
 `;
 
 export default function CreatePortfolioForm() {
-  const [open, setOpen] = React.useState(false);
+  const [state, setState] = React.useState({ open: false, name: '', cash: 0 });
+  const { createPortfolio } = useApi();
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setState({ ...state, open: true });
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setState({ ...state, open: false });
+  };
+
+  const handleTextFieldChange = e => {
+    setState({ ...state, [e.target.id]: e.target.value });
+  };
+
+  const handleCashChange = e => {
+    setState({ ...state, cash: e.target.value });
+  };
+
+  const handleSubmit = () => {
+    const { name } = state;
+    const { cash } = state;
+
+    createPortfolio(name, cash);
+    setState({ ...state, open: false });
   };
 
   return (
@@ -35,7 +53,7 @@ export default function CreatePortfolioForm() {
         <AddIcon />
       </Fab>
       <Dialog
-        open={open}
+        open={state.open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
@@ -46,24 +64,28 @@ export default function CreatePortfolioForm() {
             required
             margin="dense"
             id="name"
+            name="name"
             label="Portfolio Name"
             fullWidth
+            onChange={handleTextFieldChange}
           />
           <TextField
             autoFocus
             required
             margin="dense"
-            id="name"
+            id="cash"
+            name="cash"
             label="Starting Budget"
             type="number"
             fullWidth
+            onChange={handleTextFieldChange}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleSubmit} color="primary">
             Create
           </Button>
         </DialogActions>

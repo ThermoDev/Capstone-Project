@@ -124,12 +124,35 @@ const useApi = () => {
     getStockHistory(symbol, lastYear);
   };
 
+  const createPortfolio = (portfolioName, startingCash) => {
+    dispatch({ type: 'FETCH_INIT', api: 'createPortfolio' });
+    dataFetcher('portfolios/create', {
+      name: portfolioName,
+      cash: startingCash,
+    })
+      .catch(err =>
+        err.response.text().then(body => {
+          dispatch({
+            type: 'error',
+            errorType: 'createPortfolio',
+            error: body,
+          });
+        })
+      )
+      .finally(() => {
+        dispatch({ type: 'FETCH_COMPLETE', api: 'createPortfolio' });
+      });
+    // Update portfolios seen by app
+    getPortfolios();
+  };
+
   return {
     state,
     getRandomNews,
     getRandomStocks,
     getPortfolios,
     getYearlyStockHistory,
+    createPortfolio,
   };
 };
 

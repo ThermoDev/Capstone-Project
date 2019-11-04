@@ -19,7 +19,7 @@ import NewsItem from '../components/Newsfeed';
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
 
 const ColorBox = styled.div`
-  background-color: ${({ theme }) => `${theme.lightgrey}`};
+  background-color: #e1e1e1;
   color: white;
   min-height: 5rem;
   padding: 1rem;
@@ -40,10 +40,12 @@ const Dashboard = () => {
   const { portfolios, news, randomStocks } = state;
 
   // loading variables
+  const portfoliosLoading = get(portfolios, 'isLoading', true);
   const stocksLoading = get(randomStocks, 'isLoading', true);
   const newsLoading = get(news, 'isLoading', true);
 
   // data extraction
+  const portfoliosData = get(portfolios, 'data', []);
   const stocksData = get(randomStocks, 'data', []);
   const newsData = get(news, 'data.articles', []);
 
@@ -52,6 +54,8 @@ const Dashboard = () => {
     getRandomNews();
     getRandomStocks();
   }, []);
+
+  useEffect(() => {}, [portfoliosData]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -69,7 +73,22 @@ const Dashboard = () => {
                 <StyledTypography component="h1" variant="h6">
                   Portfolio
                 </StyledTypography>
-                <PortfolioItem m={10} />
+                {portfoliosLoading ? (
+                  <>
+                    <Card
+                      style={{ width: '100%', height: '73px', margin: '16px' }}
+                    >
+                      <Skeleton variant="rect" height={200} />
+                    </Card>
+                    <Card
+                      style={{ width: '100%', height: '73px', margin: '16px' }}
+                    >
+                      <Skeleton variant="rect" height={200} />
+                    </Card>
+                  </>
+                ) : (
+                  <PortfolioItem m={10} data={portfoliosData} />
+                )}
                 <CreatePortfolioForm />
               </ColorBox>
             </Grid>
