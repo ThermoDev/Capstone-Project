@@ -1,10 +1,10 @@
 import { useReducer } from 'react';
 import fetch from 'isomorphic-unfetch';
+import moment from 'moment';
 import { endpoint } from '../../config';
 import { apiReducer } from './apiReducer';
 
 const DEFAULT_STATE = {};
-const DEFAULT_ERROR_MESSAGE = 'INTERNAL SERVER ERROR';
 
 const dataFetcher = (url, payload = null) => {
   const checkStatus = response => {
@@ -93,11 +93,43 @@ const useApi = () => {
       .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'portfolios' }));
   };
 
+  const getStockHistory = (symbol, startDate, endDate = null) => {
+    const url = endDate
+      ? `stock/?symbol=${symbol}&start=${startDate}&end=${endDate}`
+      : `stock/?symbol=${symbol}&start=${startDate}`;
+    dispatch({ type: 'FETCH_INIT', api: 'stockHistory' });
+    dataFetcher(url)
+      .then(result =>
+        result
+          .json()
+          .then(data =>
+            dispatch({ type: 'SET_DATA', api: 'stockHistory', data })
+          )
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'stockHistory',
+          errorType: 'stockHistory',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'stockHistory' }));
+  };
+
+  const getYearlyStockHistory = symbol => {
+    const lastYear = moment()
+      .add(-1, 'year')
+      .format('YYYY-MM-DD');
+    getStockHistory(symbol, lastYear);
+  };
+
   return {
     state,
     getRandomNews,
     getRandomStocks,
     getPortfolios,
+    getYearlyStockHistory,
   };
 };
 

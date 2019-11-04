@@ -5,7 +5,6 @@ import {
   Grid,
   useMediaQuery,
   Typography,
-  CircularProgress,
   Card,
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';

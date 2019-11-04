@@ -11,7 +11,10 @@ import {
   ButtonGroup,
   Grid,
 } from '@material-ui/core';
+import get from 'lodash.get';
+import moment from 'moment';
 import { Line } from '../Graph';
+import useApi from '../../lib/useApi';
 
 const ModalContainer = styled(Paper)`
   background-color: ${({ theme }) => theme.mui.palette.background.paper};
@@ -22,7 +25,73 @@ const ModalContainer = styled(Paper)`
 `;
 
 const StockModal = props => {
-  const { open, handleClose, title } = props;
+  const { open, handleClose, name, ticker } = props;
+  const [filter, setFilter] = useState('Annual');
+  const [xLabels, setXLabels] = useState([]);
+  const [dataPoints, setDataPoints] = useState([]);
+  const { state, getYearlyStockHistory } = useApi();
+  const { stockHistory } = state;
+
+  // loading variable
+  const stocksLoading = get(stockHistory, 'isLoading', true);
+
+  // data extraction
+  const stocksData = get(stockHistory, 'data', {});
+
+  const filterData = filterOption => {
+    let limit = null;
+
+    const filtered = rawObj => {
+      const newObj = Object.keys(rawObj).filter(key => key >= limit);
+      setXLabels(newObj);
+      const filteredData = newObj.reduce(
+        (obj, key) => ({ ...obj, [key]: stocksData[key] }),
+        {}
+      );
+      return Object.values(filteredData).map(item => item.Close);
+    };
+
+    switch (filterOption) {
+      case 'Weekly':
+        limit = moment()
+          .add(-1, 'week')
+          .format('x');
+        setDataPoints(filtered(stocksData));
+        break;
+      case 'Quarterly':
+        limit = moment()
+          .add(-3, 'month')
+          .format('x');
+        setDataPoints(filtered(stocksData));
+        break;
+      case 'Biannual':
+        limit = moment()
+          .add(-6, 'month')
+          .format('x');
+        setDataPoints(filtered(stocksData));
+        break;
+      case 'Annual':
+        setXLabels(Object.keys(stocksData).filter(key => key >= limit));
+        setDataPoints(Object.values(stocksData).map(item => item.Close));
+        break;
+      case 'All':
+        break;
+      default:
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      getYearlyStockHistory(ticker);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (open && !stocksLoading) {
+      filterData(filter);
+    }
+  }, [filter, stocksLoading]);
+
   return (
     <Modal
       open={open}
@@ -46,22 +115,27 @@ const StockModal = props => {
                 variant="h5"
                 component="h2"
               >
-                {title}
+                {`${name} (${ticker})`}
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <Line />
+              <Line
+                dataLabel={ticker}
+                xLabels={xLabels}
+                dataPoints={dataPoints}
+                loading={stocksLoading}
+              />
             </Grid>
             <Grid item xs={12}>
               <ButtonGroup
                 fullWidth
                 aria-label="full width outlined button group"
               >
-                <Button>1 week</Button>
-                <Button>1 Month</Button>
-                <Button>6 Months</Button>
-                <Button>1 Year</Button>
-                <Button>All</Button>
+                <Button onClick={() => setFilter('Weekly')}>1 week</Button>
+                <Button onClick={() => setFilter('Quarterly')}>3 Months</Button>
+                <Button onClick={() => setFilter('Biannual')}>6 Months</Button>
+                <Button onClick={() => setFilter('Annual')}>1 Year</Button>
+                {/* <Button onClick={() => setFilter('All')}>All</Button> */}
               </ButtonGroup>
             </Grid>
           </Grid>
@@ -74,7 +148,8 @@ const StockModal = props => {
 StockModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  ticker: PropTypes.string.isRequired,
 };
 
 export default StockModal;

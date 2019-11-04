@@ -7,7 +7,7 @@ export const apiReducer = (state, action) => {
         [api]: {
           isLoading: true,
           isError: false,
-          data: null,
+          data: undefined,
         },
       };
     }

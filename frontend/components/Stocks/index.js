@@ -89,7 +89,8 @@ const StockItem = props => {
       <StockModal
         open={open}
         handleClose={handleClose}
-        title={`${name} (${ticker})`}
+        name={name}
+        ticker={ticker}
       />
     </>
   );
