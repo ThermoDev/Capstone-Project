@@ -113,13 +113,14 @@ class PortfolioRepository(BaseRepository):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
             portfolio_query = self.build_replace_query(table=PortfoliosTable.TABLE_NAME,
-                                                      columns=(
+                                                       columns=(
+                                                          PortfoliosTable.Columns.ID,
                                                           PortfoliosTable.Columns.HOLDER,
                                                           PortfoliosTable.Columns.NAME,
                                                           PortfoliosTable.Columns.CASH
-                                                      ),
-                                                      identifiers=(PortfoliosTable.Columns.ID))
-            cursor.execute(portfolio_query, (*self._unpack_portfolio(portfolio), portfolio.portfolio_id))
+                                                        ))
+            cursor.execute(portfolio_query,
+                           (portfolio.portfolio_id, *self._unpack_portfolio(portfolio)))
 
             for stock_transaction in portfolio.stock_transactions:
                 if not stock_transaction.transaction_id:
