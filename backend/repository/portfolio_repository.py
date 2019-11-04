@@ -105,7 +105,7 @@ class PortfolioRepository(BaseRepository):
                                                 PortfoliosTable.Columns.NAME,
                                                 PortfoliosTable.Columns.CASH
                                             ))
-            cursor.execute(query, self._unpack_portfolio(portfolio))
+            cursor.execute(query, _unpack_portfolio(portfolio))
             connection.commit()
             portfolio.update_with_generated_id(cursor.lastrowid)
 
@@ -120,7 +120,7 @@ class PortfolioRepository(BaseRepository):
                                                           PortfoliosTable.Columns.CASH
                                                         ))
             cursor.execute(portfolio_query,
-                           (portfolio.portfolio_id, *self._unpack_portfolio(portfolio)))
+                           (portfolio.portfolio_id, *_unpack_portfolio(portfolio)))
 
             for stock_transaction in portfolio.stock_transactions:
                 if not stock_transaction.transaction_id:
@@ -132,18 +132,18 @@ class PortfolioRepository(BaseRepository):
                                                                     TransactionsTable.Columns.VOLUME,
                                                                     TransactionsTable.Columns.TRANSACTION_TIME
                                                                 ))
-                    cursor.execute(transaction_query, self._unpack_transaction(stock_transaction))
+                    cursor.execute(transaction_query, _unpack_transaction(stock_transaction))
                     connection.commit()
                     stock_transaction.update_with_generated_id(cursor.lastrowid)
 
-    @staticmethod
-    def _unpack_portfolio(portfolio: Portfolio) -> tuple:
-        return portfolio.holder, portfolio.name, portfolio.cash
 
-    @staticmethod
-    def _unpack_transaction(transaction: StockTransaction) -> tuple:
-        return (transaction.portfolio_id,
-                transaction.company_code,
-                transaction.price,
-                transaction.volume,
-                transaction.transaction_time)
+def _unpack_portfolio(portfolio: Portfolio) -> tuple:
+    return portfolio.holder, portfolio.name, portfolio.cash
+
+
+def _unpack_transaction(transaction: StockTransaction) -> tuple:
+    return (transaction.portfolio_id,
+            transaction.company_code,
+            transaction.price,
+            transaction.volume,
+            transaction.transaction_time)
