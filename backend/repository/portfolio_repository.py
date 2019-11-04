@@ -118,7 +118,7 @@ class PortfolioRepository(BaseRepository):
                                                           PortfoliosTable.Columns.NAME,
                                                           PortfoliosTable.Columns.CASH
                                                       ),
-                                                      identifiers=(PortfoliosTable.Columns.ID, ))
+                                                      identifiers=(PortfoliosTable.Columns.ID))
             cursor.execute(portfolio_query, (*self._unpack_portfolio(portfolio), portfolio.portfolio_id))
 
             for stock_transaction in portfolio.stock_transactions:
