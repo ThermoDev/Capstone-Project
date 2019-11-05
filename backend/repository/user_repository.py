@@ -1,3 +1,5 @@
+from typing import List
+
 from backend.models.user import User
 from exception.user.user_not_found_error import UserNotFoundError
 import os
@@ -33,6 +35,20 @@ class UserRepository(BaseRepository):
                 raise UserNotFoundError(user_id)
 
             return User(*result)
+
+    def get_users_list(self, usernames: List[str]) -> List[User]:
+        users = []
+
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_list_query(table=UsersTable.TABLE_NAME,
+                                                     identifier=UsersTable.Columns.USERNAME,
+                                                     num=len(usernames))
+            output = cursor.execute(query, tuple(usernames))
+            for row in output:
+                users.append(User(*row))
+
+        return users
 
     def has_user(self, user_id: str) -> bool:
         with sqlite3.connect(self._db_path) as connection:
