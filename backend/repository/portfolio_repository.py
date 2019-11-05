@@ -4,7 +4,7 @@ from typing import List
 from exception.portfolio.portfolio_not_found_error import PortfolioNotFoundError
 from models.portfolio import Portfolio
 from models.stock_transaction import StockTransaction
-from repository.base_respository import BaseRepository
+from repository.base_repository import BaseRepository
 
 
 class PortfoliosTable:

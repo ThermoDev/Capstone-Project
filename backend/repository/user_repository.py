@@ -4,7 +4,7 @@ import os
 
 import sqlite3
 
-from repository.base_respository import BaseRepository
+from repository.base_repository import BaseRepository
 
 
 class UsersTable:
