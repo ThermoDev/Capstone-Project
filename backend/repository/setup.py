@@ -7,8 +7,8 @@ def init_db():
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
                     username varchar(50) PRIMARY KEY not null,
-                    lastName text, 
                     firstName text,
+                    lastName text, 
                     email text,
                     password varchar(200))
                 ''')
