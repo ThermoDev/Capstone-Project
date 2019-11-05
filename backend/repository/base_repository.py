@@ -9,6 +9,14 @@ class BaseRepository:
 
         return query_string
 
+    def build_select_all_list_query(self, table: str, identifier: str, num: int) -> str:
+        query_string = f'SELECT * from {table}\n'
+
+        list_clause = ', '.join(['?' for _ in range(num)])
+        query_string += f'WHERE {identifier} IN ({list_clause})'
+
+        return query_string
+
     def build_insert_query(self, table: str, columns: Iterable[str]) -> str:
         columns_string = ''
         values_string = ''
