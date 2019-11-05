@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import dateutil
 from exception.game.game_not_found_error import GameNotFoundError
 from exception.game.user_not_member_of_game_error import UserNotMemberOfGameError
 from flask import (
@@ -36,6 +37,25 @@ def games():
         response.append(_serialise_and_obscure_game(game, user_id))
 
     return jsonify(response), 200
+
+
+@bp.route('create', methods=['POST'])
+@login_required
+def create():
+    user_id = current_user.get_id()
+
+    name = request.json.get('name')
+    start_date = dateutil.parser.parse(request.json.get('start_date'))
+    end_date = dateutil.parser.parse(request.json.get('end_date'))
+    usernames = request.json.get('usernames')
+    initial_cash = request.json.get('cash')
+
+    if user_id not in usernames:
+        usernames.append(user_id)
+
+    game = game_manager.create_game(name, start_date, end_date, usernames, initial_cash)
+
+    return jsonify(_serialise_and_obscure_game(game, user_id)), 201
 
 
 def _serialise_and_obscure_game(game: Game, user_id: str) -> dict:

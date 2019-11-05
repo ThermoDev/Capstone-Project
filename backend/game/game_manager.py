@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from exception.game.user_not_member_of_game_error import UserNotMemberOfGameError
@@ -21,5 +22,20 @@ class GameManager:
         game = self._game_repository.get_game_by_id(game_id)
         if user_id not in [user.user_id for user in game.users]:
             raise UserNotMemberOfGameError(user_id, game_id)
+
+        return game
+
+    def create_game(self, name: str, start_date: datetime, end_date: datetime, usernames: List[str], initial_cash: int):
+        users = self._user_manager.get_users_list(usernames)
+
+        portfolios = []
+        for user in users:
+            portfolio = self._portfolio_manager.create_portfolio_for_user(user.user_id,
+                                                                          f'{name} (Game)',
+                                                                          initial_cash)
+            portfolios.append(portfolio)
+
+        game = Game(None, name, start_date, end_date, users, portfolios)
+        self._game_repository.add_game(game)
 
         return game

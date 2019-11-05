@@ -98,3 +98,38 @@ class GameRepository(BaseRepository):
                 portfolio_ids.append(row[1])
 
         return self._portfolio_repository.get_portfolios_list(portfolio_ids)
+
+    def add_game(self, game: Game):
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+
+            game_query = self.build_insert_query(table=GamesTable.TABLE_NAME,
+                                                 columns=(
+                                                     GamesTable.Columns.NAME,
+                                                     GamesTable.Columns.START_DATE,
+                                                     GamesTable.Columns.END_DATE
+                                                 ))
+            cursor.execute(game_query, _unpack_game(game))
+            game.update_with_generated_id(cursor.lastrowid)
+
+            for user in game.users:
+                user_query = self.build_insert_query(table=MembershipsTable.TABLE_NAME,
+                                                     columns=(
+                                                         MembershipsTable.Columns.GAME_ID,
+                                                         MembershipsTable.Columns.USERNAME
+                                                     ))
+                cursor.execute(user_query, (game.game_id, user.user_id))
+
+            connection.commit()
+
+            for portfolio in game.portfolios:
+                portfolio_query = self.build_insert_query(table=PortfoliosTable.TABLE_NAME,
+                                                          columns=(
+                                                              PortfoliosTable.Columns.GAME_ID,
+                                                              PortfoliosTable.Columns.PORTFOLIO_ID
+                                                          ))
+                cursor.execute(portfolio_query, (game.game_id, portfolio.portfolio_id))
+
+
+def _unpack_game(game: Game):
+    return game.name, game.start_date, game.end_date
