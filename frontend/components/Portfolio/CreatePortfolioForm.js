@@ -17,6 +17,7 @@ const StyledTitle = styled(DialogTitle)`
 export default function CreatePortfolioForm() {
   const [state, setState] = React.useState({ open: false, name: '', cash: 0 });
   const { createPortfolio } = useApi();
+  
 
   const handleClickOpen = () => {
     setState({ ...state, open: true });
@@ -38,7 +39,7 @@ export default function CreatePortfolioForm() {
     const { name } = state;
     const { cash } = state;
 
-    createPortfolio(name, cash);
+    createPortfolio(name, 'ab');
     setState({ ...state, open: false });
   };
 

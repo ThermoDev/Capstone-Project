@@ -130,7 +130,8 @@ const useApi = () => {
       name: portfolioName,
       cash: startingCash,
     })
-      .catch(err =>
+      .catch(err => {
+        console.log(err)
         err.response.text().then(body => {
           dispatch({
             type: 'error',
@@ -138,11 +139,33 @@ const useApi = () => {
             error: body,
           });
         })
-      )
+      })
       .finally(() => {
         dispatch({ type: 'FETCH_COMPLETE', api: 'createPortfolio' });
       });
     // Update portfolios seen by app
+    getPortfolios();
+  };
+
+  const postProcessTransaction = (portfolioId, transactionObject) => {
+    dispatch({ type: 'FETCH_INIT', api: 'processTransaction' });
+    dataFetcher('portfolios/process-transaction', {
+      portfolio_id: portfolioId,
+      transaction: transactionObject,
+    })
+      .catch(err =>{
+        console.log(err)
+        err.response.text().then(body => {
+          dispatch({
+            type: 'error',
+            errorType: 'processTransaction',
+            error: body,
+          });
+        })
+      })
+      .finally(() => {
+        dispatch({ type: 'FETCH_COMPLETE', api: 'processTransaction' });
+      });
     getPortfolios();
   };
 
@@ -153,6 +176,7 @@ const useApi = () => {
     getPortfolios,
     getYearlyStockHistory,
     createPortfolio,
+    postProcessTransaction
   };
 };
 
