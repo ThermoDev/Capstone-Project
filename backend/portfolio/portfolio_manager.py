@@ -64,11 +64,11 @@ class PortfolioManager:
         return portfolio
 
     def _validate_transaction(self, user_id: str, transaction: StockTransaction):
+        if transaction.price == stockhelper.get_cur_close_price(transaction.company_code):
+            raise InvalidTransactionPriceError(transaction.company_code, transaction.price)
+
         game_id = self._portfolio_repository.get_game_id_for_portfolio_id(transaction.portfolio_id)
         if game_id:
             game = self._game_manager.get_game_for_user_by_id(user_id, game_id)
             if datetime.now() > game.end_date:
                 raise GameEndedTransactionError(game.name)
-
-            if transaction.price == stockhelper.get_cur_close_price(transaction.company_code):
-                raise InvalidTransactionPriceError(transaction.company_code, transaction.price)
