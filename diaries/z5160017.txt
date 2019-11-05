@@ -22,3 +22,7 @@ During our lab, we discussed our program's data model and what exact data needs 
 Week 6
 
 Allocated next set of tasks in our lab. As a group we discussed key portfolio performance measures that should be displayed to help users make informed trading decisions. We finalised them as stock return, stock value, stock weightings, portfolio value, portfolio return. My task was to code up the calculations and make updates to the portfolio when transactions are added. 
+
+Week 7 
+
+Wrote up pytests for user repository and portfolio repository which will test the functionalities of the database. Other than that my, tasks for the backend are pretty much done. My next task was to set up the final report and detail what needs to be written in the report.   
