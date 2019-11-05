@@ -118,6 +118,13 @@ def get_all_symbols():
     return jsonify(list_data)
 
 
+@bp.route('/search/', methods=['GET'])
+def search_all():
+    data = stkh.search_stocks_list("")
+    list_data = stkh.df_to_dict(data, orient="records")
+    return jsonify(list_data)
+
+
 @bp.route('/search/<search_term>', methods=['GET'])
 def search_string(search_term: str):
     data = stkh.search_stocks_list(search_term)
