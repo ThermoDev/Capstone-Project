@@ -40,16 +40,10 @@ class PortfolioRepository(BaseRepository):
             cursor = connection.cursor()
             query = self.build_select_all_query(table=PortfoliosTable.TABLE_NAME,
                                                 identifiers=(PortfoliosTable.Columns.HOLDER, ))
-            portfolios_output = cursor.execute(query, (user_id, ))
+            output = cursor.execute(query, (user_id, ))
 
-            for portfolio_row in portfolios_output:
-                portfolio_id = portfolio_row[0]
-                holder = portfolio_row[1]
-                name = portfolio_row[2]
-                cash = portfolio_row[3]
-                stock_transactions = self._build_stock_transactions_for_portfolio(portfolio_id)
-
-                portfolios.append(Portfolio(portfolio_id, holder, name, cash, stock_transactions))
+            for row in output:
+                portfolios.append(self._build_portfolio_from_cursor_output(row))
 
         return portfolios
 
@@ -63,12 +57,30 @@ class PortfolioRepository(BaseRepository):
             if not result:
                 raise PortfolioNotFoundError(portfolio_id)
 
-            user_id = result[1]
-            name = result[2]
-            cash = result[3]
-            stock_transactions = self._build_stock_transactions_for_portfolio(portfolio_id)
+            return self._build_portfolio_from_cursor_output(result)
 
-        return Portfolio(portfolio_id, user_id, name, cash, stock_transactions)
+    def get_portfolios_list(self, portfolio_ids: List[str]) -> List[Portfolio]:
+        portfolios = []
+
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_list_query(table=PortfoliosTable.TABLE_NAME,
+                                                     identifier=PortfoliosTable.Columns.ID,
+                                                     num=len(portfolio_ids))
+            output = cursor.execute(query, tuple(portfolio_ids))
+            for row in output:
+                portfolios.append(self._build_portfolio_from_cursor_output(row))
+
+        return portfolios
+
+    def _build_portfolio_from_cursor_output(self, output_row) -> Portfolio:
+        portfolio_id = output_row[0]
+        holder = output_row[1]
+        name = output_row[2]
+        cash = output_row[3]
+        stock_transactions = self._build_stock_transactions_for_portfolio(portfolio_id)
+
+        return Portfolio(portfolio_id, holder, name, cash, stock_transactions)
 
     def _build_stock_transactions_for_portfolio(self, portfolio_id) -> List[StockTransaction]:
         stock_transactions = []
