@@ -46,3 +46,13 @@ class Game:
     @property
     def portfolios(self) -> List[Portfolio]:
         return self._portfolios
+
+    @property
+    def leaderboard(self) -> List[tuple]:
+        leaderboard = []
+        for portfolio in self.portfolios:
+            leaderboard.append((portfolio.holder, portfolio.portfolio_value))
+
+        leaderboard.sort(key=lambda tup: tup[1], reverse=True)
+
+        return leaderboard
