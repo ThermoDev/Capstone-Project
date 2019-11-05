@@ -54,7 +54,6 @@ export default function CreatePortfolioForm(props) {
   const { state, postProcessTransaction } = useApi();
   const { processTransaction } = state;
   const processError = get(processTransaction, 'isError', true);
-  console.log(processError)
 
   const handleChange = event => {
     setValue(event.target.value);
@@ -75,10 +74,8 @@ export default function CreatePortfolioForm(props) {
       volume: 2,
       price: 10
     });
-    console.log("submitted"+ processError)
   }
 
-  console.log(portfolioName)
   return (
     <div>
       <StyledButton

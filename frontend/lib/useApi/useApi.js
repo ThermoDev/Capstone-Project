@@ -131,7 +131,6 @@ const useApi = () => {
       cash: startingCash,
     })
       .catch(err => {
-        console.log(err)
         err.response.text().then(body => {
           dispatch({
             type: 'error',
@@ -154,7 +153,6 @@ const useApi = () => {
       transaction: transactionObject,
     })
       .catch(err =>{
-        console.log(err)
         err.response.text().then(body => {
           dispatch({
             type: 'error',

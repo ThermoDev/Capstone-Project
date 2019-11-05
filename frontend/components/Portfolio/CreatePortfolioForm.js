@@ -39,7 +39,7 @@ export default function CreatePortfolioForm() {
     const { name } = state;
     const { cash } = state;
 
-    createPortfolio(name, 'ab');
+    createPortfolio(name, cash);
     setState({ ...state, open: false });
   };
 
