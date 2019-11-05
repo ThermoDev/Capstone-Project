@@ -80,10 +80,10 @@ def process_transaction():
     except PortfolioNotFoundError as e:
         return Response(response=e.message, status=404)
     except InvalidTransactionPriceError as e:
-        return Response(response=e.message, status=422)
+        return Response(response=e.message, status=400)
     except InsufficientCashError as e:
-        return Response(response=e.message, status=409)
+        return Response(response=e.message, status=400)
     except GameEndedTransactionError as e:
-        return Response(response=e.message, status=409)
+        return Response(response=e.message, status=400)
 
     return jsonify(serialise_properties(portfolio)), 201
