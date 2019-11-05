@@ -35,6 +35,24 @@ def init_db():
                     transactionTime datetime)
                 ''')
 
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Games (
+                    gameID integer PRIMARY KEY autoincrement,
+                    name text,
+                    startDate datetime,
+                    endDate datetime)
+                ''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS GameMemberships(
+                    gameID integer references Games(gameID),
+                    username varchar(50) references Users(username),
+                    PRIMARY KEY (gameID, username))
+                ''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS GamePortfolios(
+                    gameID integer references Games(gameID),
+                    portfolioID integer references Portfolios(portfolioID),
+                    PRIMARY KEY (gameID, portfolioID))
+                ''')
 
     # for testing wll be deleted later
     #cursor.execute("INSERT INTO Users VALUES ('bobcarl', 'carl', 'bob', 'bobcarl@gmail.com', 'qwert')")
