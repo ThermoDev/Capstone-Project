@@ -36,6 +36,7 @@ class Portfolio:
         self._portfolio_id = portfolio_id
         self._holder = holder
         self._name = name
+        self._initial_cash = cash
         self._cash = cash
         self._stock_transactions = stock_transactions
 
@@ -72,15 +73,15 @@ class Portfolio:
 
     @property
     def portfolio_value(self) -> float:
-        return sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
+        return  self.cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
 
     @property
     def portfolio_return(self) -> float:
-        return sum(stock_holding.return_value for stock_holding in self.stock_holdings.values())
+        return self.portfolio_value - self._initial_cash
 
     @property
     def percentage_growth(self) -> float:
-        return self.portfolio_return / self.amount_invested
+        return self.portfolio_return / self._initial_cash
 
     @property
     def stock_weightings(self) -> dict:
