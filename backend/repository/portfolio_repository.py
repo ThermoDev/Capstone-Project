@@ -1,7 +1,8 @@
 import sqlite3
-from typing import List
+from typing import List, Optional
 
 from exception.portfolio.portfolio_not_found_error import PortfolioNotFoundError
+from models.game import Game
 from models.portfolio import Portfolio
 from models.stock_transaction import StockTransaction
 from repository.base_repository import BaseRepository
@@ -27,6 +28,14 @@ class TransactionsTable:
         PRICE = 'price'
         VOLUME = 'volume'
         TRANSACTION_TIME = 'transactionTime'
+
+
+class GameMemberships:
+    TABLE_NAME = 'GamePortfolios'
+
+    class Columns:
+        GAME_ID = 'gameID'
+        PORTFOLIO_ID = 'portfolioID'
 
 
 class PortfolioRepository(BaseRepository):
@@ -147,6 +156,18 @@ class PortfolioRepository(BaseRepository):
                     cursor.execute(transaction_query, _unpack_transaction(stock_transaction))
                     connection.commit()
                     stock_transaction.update_with_generated_id(cursor.lastrowid)
+
+    def get_game_id_for_portfolio_id(self, portfolio_id: int) -> Optional[int]:
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_query(table=GameMemberships.TABLE_NAME,
+                                                identifiers=(GameMemberships.Columns.PORTFOLIO_ID, ))
+            cursor.execute(query, (portfolio_id, ))
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                return None
 
 
 def _unpack_portfolio(portfolio: Portfolio) -> tuple:
