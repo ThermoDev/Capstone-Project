@@ -20,3 +20,27 @@ WEEK 3
 WEEK 4
 - Group meeting: discussed the tasks that were set for this weeks sprint
 - I created the data pipeline module that contains relevant function definitions for retrieving stock data.
+
+Week 5
+- Created API endpoints for stock data retrieval.
+- Retrieved all stock symbols, and implemented a search function.
+- Implemented some error handling on Flask
+- Added relevant code documentation
+- Added Stock Data API documentation
+- Created API Endpoints for news data retrieval and search 
+- Code clean up
+
+Week 6
+- Retrieved the industry information for stocks, and merged them to current stock data
+- Added function to retrieve a given number of random stocks, along with their pertinent information
+- Added ability to retrieve only the current stock market price for a given stock symbol
+- Added relevant endpoints
+
+Week 7
+- Created tests using PyTest to ensure data pipeline functions works as intended
+- Added some code docs
+- Started work on the report to highlight the APIs being used
+
+
+
+

@@ -93,6 +93,10 @@ export const useAuth = () => {
   const isAuthenticated = () =>
     !!(state.expiresAt && new Date().getTime() < state.expiresAt);
 
+  const resetErrors = () => {
+    dispatch({ type: 'resetErrors' });
+  };
+
   return {
     isLoading: state.isAuthenticating, // boolean
     isAuthenticated, // function -> boolean
@@ -100,6 +104,7 @@ export const useAuth = () => {
     login, // function
     logout, // function
     register, // function
+    resetErrors,
     error: state.error
       ? { message: state.error, errorType: state.errorType }
       : null,

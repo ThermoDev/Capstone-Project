@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled, { createGlobalStyle } from 'styled-components';
-import Router from 'next/router';
+import Router, { withRouter } from 'next/router';
 import NProgress from 'nprogress';
 import Meta from './Meta';
 import Header from './Header';
@@ -41,11 +41,14 @@ const UnauthenticatedGlobalStyle = createGlobalStyle`
   }
 `;
 
-// TODO: if on pages which require authentication but user does not have authenticaton
-// TODO: send to home page
 const Layout = props => {
-  const { children } = props;
-  const { isAuthenticated } = useAuth();
+  const { children, router } = props;
+  const { pathname } = router;
+  const { isAuthenticated, resetErrors } = useAuth();
+
+  useEffect(() => {
+    resetErrors();
+  }, [pathname]);
 
   return (
     <ThemeProvider>
@@ -70,6 +73,7 @@ const Layout = props => {
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
+  router: PropTypes.object.isRequired,
 };
 
-export default Layout;
+export default withRouter(Layout);

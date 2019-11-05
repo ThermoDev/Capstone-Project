@@ -7,8 +7,8 @@ def main():
     stock = stkh.get_data("NFLX", "yahoo")
 
     # Retrieves a list of stocks
-    stocks_0 = stkh.get_all_data(["AAPL", "MSFT"], "yahoo")
-    stocks_1 = stkh.get_all_data(["NDAQ", "ABF"], "yahoo")
+    stocks_0 = stkh.get_list_data(["AAPL", "MSFT"], "yahoo")
+    stocks_1 = stkh.get_list_data(["NDAQ", "ABF"], "yahoo")
 
     # Concatenates lists of lists of stocks of type pd.DataFrame and puts them together into a list of DataFrames
     concatenated_all = stkh.concatenate_all([stocks_0, stocks_1])

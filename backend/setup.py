@@ -16,7 +16,8 @@ setup(
         'pandas',
         'matplotlib',
         'pandas-datareader',
-        'yfinance',
-        'flask-cors'
+        'yfinance==0.1.45',
+        'flask-cors',
+        'feedparser'
     ],
 )
