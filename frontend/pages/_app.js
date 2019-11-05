@@ -1,6 +1,7 @@
 import App from 'next/app';
 import Layout from '../components/Layout';
 import { AuthProvider } from '../lib/useAuth';
+import { ApiProvider } from '../lib/useApi';
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -19,9 +20,11 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <AuthProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <ApiProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ApiProvider>
       </AuthProvider>
     );
   }
