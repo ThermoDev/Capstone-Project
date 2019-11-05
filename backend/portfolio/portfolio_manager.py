@@ -1,9 +1,9 @@
+import re
 from datetime import datetime
 
 from data_pipeline import stockhelper
 from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
-from exception.portfolio.portfolio_already_exists_error import PortfolioAlreadyExistsError
 from models.portfolio import Portfolio
 from models.stock_transaction import StockTransaction
 from repository.portfolio_repository import PortfolioRepository
@@ -25,7 +25,13 @@ class PortfolioManager:
 
     def create_portfolio_for_user(self, user_id: str, name: str, cash: int = 0) -> Portfolio:
         if self._portfolio_repository.has_portfolio_by_user_and_name(user_id, name):
-            raise PortfolioAlreadyExistsError(user_id, name)
+            match = re.search(r'(.*\()([0-9]+)\)', name)
+            if match:
+                new_name = f'{match.group(1)}{int(match.group(2)) + 1})'
+            else:
+                new_name = f'{name} (2)'
+
+            return self.create_portfolio_for_user(user_id, new_name, cash)
 
         portfolio = Portfolio(None, user_id, name, cash, [])
         self._portfolio_repository.add_portfolio(portfolio)
