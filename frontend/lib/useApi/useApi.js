@@ -1,10 +1,8 @@
-import { useReducer } from 'react';
+import { useContext } from 'react';
 import fetch from 'isomorphic-unfetch';
 import moment from 'moment';
+import { ApiContext } from './ApiProvider';
 import { endpoint } from '../../config';
-import { apiReducer } from './apiReducer';
-
-const DEFAULT_STATE = {};
 
 const dataFetcher = (url, payload = null) => {
   const checkStatus = response => {
@@ -32,7 +30,7 @@ const dataFetcher = (url, payload = null) => {
 };
 
 const useApi = () => {
-  const [state, dispatch] = useReducer(apiReducer, DEFAULT_STATE);
+  const { state, dispatch } = useContext(ApiContext);
 
   const getRandomNews = () => {
     dispatch({ type: 'FETCH_INIT', api: 'news' });

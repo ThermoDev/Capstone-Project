@@ -50,12 +50,12 @@ const Dashboard = () => {
   const newsData = get(news, 'data.articles', []);
 
   useEffect(() => {
-    getPortfolios();
-    getRandomNews();
-    getRandomStocks();
+    if (isAuthenticated()) {
+      getPortfolios();
+      getRandomNews();
+      getRandomStocks();
+    }
   }, []);
-
-  useEffect(() => {}, [portfoliosData]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -139,16 +139,18 @@ const Dashboard = () => {
                       </Card>
                     </Grid>
                   )) ||
-                    stocksData.map(item => (
-                      <Grid item xs={12} key={item.index}>
-                        <StockItem
-                          name={item.Name}
-                          ticker={item.Ticker}
-                          price={item.Price}
-                          percentageChange={item['PCT Change']}
-                        />
-                      </Grid>
-                    ))}
+                    stocksData.map(item =>
+                      item.Price ? (
+                        <Grid item xs={12} key={item.index}>
+                          <StockItem
+                            name={item.Name}
+                            ticker={item.Ticker}
+                            price={item.Price}
+                            percentageChange={item['PCT Change']}
+                          />
+                        </Grid>
+                      ) : null
+                    )}
                   {/* <Grid item xs={12}>
                     <StockItem
                       key={1}
