@@ -7,13 +7,11 @@ from datetime import datetime
 def test_get_data():
     result = stockhelper.get_data(symbol='MSFT')
     assert len(result) > 0
-    assert type(result) == pandas.DataFrame
 
 
 def test_get_non_existing_data():
     result = stockhelper.get_data(symbol='Failure Case')
     assert len(result) == 0
-    assert type(result) == pandas.DataFrame
 
 
 def test_get_list_data():
@@ -35,7 +33,7 @@ def test_concatenate_all():
     assert type(concatenated) == pandas.DataFrame
 
 
-def test_current_stock_infos():
+def test_function_calls():
     # Test functions that calls get_data
     pct_change = stockhelper.get_pct_change("AAPL", "yahoo")  # Retrieves percent change
     assert pct_change is not None
@@ -63,7 +61,6 @@ def test_search():
 
 
 def test_fail_search():
-    # Would be highly unlikely that a stock will contain information "Test should fail'
     result = stockhelper.search_stocks_list("TEST SHOULD FAIL")
     assert len(result) == 0
     assert type(result) == pandas.DataFrame
@@ -130,14 +127,15 @@ def test_fail_date_validation():
     assert type(results) == bool
 
 
-def test_get_all():
-    results = stockhelper.get_all_stock_data()
-    assert len(results) > 0
-    assert type(results) == pandas.DataFrame
-
-
 def test_random():
     number = 10
     results = stockhelper.get_random(number)
     assert len(results) == number
     assert type(results) == pandas.DataFrame
+
+
+def test_get_stocks_infos():
+    tickers = ["aApL", "MsFt"]
+    results = stockhelper.get_stocks_infos(tickers)
+    assert results is not None
+    assert len(results) == len(tickers) # Will be asserted successfully if tickers are known to exist
