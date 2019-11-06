@@ -9,6 +9,14 @@ class BaseRepository:
 
         return query_string
 
+    def build_select_all_list_query(self, table: str, identifier: str, num: int) -> str:
+        query_string = f'SELECT * from {table}\n'
+
+        list_clause = ', '.join(['?' for _ in range(num)])
+        query_string += f'WHERE {identifier} IN ({list_clause})'
+
+        return query_string
+
     def build_insert_query(self, table: str, columns: Iterable[str]) -> str:
         columns_string = ''
         values_string = ''
@@ -25,18 +33,19 @@ class BaseRepository:
 
         return query_string
 
-    def build_update_query(self, table: str,
-                           columns: Iterable[str],
-                           identifiers: Optional[Iterable[str]] = None) -> str:
-        query_string = f'UPDATE {table}\n'
+    def build_replace_query(self, table: str, columns: Iterable[str]) -> str:
+        columns_string = ''
+        values_string = ''
         for index, column in enumerate(columns):
             if index == 0:
-                query_string += f'SET {column}=?'
+                columns_string += f'{column}'
+                values_string += '?'
             else:
-                query_string += f', {column}=?'
+                columns_string += f', {column}'
+                values_string += ', ?'
 
-        if identifiers:
-            query_string += '\n' + self._build_identifiers_clause(identifiers)
+        query_string = (f'REPLACE into {table} ({columns_string})\n'
+                        f'VALUES ({values_string})')
 
         return query_string
 

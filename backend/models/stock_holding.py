@@ -28,7 +28,14 @@ class StockHolding:
     def return_value(self):
         return self.market_value - self.amount_invested
 
+    @property
+    def percentage_growth(self):
+        return self.return_value / self.amount_invested
 
     def add_transaction(self, transaction: StockTransaction):
+        if transaction.volume < 0:
+            self._amount_invested = self._amount_invested * (transaction.volume / self.volume)
+        else:
+            self._amount_invested = self._amount_invested + (transaction.price * transaction.volume)
+
         self._volume = self._volume + transaction.volume
-        self._amount_invested = self._amount_invested + (transaction.price * transaction.volume)
