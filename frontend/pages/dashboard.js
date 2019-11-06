@@ -15,6 +15,7 @@ import { useAuth } from '../lib/useAuth';
 import useApi from '../lib/useApi';
 import StockItem from '../components/Stocks';
 import NewsItem from '../components/Newsfeed';
+import SearchBar from '../components/SearchBar';
 
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
 
@@ -36,7 +37,13 @@ const StyledTypography = styled(Typography)`
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
   const { user, isAuthenticated } = useAuth();
-  const { state, getPortfolios, getRandomNews, getRandomStocks } = useApi();
+  const {
+    state,
+    getPortfolios,
+    getRandomNews,
+    getRandomStocks,
+    searchStocks,
+  } = useApi();
   const { portfolios, news, randomStocks } = state;
 
   // loading variables
@@ -54,6 +61,7 @@ const Dashboard = () => {
       getPortfolios();
       getRandomNews();
       getRandomStocks();
+      searchStocks();
     }
   }, []);
 
@@ -122,6 +130,7 @@ const Dashboard = () => {
                   Stocks
                 </StyledTypography>
                 <Grid container spacing={1}>
+                  <SearchBar />
                   {(stocksLoading && (
                     <Grid item xs={12} align="middle">
                       <Card

@@ -16,74 +16,74 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import TradeStockForm from './TradeStockForm';
 
-// const data = [
-//   {
-//     portfolio_id: 1,
-//     holder: 'janesmith',
-//     name: 'p1',
-//     cash: 8531.91,
-//     amount_invested: 1468.0900000000001,
-//     stock_transactions: [
-//       {
-//         transaction_id: 1,
-//         portfolio_id: 1,
-//         company_code: 'AAPL',
-//         price: 234.4,
-//         volume: 2,
-//         transaction_time: '2019-10-30T14:33:11.076849',
-//       },
-//       {
-//         transaction_id: 2,
-//         portfolio_id: 1,
-//         company_code: 'NFLX',
-//         price: 218.56,
-//         volume: 10,
-//         transaction_time: '2019-10-30T14:33:11.076866',
-//       },
-//       {
-//         transaction_id: 3,
-//         portfolio_id: 1,
-//         company_code: 'AAPL',
-//         price: 209.29,
-//         volume: 1,
-//         transaction_time: '2019-10-30T14:33:11.076869',
-//       },
-//       {
-//         transaction_id: 4,
-//         portfolio_id: 1,
-//         company_code: 'NFLX',
-//         price: 279.12,
-//         volume: -5,
-//         transaction_time: '2019-10-30T14:33:11.076909',
-//       },
-//     ],
-//     stock_holdings: {
-//       AAPL: {
-//         company_code: 'AAPL',
-//         volume: 3,
-//         amount_invested: 678.09,
-//         market_value: 729.8699798583984,
-//         return_value: 51.779979858398406,
-//         percentage_growth: 0.07636151522423042,
-//       },
-//       NFLX: {
-//         company_code: 'NFLX',
-//         volume: 5,
-//         amount_invested: 790.0,
-//         market_value: 1406.0499572753906,
-//         return_value: 616.0499572753906,
-//         percentage_growth: 0.7798100725004945,
-//       },
-//     },
-//     portfolio_value: 2135.919937133789,
-//     portfolio_return: 667.829937133789,
-//     percentage_growth: 0.4548971365064737,
-//     stock_weightings: {
-//       AAPL: 0.4618858516848422,
-//       NFLX: 0.5381141483151577,
-//     },
-//   },
-// ];
+const data = [
+  {
+    portfolio_id: 1,
+    holder: 'janesmith',
+    name: 'p1',
+    cash: 8531.91,
+    amount_invested: 1468.0900000000001,
+    stock_transactions: [
+      {
+        transaction_id: 1,
+        portfolio_id: 1,
+        company_code: 'AAPL',
+        price: 234.4,
+        volume: 2,
+        transaction_time: '2019-10-30T14:33:11.076849',
+      },
+      {
+        transaction_id: 2,
+        portfolio_id: 1,
+        company_code: 'NFLX',
+        price: 218.56,
+        volume: 10,
+        transaction_time: '2019-10-30T14:33:11.076866',
+      },
+      {
+        transaction_id: 3,
+        portfolio_id: 1,
+        company_code: 'AAPL',
+        price: 209.29,
+        volume: 1,
+        transaction_time: '2019-10-30T14:33:11.076869',
+      },
+      {
+        transaction_id: 4,
+        portfolio_id: 1,
+        company_code: 'NFLX',
+        price: 279.12,
+        volume: -5,
+        transaction_time: '2019-10-30T14:33:11.076909',
+      },
+    ],
+    stock_holdings: {
+      AAPL: {
+        company_code: 'AAPL',
+        volume: 3,
+        amount_invested: 678.09,
+        market_value: 729.8699798583984,
+        return_value: 51.779979858398406,
+        percentage_growth: 0.07636151522423042,
+      },
+      NFLX: {
+        company_code: 'NFLX',
+        volume: 5,
+        amount_invested: 790.0,
+        market_value: 1406.0499572753906,
+        return_value: 616.0499572753906,
+        percentage_growth: 0.7798100725004945,
+      },
+    },
+    portfolio_value: 2135.919937133789,
+    portfolio_return: 667.829937133789,
+    percentage_growth: 0.4548971365064737,
+    stock_value_weightings: {
+      AAPL: 0.4618858516848422,
+      NFLX: 0.5381141483151577,
+    },
+  },
+];
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -161,7 +161,7 @@ const mapLabelToColors = labels => {
 
 const PortfolioItem = props => {
   const [expanded, setExpanded] = useState(null);
-  const { data } = props;
+  // const { data } = props;
 
   const handleChange = val => {
     if (expanded === val) {
@@ -241,7 +241,7 @@ const PortfolioItem = props => {
                 />
               </StyledSubDiv>
             </StyledDiv>
-            {Object.keys(item.stock_holdings).map((key, index) => {
+            {Object.keys(item.stock_holdings).map(key => {
               const stock = item.stock_holdings[key];
               return (
                 <ColorBox key={stock.company_code}>
@@ -276,8 +276,8 @@ const PortfolioItem = props => {
   );
 };
 
-PortfolioItem.propTypes = {
-  data: PropTypes.array.isRequired,
-};
+// PortfolioItem.propTypes = {
+//   data: PropTypes.array.isRequired,
+// };
 
 export default memo(PortfolioItem);

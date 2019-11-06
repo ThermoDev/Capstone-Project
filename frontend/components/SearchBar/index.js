@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Paper, InputBase, CircularProgress } from '@material-ui/core';
+import { Paper, TextField, Grid, Typography } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import useApi from '../../lib/useApi';
+import get from 'lodash.get';
+import useSearch from '../../lib/useSearch';
 
 const InputContainer = styled(Paper)`
   padding: 2px 4px;
@@ -13,71 +13,54 @@ const InputContainer = styled(Paper)`
   border-radius: 2px;
 `;
 
-const StyledInputBase = styled(InputBase)`
+const StyledInput = styled(TextField)`
   margin-left: ${({ theme }) => theme.mui.spacing(1)};
   flex: 1;
 `;
 
 const SearchBar = props => {
   const { placeholder } = props;
-  const [value, setValue] = useState('');
-  const { searchStockApi } = useApi();
-  const { searchResults, searchStock } = searchStockApi();
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-  const loading = open && options.length === 0;
+  const { setInputText, state } = useSearch();
+  const { search } = state;
 
-  const handleInputChange = ({ target }) => setValue(target.value);
+  // loading variables
+  const searchLoading = get(search, 'isLoading', true);
 
-  useEffect(() => {
-    let active = false;
+  // data extraction
+  const searchData = get(search, 'data', []);
 
-    if (!loading) {
-      return undefined;
-    }
-
-    searchStock(value);
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  console.log(searchResults);
+  const handleInput = ({ target }) => setInputText(target.value);
 
   return (
     <Autocomplete
       style={{ width: '100%' }}
-      onChange={handleInputChange}
-      open={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
-      getOptionLabel={option => option.name}
-      options={options}
-      loading={loading}
+      options={searchData}
+      getOptionLabel={x => x.Ticker}
+      autoComplete
+      includeInputInList
+      freeSolo
+      disableOpenOnFocus
+      loading={searchLoading}
+      loadingText="Loading..."
       renderInput={params => (
         <InputContainer>
-          <StyledInputBase
+          <StyledInput
             {...params}
-            fullWidth
             placeholder={placeholder}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
-            }}
+            fullWidth
+            onInput={handleInput}
           />
         </InputContainer>
+      )}
+      renderOption={option => (
+        <Grid container alignItems="center">
+          <Grid item xs>
+            <Typography variant="h6">{option.Ticker}</Typography>
+            <Typography variant="body2" color="textSecondary">
+              {option.Name}
+            </Typography>
+          </Grid>
+        </Grid>
       )}
     />
   );
