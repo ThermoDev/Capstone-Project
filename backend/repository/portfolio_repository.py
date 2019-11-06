@@ -1,17 +1,18 @@
 import sqlite3
-from typing import List
+from typing import List, Optional
 
 from exception.portfolio.portfolio_not_found_error import PortfolioNotFoundError
+from models.game import Game
 from models.portfolio import Portfolio
 from models.stock_transaction import StockTransaction
-from repository.base_respository import BaseRepository
+from repository.base_repository import BaseRepository
 
 
 class PortfoliosTable:
     TABLE_NAME = 'Portfolios'
 
     class Columns:
-        ID = 'portfolioId'
+        ID = 'portfolioID'
         HOLDER = 'holder'
         NAME = 'name'
         CASH = 'cash'
@@ -22,11 +23,19 @@ class TransactionsTable:
 
     class Columns:
         ID = 'transactionID'
-        PORTFOLIO_ID = 'portfolioId'
+        PORTFOLIO_ID = 'portfolioID'
         COMPANY_CODE = 'companyCode'
         PRICE = 'price'
         VOLUME = 'volume'
         TRANSACTION_TIME = 'transactionTime'
+
+
+class GameMemberships:
+    TABLE_NAME = 'GamePortfolios'
+
+    class Columns:
+        GAME_ID = 'gameID'
+        PORTFOLIO_ID = 'portfolioID'
 
 
 class PortfolioRepository(BaseRepository):
@@ -40,16 +49,10 @@ class PortfolioRepository(BaseRepository):
             cursor = connection.cursor()
             query = self.build_select_all_query(table=PortfoliosTable.TABLE_NAME,
                                                 identifiers=(PortfoliosTable.Columns.HOLDER, ))
-            portfolios_output = cursor.execute(query, (user_id, ))
+            output = cursor.execute(query, (user_id, ))
 
-            for portfolio_row in portfolios_output:
-                portfolio_id = portfolio_row[0]
-                holder = portfolio_row[1]
-                name = portfolio_row[2]
-                cash = portfolio_row[3]
-                stock_transactions = self._build_stock_transactions_for_portfolio(portfolio_id)
-
-                portfolios.append(Portfolio(portfolio_id, holder, name, cash, stock_transactions))
+            for row in output:
+                portfolios.append(self._build_portfolio_from_cursor_output(row))
 
         return portfolios
 
@@ -63,12 +66,30 @@ class PortfolioRepository(BaseRepository):
             if not result:
                 raise PortfolioNotFoundError(portfolio_id)
 
-            user_id = result[1]
-            name = result[2]
-            cash = result[3]
-            stock_transactions = self._build_stock_transactions_for_portfolio(portfolio_id)
+            return self._build_portfolio_from_cursor_output(result)
 
-        return Portfolio(portfolio_id, user_id, name, cash, stock_transactions)
+    def get_portfolios_list(self, portfolio_ids: List[str]) -> List[Portfolio]:
+        portfolios = []
+
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_list_query(table=PortfoliosTable.TABLE_NAME,
+                                                     identifier=PortfoliosTable.Columns.ID,
+                                                     num=len(portfolio_ids))
+            output = cursor.execute(query, tuple(portfolio_ids))
+            for row in output:
+                portfolios.append(self._build_portfolio_from_cursor_output(row))
+
+        return portfolios
+
+    def _build_portfolio_from_cursor_output(self, output_row) -> Portfolio:
+        portfolio_id = output_row[0]
+        holder = output_row[1]
+        name = output_row[2]
+        cash = output_row[3]
+        stock_transactions = self._build_stock_transactions_for_portfolio(portfolio_id)
+
+        return Portfolio(portfolio_id, holder, name, cash, stock_transactions)
 
     def _build_stock_transactions_for_portfolio(self, portfolio_id) -> List[StockTransaction]:
         stock_transactions = []
@@ -105,21 +126,22 @@ class PortfolioRepository(BaseRepository):
                                                 PortfoliosTable.Columns.NAME,
                                                 PortfoliosTable.Columns.CASH
                                             ))
-            cursor.execute(query, self._unpack_portfolio(portfolio))
+            cursor.execute(query, _unpack_portfolio(portfolio))
             connection.commit()
             portfolio.update_with_generated_id(cursor.lastrowid)
 
     def update_portfolio(self, portfolio: Portfolio):
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
-            portfolio_query = self.build_update_query(table=PortfoliosTable.TABLE_NAME,
-                                                      columns=(
+            portfolio_query = self.build_replace_query(table=PortfoliosTable.TABLE_NAME,
+                                                       columns=(
+                                                          PortfoliosTable.Columns.ID,
                                                           PortfoliosTable.Columns.HOLDER,
                                                           PortfoliosTable.Columns.NAME,
                                                           PortfoliosTable.Columns.CASH
-                                                      ),
-                                                      identifiers=(PortfoliosTable.Columns.ID, ))
-            cursor.execute(portfolio_query, (*self._unpack_portfolio(portfolio), portfolio.portfolio_id))
+                                                        ))
+            cursor.execute(portfolio_query,
+                           (portfolio.portfolio_id, *_unpack_portfolio(portfolio)))
 
             for stock_transaction in portfolio.stock_transactions:
                 if not stock_transaction.transaction_id:
@@ -131,18 +153,30 @@ class PortfolioRepository(BaseRepository):
                                                                     TransactionsTable.Columns.VOLUME,
                                                                     TransactionsTable.Columns.TRANSACTION_TIME
                                                                 ))
-                    cursor.execute(transaction_query, self._unpack_transaction(stock_transaction))
+                    cursor.execute(transaction_query, _unpack_transaction(stock_transaction))
                     connection.commit()
                     stock_transaction.update_with_generated_id(cursor.lastrowid)
 
-    @staticmethod
-    def _unpack_portfolio(portfolio: Portfolio) -> tuple:
-        return portfolio.holder, portfolio.name, portfolio.cash
+    def get_game_id_for_portfolio_id(self, portfolio_id: int) -> Optional[int]:
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_query(table=GameMemberships.TABLE_NAME,
+                                                identifiers=(GameMemberships.Columns.PORTFOLIO_ID, ))
+            cursor.execute(query, (portfolio_id, ))
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                return None
 
-    @staticmethod
-    def _unpack_transaction(transaction: StockTransaction) -> tuple:
-        return (transaction.portfolio_id,
-                transaction.company_code,
-                transaction.price,
-                transaction.volume,
-                transaction.transaction_time)
+
+def _unpack_portfolio(portfolio: Portfolio) -> tuple:
+    return portfolio.holder, portfolio.name, portfolio.cash
+
+
+def _unpack_transaction(transaction: StockTransaction) -> tuple:
+    return (transaction.portfolio_id,
+            transaction.company_code,
+            transaction.price,
+            transaction.volume,
+            transaction.transaction_time)

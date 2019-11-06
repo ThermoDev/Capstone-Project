@@ -7,8 +7,8 @@ def init_db():
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Users (
                     username varchar(50) PRIMARY KEY not null,
-                    lastName text, 
                     firstName text,
+                    lastName text, 
                     email text,
                     password varchar(200))
                 ''')
@@ -21,20 +21,38 @@ def init_db():
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Portfolios (
                     portfolioID integer PRIMARY KEY autoincrement,
-                    holder varchar(50) references User(username),
+                    holder varchar(50) references Users(username),
                     name text,
                     cash float)
                 ''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS Transactions (
                     transactionID integer PRIMARY KEY autoincrement,
-                    portfolioID integer references Portfolio(portfolioID),
+                    portfolioID integer references Portfolios(portfolioID),
                     companyCode varchar(10),
                     price float,
                     volume integer,
                     transactionTime datetime)
                 ''')
 
+    cursor.execute('''CREATE TABLE IF NOT EXISTS Games (
+                    gameID integer PRIMARY KEY autoincrement,
+                    name text,
+                    startDate datetime,
+                    endDate datetime)
+                ''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS GameMemberships(
+                    gameID integer references Games(gameID),
+                    username varchar(50) references Users(username),
+                    PRIMARY KEY (gameID, username))
+                ''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS GamePortfolios(
+                    gameID integer references Games(gameID),
+                    portfolioID integer references Portfolios(portfolioID),
+                    PRIMARY KEY (gameID, portfolioID))
+                ''')
 
     # for testing wll be deleted later
     #cursor.execute("INSERT INTO Users VALUES ('bobcarl', 'carl', 'bob', 'bobcarl@gmail.com', 'qwert')")

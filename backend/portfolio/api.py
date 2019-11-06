@@ -1,4 +1,6 @@
+from exception.game.game_ended_transaction_error import GameEndedTransactionError
 from exception.portfolio.insufficient_cash_error import InsufficientCashError
+from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
 from exception.portfolio.portfolio_already_exists_error import PortfolioAlreadyExistsError
 from exception.portfolio.portfolio_not_found_error import PortfolioNotFoundError
@@ -64,14 +66,24 @@ def process_transaction():
     company_code = transaction_json['company_code']
     price = transaction_json['price']
     volume = transaction_json['volume']
+    transaction_time = transaction_json.setdefault('datetime', None)
 
     try:
-        portfolio = portfolio_manager.process_transaction(user_id, portfolio_id, company_code, price, volume)
+        portfolio = portfolio_manager.process_transaction(user_id,
+                                                          portfolio_id,
+                                                          company_code,
+                                                          price,
+                                                          volume,
+                                                          transaction_time)
     except PortfolioAccessDeniedError as e:
         return Response(response=e.message, status=403)
     except PortfolioNotFoundError as e:
         return Response(response=e.message, status=404)
+    except InvalidTransactionPriceError as e:
+        return Response(response=e.message, status=400)
     except InsufficientCashError as e:
-        return Response(response=e.message, status=409)
+        return Response(response=e.message, status=400)
+    except GameEndedTransactionError as e:
+        return Response(response=e.message, status=400)
 
     return jsonify(serialise_properties(portfolio)), 201

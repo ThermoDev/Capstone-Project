@@ -165,6 +165,31 @@ const useApi = () => {
     getPortfolios();
   };
 
+  const postCreateGame = (name, startDate, endDate, userNames, initialCash) => {
+    dispatch({ type: 'FETCH_INIT', api: 'createGame' });
+    dataFetcher('games/create', {
+      name: name,
+      start_date: startDate,
+      end_date: endDate,
+      usernames: userNames,
+      initial_cash: initialCash,
+    })
+      .catch(err => {
+        console.log(err)
+        err.response.text().then(body => {
+          dispatch({
+            type: 'error',
+            errorType: 'createGame',
+            error: body,
+          });
+        })
+      })
+      .finally(() => {
+        dispatch({ type: 'FETCH_COMPLETE', api: 'createGame' });
+      });
+
+  };
+
   return {
     state,
     getRandomNews,
@@ -172,7 +197,8 @@ const useApi = () => {
     getPortfolios,
     getYearlyStockHistory,
     createPortfolio,
-    postProcessTransaction
+    postProcessTransaction,
+    postCreateGame
   };
 };
 

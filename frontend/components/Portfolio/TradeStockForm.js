@@ -43,8 +43,16 @@ const StyledDiv = styled.div`
   flex-direction: row;
 `;
 
+const StyledDiv2 = styled.div`
+  width: 100%;
+`;
+
 const StyledTextField = styled(TextField)`
   margin-right:${({ theme }) => `${theme.mui.spacing(2)}px`};
+`;
+
+const StyledFormControl = styled(FormControl)`
+  width: 100%;
 `;
 
 export default function CreatePortfolioForm(props) {
@@ -101,9 +109,13 @@ export default function CreatePortfolioForm(props) {
                 defaultValue={portfolioName}
                 margin="normal"
               />
-
+              <StyledTextField
+                id="outlined"
+                label="Stock"
+                margin="normal"
+              />
             </div>
-            <div>       
+            <StyledDiv2>       
               <StyledDiv>
                 <StyledTextField
                     id="standard-disabled"
@@ -111,11 +123,11 @@ export default function CreatePortfolioForm(props) {
                     defaultValue={portfolioCash}
                     margin="normal"
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      startAdofrnment: <InputAdornment position="start">$</InputAdornment>,
                     }}
                     disabled
                   />
-                <FormControl required margin="normal">
+                <StyledFormControl required margin="normal" >
                   <InputLabel id="demo-simple-select-required-label">Action</InputLabel>
                   <Select
                     labelid="demo-simple-select-required-label"
@@ -126,15 +138,16 @@ export default function CreatePortfolioForm(props) {
                     <MenuItem value={"Buy"}>Buy</MenuItem>
                     <MenuItem value={"Sell"}>Sell</MenuItem>
                   </Select>
-                </FormControl>
+                </StyledFormControl>
               </StyledDiv>
               <StyledTextField
                     id="outlined"
                     label="Volume"
                     margin="normal"
+                    type="number"
                     fullWidth 
               />
-            </div> 
+            </StyledDiv2> 
           </StyledDiv>
         <div></div>
 
