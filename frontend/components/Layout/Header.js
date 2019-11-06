@@ -70,7 +70,7 @@ export default function Header() {
             <ListItemText primary="Dashboard" />
           </ListItem>
         </Link>
-        <Link href="/dashboard">
+        <Link href="/settings">
           <ListItem button key="Settings">
             <ListItemText primary="Settings" />
           </ListItem>
