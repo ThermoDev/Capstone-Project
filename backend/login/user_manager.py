@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from exception.user.user_already_exists_error import UserAlreadyExistsError
 from exception.user.user_not_found_error import UserNotFoundError
@@ -31,3 +31,6 @@ class UserManager:
         self._user_repository.add_user(user)
 
         return user
+
+    def get_users_list(self, usernames: List[str]) -> List[User]:
+        return self._user_repository.get_users_list(usernames)

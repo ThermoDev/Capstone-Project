@@ -36,6 +36,7 @@ class Portfolio:
         self._portfolio_id = portfolio_id
         self._holder = holder
         self._name = name
+        self._initial_cash = cash
         self._cash = cash
         self._stock_transactions = stock_transactions
 
@@ -72,31 +73,25 @@ class Portfolio:
 
     @property
     def portfolio_value(self) -> float:
-        return sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
+        return  self.cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
 
     @property
     def portfolio_return(self) -> float:
-        return sum(stock_holding.return_value for stock_holding in self.stock_holdings.values())
+        return self.portfolio_value - self._initial_cash
 
     @property
-    def stock_value_weightings(self) -> dict:
-        total_value = self.portfolio_value
-
-        value_weightings = {}
-        for company_code, stock_holding in self._stock_holdings.items():
-            value_weightings[company_code] = stock_holding.market_value / total_value
-
-        return value_weightings
+    def percentage_growth(self) -> float:
+        return self.portfolio_return / self._initial_cash
 
     @property
-    def stock_volume_weightings(self) -> dict:
-        total_volume = sum(stock_holding.volume for stock_holding in self.stock_holdings.values())
+    def stock_weightings(self) -> dict:
+        total_invested = self.amount_invested
 
-        volume_weightings = {}
+        weightings = {}
         for company_code, stock_holding in self._stock_holdings.items():
-            volume_weightings[company_code] = stock_holding.volume / total_volume
+            weightings[company_code] = stock_holding.amount_invested / total_invested
 
-        return volume_weightings
+        return weightings
 
     def update_with_generated_id(self, generated_id: int):
         self._portfolio_id = generated_id
