@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Paper, TextField, Grid, Typography } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import get from 'lodash.get';
 import useSearch from '../../lib/useSearch';
 
 const InputContainer = styled(Paper)`
@@ -20,28 +19,19 @@ const StyledInput = styled(TextField)`
 
 const SearchBar = props => {
   const { placeholder } = props;
-  const { setInputText, state } = useSearch();
-  const { search } = state;
-
-  // loading variables
-  const searchLoading = get(search, 'isLoading', true);
-
-  // data extraction
-  const searchData = get(search, 'data', []);
+  const { setInputText, results } = useSearch();
 
   const handleInput = ({ target }) => setInputText(target.value);
 
   return (
     <Autocomplete
       style={{ width: '100%' }}
-      options={searchData}
+      options={results}
       getOptionLabel={x => x.Ticker}
       autoComplete
       includeInputInList
       freeSolo
       disableOpenOnFocus
-      loading={searchLoading}
-      loadingText="Loading..."
       renderInput={params => (
         <InputContainer>
           <StyledInput

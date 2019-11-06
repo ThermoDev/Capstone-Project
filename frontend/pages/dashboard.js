@@ -37,13 +37,7 @@ const StyledTypography = styled(Typography)`
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
   const { user, isAuthenticated } = useAuth();
-  const {
-    state,
-    getPortfolios,
-    getRandomNews,
-    getRandomStocks,
-    searchStocks,
-  } = useApi();
+  const { state, getPortfolios, getRandomNews, getRandomStocks } = useApi();
   const { portfolios, news, randomStocks } = state;
 
   // loading variables
@@ -59,9 +53,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (isAuthenticated()) {
       getPortfolios();
-      getRandomNews();
-      getRandomStocks();
-      searchStocks();
+      if (stocksData.length === 0 || newsData.length === 0) {
+        getRandomNews();
+        getRandomStocks();
+      }
     }
   }, []);
 
@@ -130,7 +125,7 @@ const Dashboard = () => {
                   Stocks
                 </StyledTypography>
                 <Grid container spacing={1}>
-                  <SearchBar />
+                  <SearchBar placeholder="Please enter 2 letters.." />
                   {(stocksLoading && (
                     <Grid item xs={12} align="middle">
                       <Card
@@ -160,15 +155,6 @@ const Dashboard = () => {
                         </Grid>
                       ) : null
                     )}
-                  {/* <Grid item xs={12}>
-                    <StockItem
-                      key={1}
-                      name="Microsoft"
-                      ticker="MSFT"
-                      price={22.94}
-                      percentageChange={2.98}
-                    />
-                  </Grid> */}
                 </Grid>
               </ColorBox>
             </Grid>

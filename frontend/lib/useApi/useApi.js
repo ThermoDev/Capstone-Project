@@ -147,28 +147,21 @@ const useApi = () => {
   const searchStocks = (query = null) => {
     const url = query ? `stock/search/${query}` : `stock/search/`;
     dispatch({ type: 'FETCH_INIT', api: 'search' });
-
-    // TODO: get rid of this
-    if (query) {
-      dataFetcher(url)
-        .then(result =>
-          result
-            .json()
-            .then(data => dispatch({ type: 'SET_DATA', api: 'search', data }))
-        )
-        .catch(err =>
-          dispatch({
-            type: 'ERROR',
-            api: 'search',
-            errorType: 'search',
-            message: err.message,
-          })
-        )
-        .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'search' }));
-    } else {
-      dispatch({ type: 'SET_DATA', api: 'search', data: [] });
-      dispatch({ type: 'FETCH_COMPLETE', api: 'search' });
-    }
+    dataFetcher(url)
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: 'search', data }))
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'search',
+          errorType: 'search',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'search' }));
   };
 
   return {
