@@ -4,16 +4,15 @@ from typing import List
 from exception.game.user_not_member_of_game_error import UserNotMemberOfGameError
 from login.user_manager import UserManager
 from models.game import Game
-from portfolio.portfolio_manager import PortfolioManager
 from repository.game_repository import GameRepository
 
 
 class GameManager:
-    def __init__(self):
+    def __init__(self, portfolio_manager):
         self._game_repository = GameRepository()
 
         self._user_manager = UserManager()
-        self._portfolio_manager = PortfolioManager()
+        self._portfolio_manager = portfolio_manager
 
     def get_games_for_user(self, user_id: str) -> List[Game]:
         return self._game_repository.get_games_for_user(user_id)

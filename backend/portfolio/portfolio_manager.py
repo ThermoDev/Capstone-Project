@@ -16,7 +16,7 @@ class PortfolioManager:
     def __init__(self):
         self._portfolio_repository = PortfolioRepository()
 
-        self._game_manager = GameManager()
+        self._game_manager = GameManager(self)
 
     def get_all_portfolios_for_user(self, user_id: str) -> [Portfolio]:
         return self._portfolio_repository.get_all_portfolios_for_user(user_id)
