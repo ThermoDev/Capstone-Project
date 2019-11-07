@@ -20,7 +20,7 @@ const ColorBox = styled.div`
 
 const StyledTypography = styled(Typography)`
   align-self: flex-start;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
 `;
 
 const useStyles = makeStyles(theme => ({
