@@ -1,4 +1,4 @@
-import { useEffect, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 import {
   Container,
@@ -39,6 +39,7 @@ const Dashboard = () => {
   const { user, isAuthenticated } = useAuth();
   const { state, getPortfolios, getRandomNews, getRandomStocks } = useApi();
   const { portfolios, news, randomStocks } = state;
+  const [searchValue, setSearchValue] = useState('');
 
   // loading variables
   const portfoliosLoading = get(portfolios, 'isLoading', true);
@@ -59,6 +60,12 @@ const Dashboard = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (searchValue) {
+      console.log({ searchValue });
+    }
+  }, [searchValue]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -125,24 +132,25 @@ const Dashboard = () => {
                   Stocks
                 </StyledTypography>
                 <Grid container spacing={1}>
-                  <SearchBar placeholder="Please enter 2 letters.." />
-                  {(stocksLoading && (
-                    <Grid item xs={12} align="middle">
-                      <Card
-                        style={{
-                          width: '100%',
-                          height: '150px',
-                          backgroundColor: '#00ced1',
-                        }}
-                      >
-                        <div style={{ padding: '0 0.5rem' }}>
-                          <Skeleton />
-                          <Skeleton />
-                          <Skeleton />
-                        </div>
-                      </Card>
-                    </Grid>
-                  )) ||
+                  <SearchBar placeholder="Search" onSearch={setSearchValue} />
+                  {stocksLoading ||
+                    (searchValue && (
+                      <Grid item xs={12} align="middle">
+                        <Card
+                          style={{
+                            width: '100%',
+                            height: '150px',
+                            backgroundColor: '#00ced1',
+                          }}
+                        >
+                          <div style={{ padding: '0 0.5rem' }}>
+                            <Skeleton />
+                            <Skeleton />
+                            <Skeleton />
+                          </div>
+                        </Card>
+                      </Grid>
+                    )) ||
                     stocksData.map(item =>
                       item.Price ? (
                         <Grid item xs={12} key={item.index}>

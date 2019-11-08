@@ -144,6 +144,25 @@ const useApi = () => {
     getPortfolios();
   };
 
+  const getStockSymbols = () => {
+    dispatch({ type: 'FETCH_INIT', api: 'symbols' });
+    dataFetcher('stock/getallsymbols')
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: 'symbols', data }))
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'symbols',
+          errorType: 'symbols',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'search' }));
+  };
+
   const searchStocks = (query = null) => {
     const url = query ? `stock/search/${query}` : `stock/search/`;
     dispatch({ type: 'FETCH_INIT', api: 'search' });
@@ -171,6 +190,7 @@ const useApi = () => {
     getPortfolios,
     getYearlyStockHistory,
     createPortfolio,
+    getStockSymbols,
     searchStocks,
   };
 };

@@ -14,31 +14,29 @@ const filterArray = (arr, substring) => {
 export const useSearch = () => {
   const [inputText, setInputText] = useState('');
   const [results, setResults] = useState([]);
-  const { state, searchStocks } = useApi();
-  const { search } = state;
+  const { state, getStockSymbols } = useApi();
+  const { symbols } = state;
 
-  const searchData = get(search, 'data', []);
+  const symbolData = get(symbols, 'data', []);
 
   useEffect(() => {
-    if (searchData.length === 0) {
-      searchStocks();
+    if (symbolData.length === 0) {
+      getStockSymbols();
     }
   }, []);
 
   useEffect(() => {
     const handler =
       inputText.length >= 2
-        ? setTimeout(() => setResults(filterArray(searchData, inputText)), 800)
+        ? setTimeout(() => setResults(filterArray(symbolData, inputText)), 800)
         : null;
 
     return () => handler && clearTimeout(handler);
   }, [inputText]);
 
-  console.log(results);
-
   return {
     inputText,
     setInputText,
-    results,
+    results: symbolData,
   };
 };
