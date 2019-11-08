@@ -8,24 +8,24 @@ import requests
 
 news_api_key = "7ab953b64f764e038808a57ebe9f4aea"
 
-sources = ['the-new-york-times',
-           'cnn',
-           'reuters',
-           'business-insider',
-           'business-insider-uk',
-           'financial-post',
-           'the-wall-street-journal',
-           'cnbc',
-           'bloomberg',
-           'techcrunch',
-           'australian-financial-review',
-           'fortune'
-           ]
+sources = [
+    'the-new-york-times',
+    'cnn',
+    'reuters',
+    'business-insider',
+    'business-insider-uk',
+    'financial-post',
+    'the-wall-street-journal',
+    'cnbc',
+    'bloomberg',
+    'techcrunch',
+    'australian-financial-review',
+    'fortune'
+]
 
 sources = ",".join(sources)
 
 yahoo_finance_rss_url = "https://finance.yahoo.com/rss/"
-
 
 def retrieve_headlines() -> dict:
     """
@@ -34,7 +34,7 @@ def retrieve_headlines() -> dict:
     Returns
     -------
     dict
-        A dictionary which contains the latest top headlines from US
+        A dictionary which contains the latest top headlines obtained from Yahoo Finance
     """
     feed = feedparser.parse(yahoo_finance_rss_url)
     news = []
