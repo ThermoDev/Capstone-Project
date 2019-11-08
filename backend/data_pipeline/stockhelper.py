@@ -648,13 +648,13 @@ def __add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
     infos = [ticker.info for ticker in tickers.tickers]
     info_df = pd.DataFrame(infos)
 
-    info_df = info_df[[
+    info_df = info_df[info_df.columns.intersection([
         "epsTrailingTwelveMonths",
         "marketCap",
         "trailingPE",
         "bid",
         "ask",
-    ]]
+    ])]
 
     temp = data.copy()
     # Need to reset index as it persists in memory
@@ -710,7 +710,7 @@ def get_stocks_infos(list_of_tickers: List[str]) -> pd.DataFrame:
          A DataFrame with the retrieved data, with all its current known stock info
     """
 
-    list_of_tickers = [x.upper() for x in list_of_tickers] # UpperCase Tickers to be sure
+    list_of_tickers = [x.upper() for x in list_of_tickers]  # UpperCase Tickers to be sure
     data = get_all_stock_data()
     data = data[data["Ticker"].isin(list_of_tickers)]
     if len(data) != 0:
