@@ -13,7 +13,7 @@ const InputContainer = styled(Paper)`
   display: flex;
   align-items: center;
   width: 100%;
-  border-radius: 2px;
+  border-radius: 3px;
 `;
 
 const StyledInput = styled(TextField)`

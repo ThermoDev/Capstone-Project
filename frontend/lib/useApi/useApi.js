@@ -117,7 +117,7 @@ const useApi = () => {
 
   const getYearlyStockHistory = symbol => {
     const lastYear = moment()
-      .add(-1, 'year')
+      .add(-5, 'year')
       .format('YYYY-MM-DD');
     getStockHistory(symbol, lastYear);
   };
