@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import fetch from 'isomorphic-unfetch';
+import Cookies from 'js-cookie';
 import { AuthContext } from './AuthProvider';
 import { endpoint } from '../../config';
 
