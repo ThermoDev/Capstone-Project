@@ -96,6 +96,7 @@ export const useApi = () => {
       portfolio_id: portfolioId,
       transaction: transactionObject,
     });
+    // ! this could be getting called before the above request finishes?
     getPortfolios();
   };
 
@@ -118,6 +119,10 @@ export const useApi = () => {
   const getStockInfo = stockTicker =>
     callApi(`stock/infos/${stockTicker}`, 'stockInfo');
 
+  // ! this is a workaround to prevent anything relying on getStockInfo from updating when its called from a different component
+  const getStock = stockTicker =>
+    callApi(`stock/infos/${stockTicker}`, 'stock');
+
   return {
     state,
     getRandomNews,
@@ -130,5 +135,6 @@ export const useApi = () => {
     getStockSymbols,
     searchStocks,
     getStockInfo,
+    getStock,
   };
 };

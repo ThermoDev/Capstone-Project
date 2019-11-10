@@ -230,4 +230,4 @@ PortfolioItem.propTypes = {
   data: PropTypes.array.isRequired,
 };
 
-export default memo(PortfolioItem);
+export default PortfolioItem;
