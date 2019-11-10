@@ -105,7 +105,7 @@ const Dashboard = () => {
         </Grid>
       );
     }
-    if (stocksError || (searchValue && infoError)) {
+    if (searchValue && infoError) {
       return (
         <Grid item xs={12} align="middle">
           <Card
@@ -131,6 +131,23 @@ const Dashboard = () => {
             price={singularStockData[0].Price}
             percentageChange={singularStockData[0]['PCT Change']}
           />
+        </Grid>
+      );
+    }
+    if (stocksError) {
+      return (
+        <Grid item xs={12} align="middle">
+          <Card
+            style={{
+              width: '100%',
+              height: '150px',
+              backgroundColor: '#00ced1',
+            }}
+          >
+            <div style={{ padding: '0 0.5rem' }}>
+              <p>Could not load data from server.</p>
+            </div>
+          </Card>
         </Grid>
       );
     }
@@ -165,11 +182,6 @@ const Dashboard = () => {
                 )}
                 {portfoliosLoading ? (
                   <>
-                    <Card
-                      style={{ width: '100%', height: '73px', margin: '16px' }}
-                    >
-                      <Skeleton variant="rect" height={200} />
-                    </Card>
                     <Card
                       style={{ width: '100%', height: '73px', margin: '16px' }}
                     >
@@ -237,4 +249,4 @@ const Dashboard = () => {
   );
 };
 
-export default memo(Dashboard);
+export default Dashboard;

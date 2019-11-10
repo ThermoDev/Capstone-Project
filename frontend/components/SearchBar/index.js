@@ -17,8 +17,7 @@ const InputContainer = styled(Paper)`
 `;
 
 const StyledInput = styled(TextField)`
-  margin-left: ${({ theme }) => theme.mui.spacing(1)};
-  flex: 1;
+  margin: 0;
 `;
 
 function renderRow(props) {
@@ -126,16 +125,14 @@ const SearchBar = props => {
       ListboxComponent={ListboxComponent}
       onChange={onChangeHandler}
       renderInput={params => (
-        <InputContainer>
-          <StyledInput
-            {...params}
-            variant="outlined"
-            label={placeholder}
-            onInput={isModified}
-            InputLabelProps={{ shrink: modified }}
-            fullWidth
-          />
-        </InputContainer>
+        <StyledInput
+          {...params}
+          label={placeholder}
+          onInput={isModified}
+          InputLabelProps={{ shrink: modified }}
+          margin="normal"
+          fullWidth
+        />
       )}
     />
   );
