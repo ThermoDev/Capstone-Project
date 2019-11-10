@@ -35,7 +35,11 @@ def portfolios():
 
     response = []
     for portfolio in portfolio_manager.get_all_portfolios_for_user(user_id):
-        response.append(serialise_properties(portfolio))
+        try:
+            p = serialise_properties(portfolio)
+            response.append(p)
+        except:
+            continue
 
     return jsonify(response), 200
 
