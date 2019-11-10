@@ -46,6 +46,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
 
   const outerElementType = React.useMemo(
     () =>
+      // eslint-disable-next-line react/display-name
       React.forwardRef((props2, ref2) => (
         <div ref={ref2} {...props2} {...other} />
       )),

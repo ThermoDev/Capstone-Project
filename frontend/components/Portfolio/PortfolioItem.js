@@ -14,6 +14,7 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import { Doughnut } from 'react-chartjs-2';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import RemoveIcon from '@material-ui/icons/Remove';
 import TradeStockForm from './TradeStockForm';
 
 const ColorBox = styled(Paper)`
@@ -55,7 +56,6 @@ const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
   min-height: 56;
   width: 100%;
   padding: 0;
-
   .MuiExpansionPanelSummary-content {
     display: flex;
     margin: 0.5em 1em;
@@ -120,7 +120,11 @@ const PortfolioItem = props => {
               {item.percentage_growth && (
                 <>
                   <Typography component="h1" variant="subtitle1">
-                    {`${item.percentage_growth.toFixed(4)}%`}
+                    {`${
+                      item.percentage_growth
+                        ? item.percentage_growth.toFixed(4)
+                        : null
+                    }%`}
                   </Typography>
                   {item.percentage_growth > 0 ? (
                     <ArrowDropUpIcon color="primary" />
@@ -129,7 +133,11 @@ const PortfolioItem = props => {
                   )}
                 </>
               )}
-              <TradeStockForm />
+              <TradeStockForm
+                portfolioName={item.name}
+                portfolioId={item.portfolio_id}
+                portfolioCash={item.cash}
+              />
               <IconButton onClick={() => handleChange(item.portfolio_id)}>
                 {expanded === item.portfolio_id ? (
                   <ExpandLessIcon />
@@ -146,15 +154,17 @@ const PortfolioItem = props => {
                   Portfolio value:
                 </Typography>
                 <Typography variant="h6">
-                  ${item.portfolio_value.toFixed(2)}
+                  $
+                  {item.portfolio_value
+                    ? item.portfolio_value.toFixed(2)
+                    : null}
                 </Typography>
                 <Typography variant="h5" color="primary">
                   Cash:
                 </Typography>
-                <Typography variant="h6">${item.cash.toFixed(2)}</Typography>
-              </StyledSubDiv>
-              <StyledSubDiv>
-                <ColorBox />
+                <Typography variant="h6">
+                  ${item.cash ? item.cash.toFixed(2) : null}
+                </Typography>
               </StyledSubDiv>
               <StyledSubDiv>
                 <Doughnut
@@ -186,14 +196,23 @@ const PortfolioItem = props => {
                   </StyledSubDiv>
                   <StyledSubDiv2>
                     <StyledTypography2 variant="h6">
-                      ${stock.market_value.toFixed(2)}
+                      $
+                      {stock.market_value
+                        ? stock.market_value.toFixed(2)
+                        : null}
                     </StyledTypography2>
                     <StyledTypography variant="subtitle2">
-                      {stock.percentage_growth.toFixed(4)}%
-                      {stock.percentage_growth > 0 ? (
+                      {stock.percentage_growth
+                        ? stock.percentage_growth.toFixed(4)
+                        : 0}
+                      %
+                      {// eslint-disable-next-line no-nested-ternary
+                      stock.percentage_growth > 0 ? (
                         <ArrowDropUpIcon color="secondary" />
-                      ) : (
+                      ) : stock.percentage_growth > 0 ? (
                         <ArrowDropDownIcon color="error" />
+                      ) : (
+                        <RemoveIcon />
                       )}
                     </StyledTypography>
                   </StyledSubDiv2>

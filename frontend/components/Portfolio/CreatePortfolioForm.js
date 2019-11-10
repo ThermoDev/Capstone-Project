@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import useApi from '../../lib/useApi';
 
 const StyledTitle = styled(DialogTitle)`
@@ -28,10 +29,6 @@ export default function CreatePortfolioForm() {
 
   const handleTextFieldChange = e => {
     setState({ ...state, [e.target.id]: e.target.value });
-  };
-
-  const handleCashChange = e => {
-    setState({ ...state, cash: e.target.value });
   };
 
   const handleSubmit = () => {
@@ -79,6 +76,11 @@ export default function CreatePortfolioForm() {
             type="number"
             fullWidth
             onChange={handleTextFieldChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
         <DialogActions>

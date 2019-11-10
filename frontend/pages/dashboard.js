@@ -54,6 +54,7 @@ const Dashboard = () => {
   const infoLoading = get(stockInfo, 'isLoading', false);
 
   // error variables
+  const portfoliosError = get(portfolios, 'isError', false);
   const stocksError = get(randomStocks, 'isError', false);
   const infoError = get(stockInfo, 'isError', false);
 
@@ -157,6 +158,11 @@ const Dashboard = () => {
                 <StyledTypography component="h1" variant="h6">
                   Portfolio
                 </StyledTypography>
+                {portfoliosError && (
+                  <div>
+                    <p>{`Error: ${portfolios.error.message}`}</p>
+                  </div>
+                )}
                 {portfoliosLoading ? (
                   <>
                     <Card
