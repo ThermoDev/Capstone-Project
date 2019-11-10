@@ -183,6 +183,25 @@ const useApi = () => {
       .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'search' }));
   };
 
+  const getStockInfo = stockTicker => {
+    dispatch({ type: 'FETCH_INIT', api: 'stockInfo' });
+    dataFetcher(`stock/infos/${stockTicker}`)
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: 'stockInfo', data }))
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'stockInfo',
+          errorType: 'stockInfo',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'stockInfo' }));
+  };
+
   return {
     state,
     getRandomNews,
@@ -192,6 +211,7 @@ const useApi = () => {
     createPortfolio,
     getStockSymbols,
     searchStocks,
+    getStockInfo,
   };
 };
 

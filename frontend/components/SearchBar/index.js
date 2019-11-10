@@ -1,13 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {
-  Paper,
-  TextField,
-  Grid,
-  Typography,
-  useMediaQuery,
-} from '@material-ui/core';
+import { Paper, TextField, useMediaQuery } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import get from 'lodash.get';
 import { FixedSizeList } from 'react-window';
@@ -97,10 +91,24 @@ const useStyles = makeStyles({
 const SearchBar = props => {
   const classes = useStyles();
   const { placeholder, onSearch } = props;
+  const [modified, setModified] = useState(false);
   const { state, getStockSymbols } = useApi();
   const { symbols } = state;
 
   const symbolData = get(symbols, 'data', []);
+
+  const isModified = e => setModified(!!e.target.value);
+
+  const onChangeHandler = e => {
+    const selected = e.target.textContent;
+    if (selected) {
+      onSearch(selected.split(' - ')[0]);
+      setModified(true);
+    } else {
+      onSearch('');
+      setModified(false);
+    }
+  };
 
   useEffect(() => {
     if (symbolData.length === 0) {
@@ -115,20 +123,15 @@ const SearchBar = props => {
       style={{ width: '100%' }}
       options={symbolData.map(item => `${item.Ticker} - ${item.Name}`)}
       ListboxComponent={ListboxComponent}
-      onChange={e => {
-        const selected = e.target.textContent;
-        if (selected) {
-          onSearch(selected.split(' - ')[0]);
-        } else {
-          onSearch('');
-        }
-      }}
+      onChange={onChangeHandler}
       renderInput={params => (
         <InputContainer>
           <StyledInput
             {...params}
             variant="outlined"
             label={placeholder}
+            onInput={isModified}
+            InputLabelProps={{ shrink: modified }}
             fullWidth
           />
         </InputContainer>
