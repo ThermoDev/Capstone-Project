@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Paper, InputBase, CircularProgress } from '@material-ui/core';
+import { Paper, TextField, useMediaQuery } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
+import get from 'lodash.get';
+import { FixedSizeList } from 'react-window';
+import { makeStyles } from '@material-ui/core/styles';
 import useApi from '../../lib/useApi';
 
 const InputContainer = styled(Paper)`
@@ -10,72 +13,126 @@ const InputContainer = styled(Paper)`
   display: flex;
   align-items: center;
   width: 100%;
-  border-radius: 2px;
+  border-radius: 3px;
 `;
 
-const StyledInputBase = styled(InputBase)`
+const StyledInput = styled(TextField)`
   margin-left: ${({ theme }) => theme.mui.spacing(1)};
   flex: 1;
 `;
 
-const SearchBar = props => {
-  const { placeholder } = props;
-  const [value, setValue] = useState('');
-  const { searchStockApi } = useApi();
-  const { searchResults, searchStock } = searchStockApi();
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-  const loading = open && options.length === 0;
+function renderRow(props) {
+  const { data, index, style } = props;
+  return React.cloneElement(data[index], {
+    style: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      display: 'block',
+      ...style,
+    },
+  });
+}
 
-  const handleInputChange = ({ target }) => setValue(target.value);
+// Adapter for react-window
+const ListboxComponent = React.forwardRef(function ListboxComponent(
+  props,
+  ref
+) {
+  const { children, ...other } = props;
+  const smUp = useMediaQuery(theme => theme.breakpoints.up('sm'));
+  const itemCount = Array.isArray(children) ? children.length : 0;
+  const itemSize = smUp ? 36 : 48;
+
+  const outerElementType = React.useMemo(
+    () =>
+      React.forwardRef((props2, ref2) => (
+        <div ref={ref2} {...props2} {...other} />
+      )),
+    []
+  );
+
+  return (
+    <div ref={ref}>
+      <FixedSizeList
+        style={{
+          padding: 0,
+          height: Math.min(8, itemCount) * itemSize,
+          maxHeight: 'auto',
+        }}
+        itemData={children}
+        height={250}
+        width="100%"
+        outerElementType={outerElementType}
+        innerElementType="ul"
+        itemSize={itemSize}
+        overscanCount={5}
+        itemCount={itemCount}
+      >
+        {renderRow}
+      </FixedSizeList>
+    </div>
+  );
+});
+
+ListboxComponent.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+const useStyles = makeStyles({
+  listbox: {
+    '& ul': {
+      padding: '0.5rem',
+      margin: 0,
+    },
+  },
+});
+
+const SearchBar = props => {
+  const classes = useStyles();
+  const { placeholder, onSearch } = props;
+  const [modified, setModified] = useState(false);
+  const { state, getStockSymbols } = useApi();
+  const { symbols } = state;
+
+  const symbolData = get(symbols, 'data', []);
+
+  const isModified = e => setModified(!!e.target.value);
+
+  const onChangeHandler = e => {
+    const selected = e.target.textContent;
+    if (selected) {
+      onSearch(selected.split(' - ')[0]);
+      setModified(true);
+    } else {
+      onSearch('');
+      setModified(false);
+    }
+  };
 
   useEffect(() => {
-    let active = false;
-
-    if (!loading) {
-      return undefined;
+    if (symbolData.length === 0) {
+      getStockSymbols();
     }
-
-    searchStock(value);
-
-    return () => {
-      active = false;
-    };
   }, []);
-
-  console.log(searchResults);
 
   return (
     <Autocomplete
+      classes={classes}
+      disableListWrap
       style={{ width: '100%' }}
-      onChange={handleInputChange}
-      open={open}
-      onOpen={() => {
-        setOpen(true);
-      }}
-      onClose={() => {
-        setOpen(false);
-      }}
-      getOptionLabel={option => option.name}
-      options={options}
-      loading={loading}
+      options={symbolData.map(item => `${item.Ticker} - ${item.Name}`)}
+      ListboxComponent={ListboxComponent}
+      onChange={onChangeHandler}
       renderInput={params => (
         <InputContainer>
-          <StyledInputBase
+          <StyledInput
             {...params}
+            variant="outlined"
+            label={placeholder}
+            onInput={isModified}
+            InputLabelProps={{ shrink: modified }}
             fullWidth
-            placeholder={placeholder}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
-            }}
           />
         </InputContainer>
       )}
@@ -85,10 +142,12 @@ const SearchBar = props => {
 
 SearchBar.defaultProps = {
   placeholder: 'Search',
+  onSearch: () => {},
 };
 
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
+  onSearch: PropTypes.func,
 };
 
 export default SearchBar;

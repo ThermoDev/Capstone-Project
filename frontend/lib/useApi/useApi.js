@@ -117,7 +117,7 @@ const useApi = () => {
 
   const getYearlyStockHistory = symbol => {
     const lastYear = moment()
-      .add(-1, 'year')
+      .add(-5, 'year')
       .format('YYYY-MM-DD');
     getStockHistory(symbol, lastYear);
   };
@@ -144,6 +144,64 @@ const useApi = () => {
     getPortfolios();
   };
 
+  const getStockSymbols = () => {
+    dispatch({ type: 'FETCH_INIT', api: 'symbols' });
+    dataFetcher('stock/getallsymbols')
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: 'symbols', data }))
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'symbols',
+          errorType: 'symbols',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'search' }));
+  };
+
+  const searchStocks = (query = null) => {
+    const url = query ? `stock/search/${query}` : `stock/search/`;
+    dispatch({ type: 'FETCH_INIT', api: 'search' });
+    dataFetcher(url)
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: 'search', data }))
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'search',
+          errorType: 'search',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'search' }));
+  };
+
+  const getStockInfo = stockTicker => {
+    dispatch({ type: 'FETCH_INIT', api: 'stockInfo' });
+    dataFetcher(`stock/infos/${stockTicker}`)
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: 'stockInfo', data }))
+      )
+      .catch(err =>
+        dispatch({
+          type: 'ERROR',
+          api: 'stockInfo',
+          errorType: 'stockInfo',
+          message: err.message,
+        })
+      )
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'stockInfo' }));
+  };
+
   return {
     state,
     getRandomNews,
@@ -151,6 +209,9 @@ const useApi = () => {
     getPortfolios,
     getYearlyStockHistory,
     createPortfolio,
+    getStockSymbols,
+    searchStocks,
+    getStockInfo,
   };
 };
 

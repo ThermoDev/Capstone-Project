@@ -1,4 +1,4 @@
-import { useEffect, memo } from 'react';
+import { useState, useEffect, memo } from 'react';
 import styled from 'styled-components';
 import {
   Container,
@@ -15,6 +15,7 @@ import { useAuth } from '../lib/useAuth';
 import useApi from '../lib/useApi';
 import StockItem from '../components/Stocks';
 import NewsItem from '../components/Newsfeed';
+import SearchBar from '../components/SearchBar';
 
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
 
@@ -36,32 +37,115 @@ const StyledTypography = styled(Typography)`
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
   const { user, isAuthenticated } = useAuth();
-  const { state, getPortfolios, getRandomNews, getRandomStocks } = useApi();
-  const { portfolios, news, randomStocks } = state;
+  const {
+    state,
+    getPortfolios,
+    getRandomNews,
+    getRandomStocks,
+    getStockInfo,
+  } = useApi();
+  const { portfolios, news, randomStocks, stockInfo } = state;
+  const [searchValue, setSearchValue] = useState('');
 
   // loading variables
   const portfoliosLoading = get(portfolios, 'isLoading', true);
   const stocksLoading = get(randomStocks, 'isLoading', true);
   const newsLoading = get(news, 'isLoading', true);
+  const infoLoading = get(stockInfo, 'isLoading', false);
+
+  // error variables
+  const stocksError = get(randomStocks, 'isError', false);
+  const infoError = get(stockInfo, 'isError', false);
 
   // data extraction
   const portfoliosData = get(portfolios, 'data', []);
   const stocksData = get(randomStocks, 'data', []);
   const newsData = get(news, 'data.articles', []);
+  const singularStockData = get(stockInfo, 'data', []);
 
   useEffect(() => {
     if (isAuthenticated()) {
       getPortfolios();
-      getRandomNews();
-      getRandomStocks();
+      if (stocksData.length === 0 || newsData.length === 0) {
+        getRandomNews();
+        getRandomStocks();
+      }
     }
   }, []);
+
+  useEffect(() => {
+    if (searchValue) {
+      getStockInfo(searchValue);
+    }
+  }, [searchValue]);
 
   useEffect(() => {
     if (!isAuthenticated()) {
       Router.push('/');
     }
   }, [user]);
+
+  const stockSearchRender = () => {
+    if (stocksLoading || infoLoading) {
+      return (
+        <Grid item xs={12} align="middle">
+          <Card
+            style={{
+              width: '100%',
+              height: '150px',
+              backgroundColor: '#00ced1',
+            }}
+          >
+            <div style={{ padding: '0 0.5rem' }}>
+              <Skeleton height={50} />
+              <Skeleton />
+            </div>
+          </Card>
+        </Grid>
+      );
+    }
+    if (stocksError || (searchValue && infoError)) {
+      return (
+        <Grid item xs={12} align="middle">
+          <Card
+            style={{
+              width: '100%',
+              height: '150px',
+              backgroundColor: '#00ced1',
+            }}
+          >
+            <div style={{ padding: '0 0.5rem' }}>
+              <p>Could not load data from server.</p>
+            </div>
+          </Card>
+        </Grid>
+      );
+    }
+    if (searchValue && singularStockData.length) {
+      return (
+        <Grid item xs={12}>
+          <StockItem
+            name={singularStockData[0].Name}
+            ticker={singularStockData[0].Ticker}
+            price={singularStockData[0].Price}
+            percentageChange={singularStockData[0]['PCT Change']}
+          />
+        </Grid>
+      );
+    }
+    return stocksData.map(item =>
+      item.Price ? (
+        <Grid item xs={12} key={item.index}>
+          <StockItem
+            name={item.Name}
+            ticker={item.Ticker}
+            price={item.Price}
+            percentageChange={item['PCT Change']}
+          />
+        </Grid>
+      ) : null
+    );
+  };
 
   return (
     <div>
@@ -97,7 +181,11 @@ const Dashboard = () => {
                 <StyledTypography component="h1" variant="h6">
                   Newsfeed
                 </StyledTypography>
-                <Grid container spacing={1}>
+                <Grid
+                  container
+                  spacing={1}
+                  style={{ height: 500, overflowY: 'scroll' }}
+                >
                   {newsLoading ? (
                     <Card style={{ width: '100%', height: '300px' }}>
                       <Skeleton variant="rect" height={200} />
@@ -122,44 +210,17 @@ const Dashboard = () => {
                   Stocks
                 </StyledTypography>
                 <Grid container spacing={1}>
-                  {(stocksLoading && (
-                    <Grid item xs={12} align="middle">
-                      <Card
-                        style={{
-                          width: '100%',
-                          height: '150px',
-                          backgroundColor: '#00ced1',
-                        }}
-                      >
-                        <div style={{ padding: '0 0.5rem' }}>
-                          <Skeleton />
-                          <Skeleton />
-                          <Skeleton />
-                        </div>
-                      </Card>
-                    </Grid>
-                  )) ||
-                    stocksData.map(item =>
-                      item.Price ? (
-                        <Grid item xs={12} key={item.index}>
-                          <StockItem
-                            name={item.Name}
-                            ticker={item.Ticker}
-                            price={item.Price}
-                            percentageChange={item['PCT Change']}
-                          />
-                        </Grid>
-                      ) : null
-                    )}
-                  {/* <Grid item xs={12}>
-                    <StockItem
-                      key={1}
-                      name="Microsoft"
-                      ticker="MSFT"
-                      price={22.94}
-                      percentageChange={2.98}
-                    />
-                  </Grid> */}
+                  <Grid item xs={12}>
+                    <SearchBar placeholder="Search" onSearch={setSearchValue} />
+                  </Grid>
+                  <Grid
+                    item
+                    container
+                    spacing={1}
+                    style={{ height: 440, overflowY: 'scroll' }}
+                  >
+                    {stockSearchRender()}
+                  </Grid>
                 </Grid>
               </ColorBox>
             </Grid>
