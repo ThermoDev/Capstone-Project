@@ -18,7 +18,6 @@ const StyledTitle = styled(DialogTitle)`
 export default function CreatePortfolioForm() {
   const [state, setState] = React.useState({ open: false, name: '', cash: 0 });
   const { createPortfolio } = useApi();
-  
 
   const handleClickOpen = () => {
     setState({ ...state, open: true });
@@ -30,10 +29,6 @@ export default function CreatePortfolioForm() {
 
   const handleTextFieldChange = e => {
     setState({ ...state, [e.target.id]: e.target.value });
-  };
-
-  const handleCashChange = e => {
-    setState({ ...state, cash: e.target.value });
   };
 
   const handleSubmit = () => {
@@ -82,7 +77,9 @@ export default function CreatePortfolioForm() {
             fullWidth
             onChange={handleTextFieldChange}
             InputProps={{
-              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
             }}
           />
         </DialogContent>

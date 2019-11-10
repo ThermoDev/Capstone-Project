@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -13,8 +14,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import useApi from '../../lib/useApi';
 import get from 'lodash.get';
+import useApi from '../../lib/useApi';
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -28,7 +29,6 @@ const ColorBox = styled(Paper)`
   margin: 8px 16px;
   padding: ${({ theme }) => `${theme.mui.spacing(4)}px`};
 `;
-
 
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
@@ -48,7 +48,7 @@ const StyledDiv2 = styled.div`
 `;
 
 const StyledTextField = styled(TextField)`
-  margin-right:${({ theme }) => `${theme.mui.spacing(2)}px`};
+  margin-right: ${({ theme }) => `${theme.mui.spacing(2)}px`};
 `;
 
 const StyledFormControl = styled(FormControl)`
@@ -57,16 +57,14 @@ const StyledFormControl = styled(FormControl)`
 
 export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
-  const {portfolioName, portfolioId, portfolioCash} = props;
-  const [value, setValue] = React.useState("Buy");
+  const { portfolioName, portfolioId, portfolioCash } = props;
+  const [value, setValue] = React.useState('Buy');
   const { state, postProcessTransaction } = useApi();
   const { processTransaction } = state;
-  const processError = get(processTransaction, 'isError', true);
 
   const handleChange = event => {
     setValue(event.target.value);
   };
-
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -78,11 +76,11 @@ export default function CreatePortfolioForm(props) {
 
   const handleSubmit = () => {
     postProcessTransaction(portfolioId, {
-      company_code:'A',
+      company_code: 'A',
       volume: 2,
-      price: 10
+      price: 10,
     });
-  }
+  };
 
   return (
     <div>
@@ -98,7 +96,7 @@ export default function CreatePortfolioForm(props) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-      <StyledTitle id="form-dialog-title">Create Portfolio</StyledTitle>
+        <StyledTitle id="form-dialog-title">Create Portfolio</StyledTitle>
         <DialogContent>
           <StyledDiv>
             <div>
@@ -109,49 +107,47 @@ export default function CreatePortfolioForm(props) {
                 defaultValue={portfolioName}
                 margin="normal"
               />
-              <StyledTextField
-                id="outlined"
-                label="Stock"
-                margin="normal"
-              />
+              <StyledTextField id="outlined" label="Stock" margin="normal" />
             </div>
-            <StyledDiv2>       
+            <StyledDiv2>
               <StyledDiv>
                 <StyledTextField
-                    id="standard-disabled"
-                    label="Cash"
-                    defaultValue={portfolioCash}
-                    margin="normal"
-                    InputProps={{
-                      startAdofrnment: <InputAdornment position="start">$</InputAdornment>,
-                    }}
-                    disabled
-                  />
-                <StyledFormControl required margin="normal" >
-                  <InputLabel id="demo-simple-select-required-label">Action</InputLabel>
+                  id="standard-disabled"
+                  label="Cash"
+                  defaultValue={portfolioCash}
+                  margin="normal"
+                  InputProps={{
+                    startAdofrnment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                  disabled
+                />
+                <StyledFormControl required margin="normal">
+                  <InputLabel id="demo-simple-select-required-label">
+                    Action
+                  </InputLabel>
                   <Select
                     labelid="demo-simple-select-required-label"
                     id="demo-simple-select-required"
                     value={value}
                     onChange={handleChange}
                   >
-                    <MenuItem value={"Buy"}>Buy</MenuItem>
-                    <MenuItem value={"Sell"}>Sell</MenuItem>
+                    <MenuItem value="Buy">Buy</MenuItem>
+                    <MenuItem value="Sell">Sell</MenuItem>
                   </Select>
                 </StyledFormControl>
               </StyledDiv>
               <StyledTextField
-                    id="outlined"
-                    label="Volume"
-                    margin="normal"
-                    type="number"
-                    fullWidth 
+                id="outlined"
+                label="Volume"
+                margin="normal"
+                type="number"
+                fullWidth
               />
-            </StyledDiv2> 
+            </StyledDiv2>
           </StyledDiv>
-        <div></div>
-
-
+          <div />
         </DialogContent>
         <DialogActions>
           <ColorBox>
@@ -168,3 +164,9 @@ export default function CreatePortfolioForm(props) {
     </div>
   );
 }
+
+CreatePortfolioForm.propTypes = {
+  portfolioName: PropTypes.string.isRequired,
+  portfolioId: PropTypes.number.isRequired,
+  portfolioCash: PropTypes.number.isRequired,
+};
