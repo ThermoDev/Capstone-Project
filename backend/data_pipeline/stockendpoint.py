@@ -234,8 +234,11 @@ def infos(tickers):
     tickers = tickers.upper()
     tickers = tickers.replace(" ", "")
     list_of_tickers = tickers.split(",")
-    data = stkh.get_stocks_infos(list_of_tickers)
 
+    if type(list_of_tickers) is str:
+        list_of_tickers = [list_of_tickers]
+
+    data = stkh.get_stocks_infos(list_of_tickers)
     list_data = stkh.df_to_dict(data, orient="records")
 
     if not list_data:
