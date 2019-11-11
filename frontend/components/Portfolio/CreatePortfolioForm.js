@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -9,35 +9,51 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import useApi from '../../lib/useApi';
+import { InlineError } from '../Error';
 
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
 `;
 
 export default function CreatePortfolioForm() {
-  const [state, setState] = React.useState({ open: false, name: '', cash: 0 });
-  const { createPortfolio } = useApi();
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', cash: 0 });
+  const { state, createPortfolio, resetApiData } = useApi();
+  const { createPort } = state;
 
-  const handleClickOpen = () => {
-    setState({ ...state, open: true });
-  };
+  const handleClickOpen = () => setOpen(true);
 
   const handleClose = () => {
-    setState({ ...state, open: false });
+    setOpen(false);
+    // resets isError inside of createPort because the normal behaviour is to persist state between pages
+    resetApiData('createPort');
+    // reset form values
+    setForm({ name: '', cash: 0 });
   };
 
   const handleTextFieldChange = e => {
-    setState({ ...state, [e.target.id]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.id]: e.target.value,
+    });
   };
 
   const handleSubmit = () => {
-    const { name } = state;
-    const { cash } = state;
-
+    const { name, cash } = form;
+    // async api call
     createPortfolio(name, cash);
-    setState({ ...state, open: false });
   };
+
+  // We can close the dialogue box if !createPort.isError and if createPort.data !== undefined
+  // Ie. we made a successful request, received a the correct response without any errors
+  useEffect(() => {
+    if (createPort && !createPort.isError && !!createPort.data) {
+      // if we have successfully created a new portfolio, close the dialogue box
+      setOpen(false);
+    }
+  }, [createPort]);
 
   return (
     <div>
@@ -50,7 +66,7 @@ export default function CreatePortfolioForm() {
         <AddIcon />
       </Fab>
       <Dialog
-        open={state.open}
+        open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
@@ -82,6 +98,16 @@ export default function CreatePortfolioForm() {
               ),
             }}
           />
+          {// Display a loading bar while the api is being called
+          createPort && createPort.isLoading && (
+            <DialogContent>
+              <LinearProgress variant="query" />
+            </DialogContent>
+          )}
+          {// Display an error message if the api call fails (error thrown from backend)
+          createPort && createPort.isError && (
+            <InlineError error={createPort.error} />
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
