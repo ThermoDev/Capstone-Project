@@ -63,6 +63,9 @@ export const useApi = () => {
       .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: apiName }));
   };
 
+  // Use this endpoint when you have a component that access a blank api state each time it renders
+  const resetApiData = api => dispatch({ type: 'RESET', api });
+
   const getRandomNews = () => callApi('news/', 'news');
 
   const getRandomStocks = () => callApi('stock/random/', 'randomStocks');
@@ -84,7 +87,7 @@ export const useApi = () => {
   };
 
   const createPortfolio = (portfolioName, startingCash) => {
-    callApi('portfolios/create', 'createPortfolio', {
+    callApi('portfolios/create', 'createPort', {
       name: portfolioName,
       cash: startingCash,
     });
@@ -125,6 +128,7 @@ export const useApi = () => {
 
   return {
     state,
+    resetApiData,
     getRandomNews,
     getRandomStocks,
     getPortfolios,

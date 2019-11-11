@@ -50,7 +50,7 @@ def create():
     user_id = current_user.get_id()
 
     portfolio_name = request.json.get('name')
-    initial_cash = request.json.get('cash')
+    initial_cash = float(request.json.get('cash'))
 
     try:
         portfolio = portfolio_manager.create_portfolio_for_user(user_id, portfolio_name, initial_cash)
