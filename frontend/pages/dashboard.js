@@ -66,6 +66,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated()) {
+      console.log("portfolioa")
       getPortfolios();
       if (stocksData.length === 0 || newsData.length === 0) {
         getRandomNews();

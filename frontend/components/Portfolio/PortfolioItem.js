@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   ExpansionPanel,
@@ -94,6 +94,16 @@ const PortfolioItem = props => {
   const [expanded, setExpanded] = useState(null);
   const { data } = props;
 
+  useEffect(() => {
+    console.log(data)
+    var companyCodes = data.map((p) => {
+      return Object.keys(p.stock_holdings)
+    })
+    companyCodes = _.union.apply([], companyCodes);
+    console.log(companyCodes)
+    
+  }, [data]);
+
   const handleChange = val => {
     if (expanded === val) {
       setExpanded(null);
@@ -128,8 +138,10 @@ const PortfolioItem = props => {
                   </Typography>
                   {item.percentage_growth > 0 ? (
                     <ArrowDropUpIcon color="primary" />
-                  ) : (
+                  ) : item.percentage_growth < 0 ? (
                     <ArrowDropDownIcon color="error" />
+                  ) : (
+                    <RemoveIcon />
                   )}
                 </>
               )}
@@ -167,7 +179,7 @@ const PortfolioItem = props => {
                 </Typography>
               </StyledSubDiv>
               <StyledSubDiv>
-                <Doughnut
+                {item.stock_weightings ? <Doughnut
                   data={{
                     labels: Object.keys(item.stock_weightings),
                     datasets: [
@@ -179,7 +191,7 @@ const PortfolioItem = props => {
                       },
                     ],
                   }}
-                />
+                />: null}
               </StyledSubDiv>
             </StyledDiv>
             {Object.keys(item.stock_holdings).map(key => {
@@ -209,7 +221,7 @@ const PortfolioItem = props => {
                       {// eslint-disable-next-line no-nested-ternary
                       stock.percentage_growth > 0 ? (
                         <ArrowDropUpIcon color="secondary" />
-                      ) : stock.percentage_growth > 0 ? (
+                      ) : stock.percentage_growth < 0 ? (
                         <ArrowDropDownIcon color="error" />
                       ) : (
                         <RemoveIcon />

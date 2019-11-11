@@ -50,6 +50,7 @@ export default function Header() {
     setState({ [side]: open });
   };
 
+  console.log(user)
   const sideList = side => (
     <div
       role="presentation"
@@ -61,7 +62,7 @@ export default function Header() {
         <Avatar style={{ backgroundColor: '#00ced1', marginBottom: '15px' }}>
           {user.firstName.charAt(0)}
         </Avatar>
-        <Typography>{state.userName}</Typography>
+        <Typography>{user.firstName}</Typography>
       </StyledSidebar>
       <Divider />
       <List>

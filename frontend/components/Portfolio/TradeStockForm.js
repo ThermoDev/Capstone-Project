@@ -56,6 +56,12 @@ const StyledFormControl = styled(FormControl)`
   width: 100%;
 `;
 
+const SearchBarDiv = styled.div`
+  margin-top: 16px;
+  margin-bottom: 8px;
+  margin-right: 16px; 
+`;
+
 export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -80,7 +86,7 @@ export default function CreatePortfolioForm(props) {
   };
 
   const handleSubmit = () => {
-    const price = stock.data[0].Price * volume;
+    const price = stock.data[0].Price;
     postProcessTransaction(portfolioId, {
       company_code: searchValue,
       volume,
@@ -108,7 +114,7 @@ export default function CreatePortfolioForm(props) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <StyledTitle id="form-dialog-title">Create Portfolio</StyledTitle>
+        <StyledTitle id="form-dialog-title">Trade</StyledTitle>
         <DialogContent>
           <StyledDiv>
             <div>
@@ -119,8 +125,9 @@ export default function CreatePortfolioForm(props) {
                 defaultValue={portfolioName}
                 margin="normal"
               />
-              <StyledTextField id="outlined" label="Stock" margin="normal" />
-              <SearchBar placeholder="Stock" onSearch={setSearchValue} />
+              <SearchBarDiv>
+                <SearchBar placeholder="Stock" onSearch={setSearchValue}  />
+              </SearchBarDiv>
             </div>
             <StyledDiv2>
               <StyledDiv>

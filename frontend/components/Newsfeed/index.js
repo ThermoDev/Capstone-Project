@@ -16,6 +16,7 @@ const NewsCard = styled(Card)`
   background-color: ${({ theme }) => theme.mui.palette.background.paper};
   box-shadow: ${({ theme }) => theme.mui.shadows[5]};
   width: 100%;
+  display: flex;
 `;
 
 const NewsItem = props => {
@@ -23,16 +24,14 @@ const NewsItem = props => {
   const { title, urlToImage, description, url } = item;
   return (
     <NewsCard>
-      <CardActionArea
-        onClick={() => window.open(url, '_blank')}
-        style={{ display: 'flex' }}
-      >
+
+      <div style={{ display: 'flex' }}>
         <CardMedia
           title="news image"
           image={urlToImage || DEFAULT_IMAGE}
-          style={{ height: 100 }}
+          style={{ width: '50%' }}
         />
-        <div>
+        <CardActionArea onClick={() => window.open(url, '_blank')}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {title}
@@ -41,8 +40,9 @@ const NewsItem = props => {
               {description}
             </Typography>
           </CardContent>
-        </div>
-      </CardActionArea>
+        </CardActionArea>
+      </div>
+
     </NewsCard>
   );
 };
