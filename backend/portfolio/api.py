@@ -35,7 +35,11 @@ def portfolios():
 
     response = []
     for portfolio in portfolio_manager.get_all_portfolios_for_user(user_id):
-        response.append(serialise_properties(portfolio))
+        try:
+            p = serialise_properties(portfolio)
+            response.append(p)
+        except:
+            continue
 
     return jsonify(response), 200
 
@@ -64,8 +68,8 @@ def process_transaction():
     portfolio_id = request.json.get('portfolio_id')
     transaction_json = request.json.get('transaction')
     company_code = transaction_json['company_code']
-    price = transaction_json['price']
-    volume = transaction_json['volume']
+    price = float(transaction_json['price'])
+    volume = int(transaction_json['volume'])
     transaction_time = transaction_json.setdefault('datetime', None)
 
     try:

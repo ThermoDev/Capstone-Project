@@ -14,77 +14,8 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import { Doughnut } from 'react-chartjs-2';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import TradeStockForm from './TradeStockForm';
 import RemoveIcon from '@material-ui/icons/Remove';
-
-// const data = [
-//   {
-//     portfolio_id: 1,
-//     holder: 'janesmith',
-//     name: 'p1',
-//     cash: 8531.91,
-//     amount_invested: 1468.0900000000001,
-//     stock_transactions: [
-//       {
-//         transaction_id: 1,
-//         portfolio_id: 1,
-//         company_code: 'AAPL',
-//         price: 234.4,
-//         volume: 2,
-//         transaction_time: '2019-10-30T14:33:11.076849',
-//       },
-//       {
-//         transaction_id: 2,
-//         portfolio_id: 1,
-//         company_code: 'NFLX',
-//         price: 218.56,
-//         volume: 10,
-//         transaction_time: '2019-10-30T14:33:11.076866',
-//       },
-//       {
-//         transaction_id: 3,
-//         portfolio_id: 1,
-//         company_code: 'AAPL',
-//         price: 209.29,
-//         volume: 1,
-//         transaction_time: '2019-10-30T14:33:11.076869',
-//       },
-//       {
-//         transaction_id: 4,
-//         portfolio_id: 1,
-//         company_code: 'NFLX',
-//         price: 279.12,
-//         volume: -5,
-//         transaction_time: '2019-10-30T14:33:11.076909',
-//       },
-//     ],
-//     stock_holdings: {
-//       AAPL: {
-//         company_code: 'AAPL',
-//         volume: 3,
-//         amount_invested: 678.09,
-//         market_value: 729.8699798583984,
-//         return_value: 51.779979858398406,
-//         percentage_growth: 0.07636151522423042,
-//       },
-//       NFLX: {
-//         company_code: 'NFLX',
-//         volume: 5,
-//         amount_invested: 790.0,
-//         market_value: 1406.0499572753906,
-//         return_value: 616.0499572753906,
-//         percentage_growth: 0.7798100725004945,
-//       },
-//     },
-//     portfolio_value: 2135.919937133789,
-//     portfolio_return: 667.829937133789,
-//     percentage_growth: 0.4548971365064737,
-//     stock_weightings: {
-//       AAPL: 0.4618858516848422,
-//       NFLX: 0.5381141483151577,
-//     },
-//   },
-// ];
+import TradeStockForm from './TradeStockForm';
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -189,7 +120,11 @@ const PortfolioItem = props => {
               {item.percentage_growth && (
                 <>
                   <Typography component="h1" variant="subtitle1">
-                    {`${item.percentage_growth ? item.percentage_growth.toFixed(4): null}%`}
+                    {`${
+                      item.percentage_growth
+                        ? item.percentage_growth.toFixed(4)
+                        : null
+                    }%`}
                   </Typography>
                   {item.percentage_growth > 0 ? (
                     <ArrowDropUpIcon color="primary" />
@@ -198,7 +133,11 @@ const PortfolioItem = props => {
                   )}
                 </>
               )}
-              <TradeStockForm portfolioName={item.name} portfolioId={item.portfolio_id} portfolioCash={item.cash}/>
+              <TradeStockForm
+                portfolioName={item.name}
+                portfolioId={item.portfolio_id}
+                portfolioCash={item.cash}
+              />
               <IconButton onClick={() => handleChange(item.portfolio_id)}>
                 {expanded === item.portfolio_id ? (
                   <ExpandLessIcon />
@@ -215,22 +154,27 @@ const PortfolioItem = props => {
                   Portfolio value:
                 </Typography>
                 <Typography variant="h6">
-                  ${item.portfolio_value ?item.portfolio_value.toFixed(2):null}
+                  $
+                  {item.portfolio_value
+                    ? item.portfolio_value.toFixed(2)
+                    : null}
                 </Typography>
                 <Typography variant="h5" color="primary">
                   Cash:
                 </Typography>
-                <Typography variant="h6">${item.cash ? item.cash.toFixed(2): null}</Typography>
+                <Typography variant="h6">
+                  ${item.cash ? item.cash.toFixed(2) : null}
+                </Typography>
               </StyledSubDiv>
               <StyledSubDiv>
                 <Doughnut
                   data={{
-                    labels: Object.keys(item.stock_value_weightings),
+                    labels: Object.keys(item.stock_weightings),
                     datasets: [
                       {
-                        data: Object.values(item.stock_value_weightings),
+                        data: Object.values(item.stock_weightings),
                         backgroundColor: mapLabelToColors(
-                          Object.keys(item.stock_value_weightings)
+                          Object.keys(item.stock_weightings)
                         ),
                       },
                     ],
@@ -238,7 +182,7 @@ const PortfolioItem = props => {
                 />
               </StyledSubDiv>
             </StyledDiv>
-            {Object.keys(item.stock_holdings).map((key, index) => {
+            {Object.keys(item.stock_holdings).map(key => {
               const stock = item.stock_holdings[key];
               return (
                 <ColorBox key={stock.company_code}>
@@ -252,15 +196,23 @@ const PortfolioItem = props => {
                   </StyledSubDiv>
                   <StyledSubDiv2>
                     <StyledTypography2 variant="h6">
-                      ${stock.market_value ? stock.market_value.toFixed(2): null}
+                      $
+                      {stock.market_value
+                        ? stock.market_value.toFixed(2)
+                        : null}
                     </StyledTypography2>
                     <StyledTypography variant="subtitle2">
-                      {stock.percentage_growth ?stock.percentage_growth.toFixed(4): 0}%
-                      {stock.percentage_growth > 0 ? (
+                      {stock.percentage_growth
+                        ? stock.percentage_growth.toFixed(4)
+                        : 0}
+                      %
+                      {// eslint-disable-next-line no-nested-ternary
+                      stock.percentage_growth > 0 ? (
                         <ArrowDropUpIcon color="secondary" />
-                      ) : ( stock.percentage_growth > 0 ?
+                      ) : stock.percentage_growth > 0 ? (
                         <ArrowDropDownIcon color="error" />
-                        : <RemoveIcon/>
+                      ) : (
+                        <RemoveIcon />
                       )}
                     </StyledTypography>
                   </StyledSubDiv2>
@@ -278,4 +230,4 @@ PortfolioItem.propTypes = {
   data: PropTypes.array.isRequired,
 };
 
-export default memo(PortfolioItem);
+export default PortfolioItem;

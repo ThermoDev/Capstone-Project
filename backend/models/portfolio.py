@@ -73,7 +73,7 @@ class Portfolio:
 
     @property
     def portfolio_value(self) -> float:
-        return  self.cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
+        return self._cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
 
     @property
     def portfolio_return(self) -> float:
@@ -97,14 +97,16 @@ class Portfolio:
         self._portfolio_id = generated_id
 
     def process_transaction(self, transaction: StockTransaction):
-        cash_required = transaction.volume * transaction.price
+        volume = int(transaction.volume)
+        price = float(transaction.price)
+        cash_required = volume * price
         if self.cash < cash_required:
             raise InsufficientCashError(self.portfolio_id)
 
-        if transaction.volume < 0:
+        if volume < 0:
             if transaction.company_code not in self._stock_holdings:
                 raise NoHoldingsInPortfolio(self.portfolio_id, transaction.company_code)
-            elif self.stock_holdings[transaction.company_code].volume + transaction.volume < 0:
+            elif self.stock_holdings[transaction.company_code].volume + volume < 0:
                 raise ExceedStockHoldingVolumeError(self.portfolio_id, transaction.company_code)
 
         self._cash -= cash_required

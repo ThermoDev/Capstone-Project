@@ -1,13 +1,15 @@
+import Cookies from 'js-cookie';
+
 export const authReducer = (state, action) => {
   switch (action.type) {
     case 'login': {
       const { user } = action;
       const d = new Date();
       const expiresAt = new Date(d.getTime() + 1000 * 60 * 60 * 24 * 365); // 1 year
-      if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.setItem('user', JSON.stringify(user));
-        if (!sessionStorage.getItem('expires_at')) {
-          sessionStorage.setItem('expires_at', JSON.stringify(expiresAt));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(user));
+        if (!localStorage.getItem('expires_at')) {
+          localStorage.setItem('expires_at', JSON.stringify(expiresAt));
         }
       }
       return {
@@ -22,11 +24,10 @@ export const authReducer = (state, action) => {
       };
     }
     case 'logout':
-      if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.removeItem('user');
-        sessionStorage.removeItem('expires_at');
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('expires_at');
       }
-
       return {
         ...state,
         user: {},

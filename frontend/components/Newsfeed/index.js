@@ -23,13 +23,16 @@ const NewsItem = props => {
   const { title, urlToImage, description, url } = item;
   return (
     <NewsCard>
-      <div style={{ display: 'flex' }}>
-        <CardActionArea onClick={() => window.open(url, '_blank')}>
-          <CardMedia
-            title="news image"
-            image={urlToImage || DEFAULT_IMAGE}
-            style={{ height: '200px' }}
-          />
+      <CardActionArea
+        onClick={() => window.open(url, '_blank')}
+        style={{ display: 'flex' }}
+      >
+        <CardMedia
+          title="news image"
+          image={urlToImage || DEFAULT_IMAGE}
+          style={{ height: 100 }}
+        />
+        <div>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
               {title}
@@ -38,8 +41,8 @@ const NewsItem = props => {
               {description}
             </Typography>
           </CardContent>
-        </CardActionArea>
-      </div>
+        </div>
+      </CardActionArea>
     </NewsCard>
   );
 };
