@@ -79,6 +79,7 @@ const Dashboard = () => {
     }
   }, []);
 
+
   useEffect(() => {
     if (searchValue) {
       getStockInfo(searchValue);
@@ -122,14 +123,13 @@ const Dashboard = () => {
             }}
           >
             <div style={{ padding: '0 0.5rem' }}>
-              <p>Could not load data from server info error.</p>
+              <p>Could not load data from server.</p>
             </div>
           </Card>
         </Grid>
       );
     }
 
-    console.log(singularStockData)
 
     if (searchValue && singularStockData.length ) {
 
@@ -168,6 +168,7 @@ const Dashboard = () => {
             name={item.Name}
             ticker={item.Ticker}
             price={item.Price}
+            industry={item.Industry}
             percentageChange={item['PCT Change']}
           />
         </Grid>

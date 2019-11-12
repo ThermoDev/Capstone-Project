@@ -8,6 +8,7 @@ import {
   CardMedia,
   Typography,
 } from '@material-ui/core';
+import he from 'he';
 
 const DEFAULT_IMAGE =
   'https://res.cloudinary.com/dzowh11b5/image/upload/v1565325720/sickfits/t5dehhuwwlcfkpyatfoo.jpg';
@@ -34,10 +35,10 @@ const NewsItem = props => {
         <CardActionArea onClick={() => window.open(url, '_blank')}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              {title}
+              {he.decode(title)}
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {description}
+            <Typography variant="body2" color="textSecondary" component="p" align="justify">
+              {he.decode(description)}
             </Typography>
           </CardContent>
         </CardActionArea>

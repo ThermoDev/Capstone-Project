@@ -43,14 +43,13 @@ const StockModal = props => {
 
     const filtered = rawObj => {
       const newObj = Object.keys(rawObj).filter(key => key >= limit);
-      setXLabels(newObj);
+      setXLabels(newObj.map(i => (new Date(i*1).toLocaleDateString())));
       const filteredData = newObj.reduce(
         (obj, key) => ({ ...obj, [key]: stocksData[key] }),
         {}
       );
       return Object.values(filteredData).map(item => item.Close);
     };
-
     switch (filterOption) {
       case 'Weekly':
         limit = moment()
@@ -75,10 +74,13 @@ const StockModal = props => {
           .add(-1, 'year')
           .format('x');
         setDataPoints(filtered(stocksData));
+        console.log(stocksData)
+
         break;
       case 'All':
-        setXLabels(Object.keys(stocksData).filter(key => key >= limit));
+        setXLabels(Object.keys(stocksData).filter(key => key >= limit).map(i => (new Date(i*1).toLocaleDateString())));
         setDataPoints(Object.values(stocksData).map(item => item.Close));
+        console.log(stocksData)
         break;
       default:
     }

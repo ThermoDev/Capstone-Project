@@ -98,7 +98,7 @@ export default function Header() {
           >
             <MenuIcon style={{ fontSize: 38 }} />
           </IconButton>
-          <img src={turquoiseBkg} alt="Logo" styled={{ maxHeight: '50px' }} />
+          <img src={turquoiseBkg} alt="Logo" style={{ maxWidth: '200px' }} />
           <div styled={{ minWidth: '38px' }} />
         </StyledToolbar>
       </StyledAppbar>
