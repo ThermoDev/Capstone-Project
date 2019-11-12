@@ -10,6 +10,7 @@ class TestUserRepository(UserRepository):
         super().__init__()
         self._db_path = 'temp/db'
 
+
 class UserRepositoryTests(unittest.TestCase):
     user_repository = TestUserRepository()
 
@@ -70,5 +71,20 @@ class UserRepositoryTests(unittest.TestCase):
         self.assertEqual(user.email, 'martinle@gmail.com')
         self.assertEqual(user.check_password('ABCD'), True)
 
+    def test_get_all_usernames(self):
+        user = User('MWanggg', 'Manlin', 'Wang', 'mwang@lol.com.au', None)
+        user.password = '1234'
+        self.user_repository.add_user(user)
 
-unittest.main()
+        user = User('karlmcgee', 'Karl', 'McGee', 'kMcGee@gmail.com', None)
+        user.password = 'km1234'
+        self.user_repository.add_user(user)
+
+        usernames = self.user_repository.get_all_usernames()
+        self.assertTrue('test' in usernames)
+        self.assertTrue('MWanggg' in usernames)
+        self.assertTrue('karlmcgee' in usernames)
+
+
+if __name__ == '__main__':
+    unittest.main()
