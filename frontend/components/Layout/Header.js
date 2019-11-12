@@ -50,7 +50,6 @@ export default function Header() {
     setState({ [side]: open });
   };
 
-  console.log(user)
   const sideList = side => (
     <div
       role="presentation"

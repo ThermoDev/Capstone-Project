@@ -43,9 +43,11 @@ const Dashboard = () => {
     getRandomNews,
     getRandomStocks,
     getStockInfo,
+    getStockSymbols,
   } = useApi();
-  const { portfolios, news, randomStocks, stockInfo } = state;
+  const { portfolios, news, randomStocks, stockInfo, symbols} = state;
   const [searchValue, setSearchValue] = useState('');
+
 
   // loading variables
   const portfoliosLoading = get(portfolios, 'isLoading', true);
@@ -62,12 +64,14 @@ const Dashboard = () => {
   const portfoliosData = get(portfolios, 'data', []);
   const stocksData = get(randomStocks, 'data', []);
   const newsData = get(news, 'data.articles', []);
-  const singularStockData = get(stockInfo, 'data', []);
+  const singularStockData = get(stockInfo, 'data', {});
+  const symbolData = get(symbols, 'data', []);
+
 
   useEffect(() => {
     if (isAuthenticated()) {
-      console.log("portfolioa")
       getPortfolios();
+      getStockSymbols();
       if (stocksData.length === 0 || newsData.length === 0) {
         getRandomNews();
         getRandomStocks();
@@ -88,6 +92,7 @@ const Dashboard = () => {
   }, [user]);
 
   const stockSearchRender = () => {
+
     if (stocksLoading || infoLoading) {
       return (
         <Grid item xs={12} align="middle">
@@ -117,13 +122,17 @@ const Dashboard = () => {
             }}
           >
             <div style={{ padding: '0 0.5rem' }}>
-              <p>Could not load data from server.</p>
+              <p>Could not load data from server info error.</p>
             </div>
           </Card>
         </Grid>
       );
     }
-    if (searchValue && singularStockData.length) {
+
+    console.log(singularStockData)
+
+    if (searchValue && singularStockData.length ) {
+
       return (
         <Grid item xs={12}>
           <StockItem
@@ -190,7 +199,7 @@ const Dashboard = () => {
                     </Card>
                   </>
                 ) : (
-                  <PortfolioItem m={10} data={portfoliosData} />
+                  <PortfolioItem m={10} data={portfoliosData} symbolData={symbolData} />
                 )}
                 <CreatePortfolioForm />
               </ColorBox>
@@ -230,7 +239,7 @@ const Dashboard = () => {
                 </StyledTypography>
                 <Grid container spacing={1}>
                   <Grid item xs={12}>
-                    <SearchBar placeholder="Search" onSearch={setSearchValue} />
+                    <SearchBar placeholder="Search" onSearch={setSearchValue} symbolData={symbolData}/>
                   </Grid>
                   <Grid
                     item

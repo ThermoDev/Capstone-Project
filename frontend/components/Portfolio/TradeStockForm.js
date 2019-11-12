@@ -66,7 +66,7 @@ export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [volume, setVolume] = useState(1);
-  const { portfolioName, portfolioId, portfolioCash } = props;
+  const { portfolioName, portfolioId, portfolioCash, symbolData } = props;
   const [value, setValue] = React.useState('Buy');
   const { state, postProcessTransaction, getStock } = useApi();
   const { processTransaction, stock } = state;
@@ -126,7 +126,7 @@ export default function CreatePortfolioForm(props) {
                 margin="normal"
               />
               <SearchBarDiv>
-                <SearchBar placeholder="Stock" onSearch={setSearchValue}  />
+                <SearchBar placeholder="Stock" onSearch={setSearchValue} symbolData={symbolData} />
               </SearchBarDiv>
             </div>
             <StyledDiv2>

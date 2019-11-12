@@ -70,7 +70,6 @@ export default function CreateGameForm() {
 
   const handleSubmit = () => {
     const { name, cash, date, friends } = state;
-    console.log(state)
 
     postCreateGame(name, new Date().toISOString(), date.toISOString(), friends, cash);
     setState({ ...state, open: false });
