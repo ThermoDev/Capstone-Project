@@ -103,11 +103,14 @@ const mapLabelToColors = labels => {
 
 const PortfolioItem = props => {
   const [expanded, setExpanded] = useState(null);
-  const { data, symbolData } = props;
+  const { data, symbolData, disableTrade } = props;
   const symbolDict = {};
-  symbolData.forEach( (i) =>{
-    symbolDict[i.Ticker] = i;
-  });
+  if (symbolData){
+    symbolData.forEach( (i) =>{
+      symbolDict[i.Ticker] = i;
+    });
+  }
+
 
 
   const [open, setOpen] = useState(false);
@@ -163,12 +166,16 @@ const PortfolioItem = props => {
                   )}
                 </>
               )}
-              <TradeStockForm
-                portfolioName={item.name}
-                portfolioId={item.portfolio_id}
-                portfolioCash={item.cash}
-                symbolData={symbolData}
-              />
+              {
+                disableTrade ?
+                (<TradeStockForm
+                  portfolioName={item.name}
+                  portfolioId={item.portfolio_id}
+                  portfolioCash={item.cash}
+                  symbolData={symbolData}
+                />) : null
+              }
+
               <IconButton onClick={() => handleChange(item.portfolio_id)}>
                 {expanded === item.portfolio_id ? (
                   <ExpandLessIcon />
@@ -228,13 +235,13 @@ const PortfolioItem = props => {
                           width: "100%",}}>
                           <StyledSubDiv>
                             <StyledTypography variant="h6">
-                              {symbolDict ? symbolDict[stock.company_code].Name:''}
+                              {symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name:''}
                               ({stock.company_code})
                             </StyledTypography>
                             <Typography variant="subtitle2">
                               {stock.volume} share{stock.volume > 1 ? 's' : null}
                             </Typography>
-                            <Typography color="secondary">{symbolDict[stock.company_code].Industry}</Typography>
+                            <Typography color="secondary">{ symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Industry : '' }</Typography>
                           </StyledSubDiv>
                           <StyledSubDiv2>
                             <StyledTypography2 variant="h6">
@@ -266,7 +273,7 @@ const PortfolioItem = props => {
                   <StockModal
                     open={open}
                     handleClose={handleClose}
-                    name={symbolDict? symbolDict[stock.company_code].Name: ''}
+                    name={symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name: ''}
                     ticker={stock.company_code}
                   />
                 </div>
