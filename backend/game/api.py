@@ -1,6 +1,6 @@
 from datetime import datetime
+from dateutil import parser as dateparser
 
-import dateutil
 from exception.game.game_not_found_error import GameNotFoundError
 from exception.game.user_not_member_of_game_error import UserNotMemberOfGameError
 from flask import (
@@ -45,8 +45,8 @@ def create():
     user_id = current_user.get_id()
 
     name = request.json.get('name')
-    start_date = dateutil.parser.parse(request.json.get('start_date'))
-    end_date = dateutil.parser.parse(request.json.get('end_date'))
+    start_date = dateparser.parse(request.json.get('start_date'))
+    end_date = dateparser.parse(request.json.get('end_date'))
     usernames = request.json.get('usernames')
     initial_cash = request.json.get('cash')
 

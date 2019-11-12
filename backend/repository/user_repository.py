@@ -50,6 +50,21 @@ class UserRepository(BaseRepository):
 
         return users
 
+    def get_all_usernames(self) -> List[str]:
+        usernames = []
+
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_query(table=UsersTable.TABLE_NAME,
+                                                identifiers=None)
+            output = cursor.execute(query)
+            for row in output:
+                username = row[0]
+
+                usernames.append(username)
+
+        return usernames
+
     def has_user(self, user_id: str) -> bool:
         with sqlite3.connect(self._db_path) as connection:
             cursor = connection.cursor()
