@@ -167,7 +167,7 @@ const PortfolioItem = props => {
                 </>
               )}
               {
-                disableTrade ?
+                !disableTrade ?
                 (<TradeStockForm
                   portfolioName={item.name}
                   portfolioId={item.portfolio_id}
