@@ -52,6 +52,7 @@ def create_app(test_config=None):
     from backend.data_pipeline import newsendpoint as newsend
     app.register_blueprint(newsend.bp)
 
+
     from repository import setup
     setup.init_db()
 
@@ -65,5 +66,8 @@ def create_app(test_config=None):
 
     from backend.portfolio import api as portfolio_api
     app.register_blueprint(portfolio_api.bp)
+    
+    from backend.game import api as game_api
+    app.register_blueprint(game_api.bp)
 
     return app

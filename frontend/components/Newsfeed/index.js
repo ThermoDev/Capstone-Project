@@ -8,6 +8,7 @@ import {
   CardMedia,
   Typography,
 } from '@material-ui/core';
+import he from 'he';
 
 const DEFAULT_IMAGE =
   'https://res.cloudinary.com/dzowh11b5/image/upload/v1565325720/sickfits/t5dehhuwwlcfkpyatfoo.jpg';
@@ -16,6 +17,7 @@ const NewsCard = styled(Card)`
   background-color: ${({ theme }) => theme.mui.palette.background.paper};
   box-shadow: ${({ theme }) => theme.mui.shadows[5]};
   width: 100%;
+  display: flex;
 `;
 
 const NewsItem = props => {
@@ -23,26 +25,25 @@ const NewsItem = props => {
   const { title, urlToImage, description, url } = item;
   return (
     <NewsCard>
-      <CardActionArea
-        onClick={() => window.open(url, '_blank')}
-        style={{ display: 'flex' }}
-      >
+
+      <div style={{ display: 'flex' }}>
         <CardMedia
           title="news image"
           image={urlToImage || DEFAULT_IMAGE}
-          style={{ height: 100 }}
+          style={{ width: '50%' }}
         />
-        <div>
+        <CardActionArea onClick={() => window.open(url, '_blank')}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              {title}
+              {he.decode(title)}
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {description}
+            <Typography variant="body2" color="textSecondary" component="p" align="justify">
+              {he.decode(description)}
             </Typography>
           </CardContent>
-        </div>
-      </CardActionArea>
+        </CardActionArea>
+      </div>
+
     </NewsCard>
   );
 };

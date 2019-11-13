@@ -90,12 +90,9 @@ const useStyles = makeStyles({
 
 const SearchBar = props => {
   const classes = useStyles();
-  const { placeholder, onSearch } = props;
+  const { placeholder, onSearch, symbolData } = props;
   const [modified, setModified] = useState(false);
-  const { state, getStockSymbols } = useApi();
-  const { symbols } = state;
 
-  const symbolData = get(symbols, 'data', []);
 
   const isModified = e => setModified(!!e.target.value);
 
@@ -110,11 +107,7 @@ const SearchBar = props => {
     }
   };
 
-  useEffect(() => {
-    if (symbolData.length === 0) {
-      getStockSymbols();
-    }
-  }, []);
+ 
 
   return (
     <Autocomplete

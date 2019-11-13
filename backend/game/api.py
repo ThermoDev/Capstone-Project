@@ -8,12 +8,13 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from game.game_manager import GameManager
+from portfolio.portfolio_manager import PortfolioManager
 from models.game import Game
 from utils.serialiser import serialise_properties
 
 bp = Blueprint('games', __name__, url_prefix='/games')
 
-game_manager = GameManager()
+game_manager = GameManager(PortfolioManager)
 
 
 @bp.route('', methods=['GET'])
