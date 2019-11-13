@@ -171,7 +171,7 @@ class PortfolioRepository(BaseRepository):
 
 
 def _unpack_portfolio(portfolio: Portfolio) -> tuple:
-    return portfolio.holder, portfolio.name, portfolio.cash
+    return portfolio.holder, portfolio.name, portfolio._initial_cash
 
 
 def _unpack_transaction(transaction: StockTransaction) -> tuple:
