@@ -25,6 +25,21 @@ const getGraphProps = (xLabels, dataLabel, dataPoints) => ({
       pointRadius: 1,
       pointHitRadius: 10,
       data: dataPoints,
+      options: {
+        scales: {
+          xAxes: [
+            {
+              type: 'time',
+              time: {
+                displayFormats: {
+                  quarter: 'MMM YYYY',
+                },
+                parser: 'X',
+              },
+            },
+          ],
+        },
+      },
     },
   ],
 });

@@ -612,25 +612,36 @@ def __add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
 
     """
 
-    spaced_list = " ".join(list(data["Ticker"].values))  # Retrieve space-seperated ticker values
+    tickers_list = list(data["Ticker"].values)  # Retrieve space-seperated ticker values
 
-    tickers = yf.Tickers(spaced_list)
-    ticky = tickers.download()
+    if len(data) == 1:
+        tickers = yf.Tickers(tickers_list[0])
+        ticky = yf.download(tickers_list[0])
 
-    price = ticky["Close"]
-    price = price.iloc[-1]
-    price = pd.DataFrame(price)
-    price.columns = ["Price"]
-    data = data.merge(price, left_on="Ticker", right_index=True)
+        data["Price"] = ticky["Close"][-1]
 
-    price = ticky["Close"]
-    pct_change = price.pct_change()  # Calculate pct_change
-    pct_change = pct_change.iloc[-1]  # Retrieve last row
-    pct_change = pct_change * 100
-    pct_change = pd.DataFrame(pct_change)
-    pct_change.columns = ["PCT Change"]
-    pct_change["PCT Change"] = pct_change["PCT Change"].astype(float)
-    data = data.merge(pct_change, left_on="Ticker", right_index=True)
+        price = ticky["Close"]
+        pct_change = price.pct_change()[-1] * 100
+        data["PCT Change"] = pct_change
+
+    else:
+        tickers = yf.Tickers(tickers_list)
+        ticky = tickers.download()
+
+        price = ticky["Close"]
+        price = price.iloc[-1]
+        price = pd.DataFrame(price)
+        price.columns = ["Price"]
+        data = data.merge(price, left_on="Ticker", right_index=True)
+
+        price = ticky["Close"]
+        pct_change = price.pct_change()  # Calculate pct_change`
+        pct_change = pct_change.iloc[-1]  # Retrieve last row
+        pct_change = pct_change * 100
+        pct_change = pd.DataFrame(pct_change)
+        pct_change.columns = ["PCT Change"]
+        pct_change["PCT Change"] = pct_change["PCT Change"].astype(float)
+        data = data.merge(pct_change, left_on="Ticker", right_index=True)
 
     data["Is Up"] = data["PCT Change"] > 0
 
@@ -681,3 +692,26 @@ def get_random(number: int = 10) -> pd.DataFrame:
     random_data = data.sample(n=number)
     random_data = __add_stock_info(random_data)
     return random_data
+
+
+def get_stocks_infos(ticker: str) -> pd.DataFrame:
+    """
+    Function to retrieve ticker data given a list of ticker symbols
+    This will then add all currently known stock info about each of those stocks in the data.
+
+    Parameters
+    Ticker: str
+        The ticker to retrieve
+
+    Returns
+    -------
+    DataFrame
+         A DataFrame with the retrieved data, with all its current known stock info
+    """
+    data = get_all_stock_data()
+    result_df = data[data['Ticker'].str.contains('^{}$'.format(ticker.upper()), regex=True)]
+    if len(result_df) != 0:
+        stock_info = __add_stock_info(result_df)
+        return stock_info
+    else:
+        pass

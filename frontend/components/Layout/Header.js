@@ -61,13 +61,18 @@ export default function Header() {
         <Avatar style={{ backgroundColor: '#00ced1', marginBottom: '15px' }}>
           {user.firstName.charAt(0)}
         </Avatar>
-        <Typography>{state.userName}</Typography>
+        <Typography>{user.firstName}</Typography>
       </StyledSidebar>
       <Divider />
       <List>
         <Link href="/dashboard">
           <ListItem button key="Dashboard">
             <ListItemText primary="Dashboard" />
+          </ListItem>
+        </Link>
+        <Link href="/play">
+          <ListItem button key="Play">
+            <ListItemText primary="Play" />
           </ListItem>
         </Link>
         <Link href="/settings">
@@ -93,7 +98,7 @@ export default function Header() {
           >
             <MenuIcon style={{ fontSize: 38 }} />
           </IconButton>
-          <img src={turquoiseBkg} alt="Logo" styled={{ maxHeight: '50px' }} />
+          <img src={turquoiseBkg} alt="Logo" style={{ maxWidth: '200px' }} />
           <div styled={{ minWidth: '38px' }} />
         </StyledToolbar>
       </StyledAppbar>

@@ -44,7 +44,7 @@ const StockItemCard = styled(Card)`
 `;
 
 const StockItem = props => {
-  const { name, ticker, price, percentageChange } = props;
+  const { name, ticker, price, percentageChange, industry } = props;
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -66,12 +66,14 @@ const StockItem = props => {
             >
               {`${name} (${ticker})`}
             </Typography>
+            <Typography color="secondary" variant="subtitle" component="h2">{industry}</Typography>
             <div className="price-box">
               <div className="item">
                 <Typography className="price" variant="h5" component="h2">
                   {`$${price.toFixed(2)}`}
                 </Typography>
               </div>
+              
               <div className="item">
                 <Typography className="percent" variant="h5" component="h2">
                   {`${Math.abs(percentageChange.toFixed(2))}%`}

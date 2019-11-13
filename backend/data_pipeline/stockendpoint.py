@@ -214,10 +214,10 @@ def random():
     number = request.args.get("n", default=10)  # random
 
     try:
-        if number:
+        if number and number > 0:
             number = int(number)
     except ValueError:
-        return Response(f"Please enter a valid integer for the number n: {number}.", status=400)
+        return Response(f"Please enter a valid positive integer for the number n: {number}.", status=400)
 
     data = stkh.get_random(number)
     list_data = stkh.df_to_dict(data, orient="records")
@@ -226,3 +226,13 @@ def random():
         return Response(f"Could not find random samples", status=404)  # Uh oh.
 
     return jsonify(list_data)
+
+
+@bp.route('/infos/<ticker>', methods=['GET'])
+def infos(ticker):
+    data = stkh.get_stocks_infos(ticker)
+    try:
+        list_data = stkh.df_to_dict(data, orient="records")
+        return jsonify(list_data)
+    except:
+        return Response(f"Could not find stocks with those ticker values. ", status=404)

@@ -52,3 +52,17 @@ def register():
 def logout():
     logout_user()
     return Response(response="Logout successful.", status=200)
+
+
+@bp.route('/check-user', methods=['POST'])
+@login_required
+def check_user():
+    user_id = request.json.get('user_id')
+
+    return jsonify(user_manager.check_user(user_id)), 200
+
+
+@bp.route('/all-users', methods=['GET'])
+@login_required
+def get_all_users():
+    return jsonify(user_manager.get_all_usernames()), 200

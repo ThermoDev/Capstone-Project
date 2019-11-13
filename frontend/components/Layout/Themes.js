@@ -29,6 +29,11 @@ export const muiTheme = responsiveFontSizes(
       },
       error: pink,
     },
+    overrides: {
+      MuiAutocomplete: {
+        popup: { zIndex: 1300 },
+      },
+    },
     // props: {
     //   MuiButtonBase: {
     //     disableRipple: true,
