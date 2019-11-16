@@ -14,7 +14,7 @@ from utils.serialiser import serialise_properties
 
 bp = Blueprint('games', __name__, url_prefix='/games')
 
-game_manager = GameManager(PortfolioManager)
+game_manager = GameManager()
 
 
 @bp.route('', methods=['GET'])
