@@ -49,7 +49,7 @@ def create():
     start_date = dateparser.parse(request.json.get('start_date'))
     end_date = dateparser.parse(request.json.get('end_date'))
     usernames = request.json.get('usernames') if request.json.get('usernames') else []
-    initial_cash = request.json.get('cash')
+    initial_cash = request.json.get('initial_cash')
 
     if user_id not in usernames:
         usernames.append(user_id)
