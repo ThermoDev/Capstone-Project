@@ -31,17 +31,17 @@ class Portfolio:
                  portfolio_id: Optional[int],
                  holder: str,
                  name: str,
-                 cash: float,
+                 initial_cash: float,
                  stock_transactions: List[StockTransaction]):
         self._portfolio_id = portfolio_id
         self._holder = holder
         self._name = name
-        self._initial_cash = cash
-        self._cash = cash
+        self._initial_cash = initial_cash
+        self._cash = initial_cash
         self._stock_transactions = stock_transactions
 
         self._stock_holdings = {}
-        self._build_stock_holdings()
+        self._replay_transactions()
 
     @property
     def portfolio_id(self) -> int:
@@ -114,11 +114,15 @@ class Portfolio:
 
         self._update_stock_holdings(transaction)
 
-    def _build_stock_holdings(self):
+    def _replay_transactions(self):
         for transaction in self._stock_transactions:
+            self._update_cash(transaction)
             self._update_stock_holdings(transaction)
 
-    def _update_stock_holdings(self, transaction):
+    def _update_cash(self, transaction: StockTransaction):
+        self._cash -= transaction.volume * transaction.price
+
+    def _update_stock_holdings(self, transaction: StockTransaction):
         company_code = transaction.company_code
         stock_holding = self._stock_holdings.setdefault(company_code, StockHolding(company_code))
         stock_holding.add_transaction(transaction)
