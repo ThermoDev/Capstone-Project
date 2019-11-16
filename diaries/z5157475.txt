@@ -1,0 +1,50 @@
+Week 1:
+This week only had a lecture which gave an overview of the course and a brief look at some of the projects available for the group work.
+
+Week 2:
+We formed a group this week and decided to do the Stock Portfolio Management System.
+We assigned roles:
+    - Martin, Emily and Celine are on the frontend since they have React experience.
+    - Manlin and I are on the backend since I have the most Python experience and Manlin has a lot of experience with databases.
+
+We are now researching existing, similar stock management systems to determine the features that we want to implement in our project.
+In addition, we are also researching the tech stack and architecture that we aim to implement for inclusion in our Project Proposal.
+
+Week 3:
+We were told during the last week that our group could not have 5 members and so spent a decent amount of time contacting other students in the course and convening with the lecturer to try to sort the situation out.
+We added a sixth member and split into two groups to work on a joint project - Arthur has experience with data science and so will be working on our data pipeline i.e. fetching live stock data from external APIs and aggregating/organising it for the rest of our application to use.
+Therefore, while we are finishing our Project Proposal, we have to account for the fact that we have two groups and will need to adjust our scope to be appropriate to the increased group size.
+
+
+Week 4:
+We handed in our project proposal this week and started breaking up our epics into smaller user stories that we could assign to each of the members of the two teams.
+
+I built the login module this week because portfolios and such will be attached to users and we should only allow people to view their own portfolios. We looked into and considered generating our own jwt tokens but I settled in the end for using flask-login as it was the easiest way to get it up and running without too much hassle.
+Project Proposal
+Login
+
+Week 5:
+This week I was beginning to build the portfolio module.
+
+Before I could do that, however, we had some issues with the login integration with the front-end. After some investigation we discovered that flask-login (which I had chosen for the login module implementation because it was simpler but gave us less control) was not sending cookies/tokens appropriately to the frontend. I had been using Postman to test my work and did not have a problem so did not notice it last week. We flirted again with the idea of refactoring to generate our own jwt tokens to give us more control but after a little more investigation we determined that flask-login by default does not send session cookies over http connections which is what we were using to run locally. Luckily, this could be fixed with a simple flag in the flask app config.
+
+We also decided as a team on the database schema so we could agree on a model for our portfolios and its relevant attributes. For now, while Manlin sets up the database and creates the repository modules to read and write to it properly, I am creating the portfolio management system with hard-coded dummy data until we have a working repository module and database to integrate it with.
+
+Week 6:
+This week I continued work
+Portfolio System - StockTransactions
+
+Week 7:
+This week as a team we discussed what would be useful information to have about a portfolio to display from a UX perspective. Manlin looked back through our original investigation into existing stock management products and did some more finance research to compile a list of pertinent calculations and properties that we should display.
+
+Together, we modified my existing porfolio management system to also calculate these properties such as stock weighting distributions, market capitalisation etc. and return them to the frontend to display.
+
+I also made a start on the game/simulation module.
+
+Week 8:
+Once the frontend integrated out portfolio module changes we noticed that some of the calculations were incorrect. It was difficult for us to see because there are so many numbers and percentages involved but once it was displayed nicely all in one place it became a lot easier to do a sort of manual audit and realise that some of our calculations didn't make much sense. Manlin and I had to have a discussion about the calculations and what exactly we were trying to display to ensure our portfolio properties and growth tracking were correct.
+
+I also finalised the game/simulation module for multiple users to compete with each other over a set period of time to see who can create the most profitable portfolio.
+
+Week 9:
+This week I was mostly tending to the report and being on standby in case there were any issues or bugs with any of the backend modules since we are getting to the point of finalising the integration and more vigorously testing functionality.
