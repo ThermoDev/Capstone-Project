@@ -48,8 +48,8 @@ def create():
     name = request.json.get('name')
     start_date = dateparser.parse(request.json.get('start_date'))
     end_date = dateparser.parse(request.json.get('end_date'))
-    usernames = request.json.get('usernames')
-    initial_cash = request.json.get('cash')
+    usernames = request.json.get('usernames') if request.json.get('usernames') else []
+    initial_cash = request.json.get('initial_cash')
 
     if user_id not in usernames:
         usernames.append(user_id)
@@ -61,7 +61,7 @@ def create():
 
 def _serialise_and_obscure_game(game: Game, user_id: str) -> dict:
     serialised = serialise_properties(game)
-    if datetime.now() < game.end_date:
+    if datetime.now(game.end_date.tzinfo) < game.end_date:
         for serialised_portfolio in serialised['portfolios']:
             if serialised_portfolio['holder'] != user_id:
                 serialised['portfolios'].remove(serialised_portfolio)
