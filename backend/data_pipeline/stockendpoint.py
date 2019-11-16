@@ -228,11 +228,20 @@ def random():
     return jsonify(list_data)
 
 
-@bp.route('/infos/<ticker>', methods=['GET'])
-def infos(ticker):
-    data = stkh.get_stocks_infos(ticker)
-    try:
-        list_data = stkh.df_to_dict(data, orient="records")
-        return jsonify(list_data)
-    except:
+@bp.route('/infos/<tickers>', methods=['GET'])
+def infos(tickers):
+    # Tickers as comma-separated values: E.g. "MSFT,AAPL,NFLX"
+    tickers = tickers.upper()
+    tickers = tickers.replace(" ", "")
+    list_of_tickers = tickers.split(",")
+
+    if type(list_of_tickers) is str:
+        list_of_tickers = [list_of_tickers]
+
+    data = stkh.get_stocks_infos(list_of_tickers)
+    list_data = stkh.df_to_dict(data, orient="records")
+
+    if not list_data:
         return Response(f"Could not find stocks with those ticker values. ", status=404)
+
+    return jsonify(list_data)

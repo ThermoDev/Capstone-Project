@@ -648,13 +648,13 @@ def __add_stock_info(data: pd.DataFrame) -> pd.DataFrame:
     infos = [ticker.info for ticker in tickers.tickers]
     info_df = pd.DataFrame(infos)
 
-    info_df = info_df[[
+    info_df = info_df[info_df.columns.intersection([
         "epsTrailingTwelveMonths",
         "marketCap",
         "trailingPE",
         "bid",
         "ask",
-    ]]
+    ])]
 
     temp = data.copy()
     # Need to reset index as it persists in memory
@@ -694,24 +694,27 @@ def get_random(number: int = 10) -> pd.DataFrame:
     return random_data
 
 
-def get_stocks_infos(ticker: str) -> pd.DataFrame:
+def get_stocks_infos(list_of_tickers: List[str]) -> pd.DataFrame:
     """
     Function to retrieve ticker data given a list of ticker symbols
     This will then add all currently known stock info about each of those stocks in the data.
 
     Parameters
-    Ticker: str
-        The ticker to retrieve
+    ----------
+    list_of_tickers : List[str]
+        The list of tickers to retrieve from
 
     Returns
     -------
     DataFrame
          A DataFrame with the retrieved data, with all its current known stock info
     """
+
+    list_of_tickers = [x.upper() for x in list_of_tickers]  # UpperCase Tickers to be sure
     data = get_all_stock_data()
-    result_df = data[data['Ticker'].str.contains('^{}$'.format(ticker.upper()), regex=True)]
-    if len(result_df) != 0:
-        stock_info = __add_stock_info(result_df)
-        return stock_info
+    data = data[data["Ticker"].isin(list_of_tickers)]
+    if len(data) != 0:
+        data = __add_stock_info(data)
+        return data
     else:
         pass
