@@ -43,14 +43,13 @@ Week 5
 	
 
 Week 6
-	- Had an interview during the lab time, so I didn't attended, missed out on a bunch of stuff bc of that
+	- Had an interview during the lab time, so I didn't attended, missed out on a bunch of stuff because of that
 	- Didn’t work on the project much, had a lot of COMP4920 due that week and had compulsory events to attended to during all of the weekend
-	- Will try to make up for it during Week  it during Week 7
+	- Will try to make up for it during Week it during Week 7
 
 Week 7
 	- Started working on the report while the others worked on the code
 	- Struggled with the implementation of the Virtual Trading Page
-
 
 Week 8
 	- worked on the Project Report- filled in as much as I could while reading and understanding the code
