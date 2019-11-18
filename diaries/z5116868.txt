@@ -35,3 +35,28 @@ We met in lab and went through the Epic Stories we were going to focus on Epic 1
 
 We had a Stand-Up Meeting Sunday evening of Week 4, we went through what we've working on since Wednesday and if we ran into any trouble, I finished working on the bones of the Registration Form, I have yet to implement the Style Guide to it, that Emily worked on. In Week 5 till Wednesday I'll be working on the Dashboard/Home Page of our Project. I haven't encountered any obstacles so far but if I do I'll promptly ask for help if I can't figure out the problem myself.Other members of my group worked on the Backend of the Project especially the database, the Login Form and the Style Guide.
 
+Week 5
+	- we got the marks for our Project Proposal 10/10 yew
+	- we changed from Atlaskit to Material UI for our React components since there are more contributors and its easier to ask for help from people online than Atlaskit
+	- I changed our Registration form from the Atlaskit template to the Material UI template- I still to style it to our style guide
+	- I started on the Dashboard components- just sectioning out the page for the different components- Portfolio, Newsfeed, relevant Stock chart,  Graphs
+	
+
+Week 6
+	- Had an interview during the lab time, so I didn't attended, missed out on a bunch of stuff bc of that
+	- Didn’t work on the project much, had a lot of COMP4920 due that week and had compulsory events to attended to during all of the weekend
+	- Will try to make up for it during Week  it during Week 7
+
+Week 7
+	- Started working on the report while the others worked on the code
+	- Struggled with the implementation of the Virtual Trading Page
+
+
+Week 8
+	- worked on the Project Report- filled in as much as I could while reading and understanding the code
+		○ worked on every subheading I knew except the commerce calculations for the stocks
+	- Working on the setting page in the frontend- basic wireframes, basic functionality- change username, change password,  change email, delete account and textboxes
+
+Week 9
+	- Finished setting page
+	- Finished Overview section of the report and User Documentation on how to use our website
