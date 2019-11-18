@@ -94,7 +94,7 @@ const Settings = () => {
       {isAuthenticated() && (
         <Container maxWidth="lg">
           <ColorBox>
-            <StyledTypography component="h1" variant="h6" colour="black">
+            <StyledTypography component="h1" variant="h6">
               Settings
             </StyledTypography>
           </ColorBox>
@@ -103,7 +103,7 @@ const Settings = () => {
             <StyledTypography component="h1" variant="h6">
               Change Username
             </StyledTypography>
-            <br />
+            <br/>
             <Card style={{ width: '100%', height: '50px', align: 'center' }}>
               Current Username
             </Card>
@@ -197,7 +197,7 @@ const Settings = () => {
             <StyledTypography component="h1" variant="h6">
               Change Email
             </StyledTypography>
-            <br />
+            <br/>
             <Card style={{ width: '100%', height: '50px' }}>Current Email</Card>
             <form className={classes.container} noValidate autoComplete="off">
               <div>
