@@ -98,9 +98,7 @@ const Settings = () => {
               Settings
             </StyledTypography>
           </ColorBox>
-
-          <br />
-
+          <br/>
           <ColorBox>
             <StyledTypography component="h1" variant="h6">
               Change Username
@@ -133,8 +131,7 @@ const Settings = () => {
               </div>
             </form>
           </ColorBox>
-
-          <br />
+          <br/>
           <ColorBox>
             <StyledTypography component="h1" variant="h6">
               Change Password
@@ -195,9 +192,7 @@ const Settings = () => {
               />
             </FormControl>
           </ColorBox>
-
-          <br />
-
+          <br/>
           <ColorBox>
             <StyledTypography component="h1" variant="h6">
               Change Email
@@ -228,12 +223,8 @@ const Settings = () => {
               </div>
             </form>
           </ColorBox>
-          <br />
-
+          <br/>
           <ColorBox>
-            <StyledTypography component="h1" variant="h6">
-              Delete Account
-            </StyledTypography>
             <Button
               variant="contained"
               color="secondary"
