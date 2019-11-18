@@ -17,7 +17,6 @@ import 'date-fns';
 import get from 'lodash.get';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
@@ -144,7 +143,7 @@ export default function CreateGameForm() {
                 format="dd/MM/yyyy"
                 margin="normal"
                 id="date-picker-inline"
-                label="Date picker inline"
+                label="End date"
                 value={values.date}
                 onChange={handleDateChange}
                 KeyboardButtonProps={{

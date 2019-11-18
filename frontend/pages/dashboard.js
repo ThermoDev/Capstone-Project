@@ -6,7 +6,6 @@ import {
   useMediaQuery,
   Typography,
   Card,
-  Paper,
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Router from 'next/router';
@@ -198,7 +197,7 @@ const Dashboard = () => {
                     <Card
                       style={{ width: '100%', height: '73px', margin: '16px' }}
                     >
-                      <Skeleton variant="rect" height={300} />
+                      <Skeleton variant="rect" height={200} />
                     </Card>
                   </>
                 ) : (

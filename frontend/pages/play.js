@@ -6,12 +6,10 @@ import {
   useMediaQuery,
   Typography,
   Paper,
-  Card,
   Toolbar
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import Divider from '@material-ui/core/Divider';
 import Router from 'next/router';
 import get from 'lodash.get';
 import { useAuth } from '../lib/useAuth';

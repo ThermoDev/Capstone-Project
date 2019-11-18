@@ -71,8 +71,6 @@ const Register = () => {
       register(email, firstName, lastName, password);
     }
   };
-  console.log(isSuccess)
-  console.log(isAuthenticated)
 
   useEffect(() => {
     if (isSuccess){
