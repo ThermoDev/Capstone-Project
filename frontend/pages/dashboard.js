@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   Typography,
   Card,
+  Paper,
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Router from 'next/router';
@@ -36,7 +37,7 @@ const StyledTypography = styled(Typography)`
 
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const {
     state,
     getPortfolios,
@@ -178,7 +179,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      {isAuthenticated() && (
+      { isLoading ? <div></div> :
+      (isAuthenticated() && (
         <Container maxWidth="lg">
           <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
             <Grid item xs={12}>
@@ -196,7 +198,7 @@ const Dashboard = () => {
                     <Card
                       style={{ width: '100%', height: '73px', margin: '16px' }}
                     >
-                      <Skeleton variant="rect" height={200} />
+                      <Skeleton variant="rect" height={300} />
                     </Card>
                   </>
                 ) : (
@@ -255,7 +257,8 @@ const Dashboard = () => {
             </Grid>
           </Grid>
         </Container>
-      )}
+      ))
+    }
     </div>
   );
 };

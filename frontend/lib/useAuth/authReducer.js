@@ -21,6 +21,7 @@ export const authReducer = (state, action) => {
           userId: user.user_id,
         },
         expiresAt,
+        success: false,
       };
     }
     case 'logout':
@@ -43,6 +44,11 @@ export const authReducer = (state, action) => {
         ...state,
         isAuthenticating: true,
       };
+    case 'success':
+      return {
+        ...state,
+        success: 'true',
+      }
     case 'error': {
       const { errorType, error } = action;
       return {

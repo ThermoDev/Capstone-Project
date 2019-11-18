@@ -66,7 +66,7 @@ const StockItem = props => {
             >
               {`${name} (${ticker})`}
             </Typography>
-            <Typography color="secondary" variant="subtitle" component="h2">{industry}</Typography>
+            <Typography color="secondary" variant="subtitle1" component="h2">{industry}</Typography>
             <div className="price-box">
               <div className="item">
                 <Typography className="price" variant="h5" component="h2">

@@ -72,6 +72,9 @@ export const useApi = () => {
 
   const getPortfolios = () => callApi('portfolios', 'portfolios');
 
+  const getGames = () => callApi('games', 'games');
+
+
   const getStockHistory = (symbol, startDate, endDate = null) => {
     const url = endDate
       ? `stock/?symbol=${symbol}&start=${startDate}&end=${endDate}`
@@ -103,7 +106,7 @@ export const useApi = () => {
     getPortfolios();
   };
 
-  const postCreateGame = (name, startDate, endDate, userNames, initialCash) =>
+  const postCreateGame = (name, startDate, endDate, userNames, initialCash) =>{
     callApi('games/create', 'createGame', {
       name,
       start_date: startDate,
@@ -111,6 +114,14 @@ export const useApi = () => {
       usernames: userNames,
       initial_cash: initialCash,
     });
+    getGames()
+  };
+
+  const postCheckUser = (userId) => {
+    callApi('login/check-user', 'checkUser', {
+      user_id: userId
+    });
+  };
 
   const getStockSymbols = () => callApi('stock/getallsymbols', 'symbols');
 
@@ -136,9 +147,11 @@ export const useApi = () => {
     createPortfolio,
     postProcessTransaction,
     postCreateGame,
+    postCheckUser,
     getStockSymbols,
     searchStocks,
     getStockInfo,
     getStock,
+    getGames,
   };
 };

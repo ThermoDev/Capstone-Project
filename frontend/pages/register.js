@@ -31,6 +31,8 @@ const SubmitButton = styled(Button)`
   margin: ${({ theme }) => theme.mui.spacing(3, 0, 2)};
 `;
 
+const nameRegex = /[A-Za-z\s]+/;
+
 const validateEmail = email => {
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
@@ -40,8 +42,10 @@ const Register = () => {
   const [values, setValues] = useState({
     invalidEmail: false,
     invalidPassword: false,
+    invalidFirstName: false,
+    invalidLastName: false,
   });
-  const { user, isAuthenticated, register, isError, error } = useAuth();
+  const { user, isAuthenticated, register, isError, error, isSuccess } = useAuth();
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -54,21 +58,27 @@ const Register = () => {
       setValues({
         invalidEmail: !validateEmail(email),
         invalidPassword: password.length < 8,
+        invalidFirstName: !nameRegex.test(firstName),
+        invalidLastName: !nameRegex.test(lastName),
       });
     } else {
       setValues({
         invalidEmail: false,
         invalidPassword: false,
+        invalidFirstName: false,
+        invalidLastName: false,
       });
       register(email, firstName, lastName, password);
     }
   };
+  console.log(isSuccess)
+  console.log(isAuthenticated)
 
   useEffect(() => {
-    if (isAuthenticated()) {
-      Router.push('/dashboard');
+    if (isSuccess){
+      Router.push('/login');
     }
-  }, [user]);
+  }, [isSuccess]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -93,6 +103,8 @@ const Register = () => {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                error={values.invalidFirstName}
+                helperText={values.invalidFirstName? 'Must only contain characters.' : ''}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -104,6 +116,8 @@ const Register = () => {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                error={values.invalidLastName}
+                helperText={values.invalidLastName ? 'Must only contain characters.' : ''}
               />
             </Grid>
             <Grid item xs={12}>

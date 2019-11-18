@@ -80,9 +80,7 @@ export const useAuth = () => {
       }),
     })
       .then(checkStatus)
-      .then(result => {
-        result.json().then(user => dispatch({ type: 'login', user }));
-      })
+      .then( dispatch({type: 'success'}))
       .catch(err =>
         err.response.text().then(body => {
           dispatch({ type: 'error', errorType: 'regFail', error: body });
@@ -93,6 +91,7 @@ export const useAuth = () => {
 
   const isAuthenticated = () =>
     !!(state.expiresAt && new Date().getTime() < state.expiresAt);
+
 
   const resetErrors = () => {
     dispatch({ type: 'resetErrors' });
@@ -110,5 +109,6 @@ export const useAuth = () => {
       ? { message: state.error, errorType: state.errorType }
       : null,
     isError: !!state.error,
+    isSuccess: state.success
   };
 };
