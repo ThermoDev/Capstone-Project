@@ -1,7 +1,6 @@
 import re
 from datetime import datetime
 from typing import Optional
-
 from data_pipeline import stockhelper
 from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
@@ -16,9 +15,8 @@ class PortfolioManager:
 
     def get_all_portfolios_for_user(self, user_id: str) -> [Portfolio]:
         all_portfolios = self._portfolio_repository.get_all_portfolios_for_user(user_id)
-        portfolios_in_games = self._portfolio_repository.get_portfolio_ids_in_games()
 
-        return [portfolio for portfolio in all_portfolios if portfolio not in portfolios_in_games]
+        return [portfolio for portfolio in all_portfolios if not re.search("(Game)", portfolio.name)]
 
     def get_portfolio_for_user_by_id(self, user_id: str, portfolio_id: int) -> Portfolio:
         portfolio = self._portfolio_repository.get_portfolio_by_id(portfolio_id)

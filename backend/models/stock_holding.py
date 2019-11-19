@@ -22,7 +22,11 @@ class StockHolding:
 
     @property
     def market_value(self):
-        return self.volume * stockhelper.get_info(self.company_code)['regularMarketPrice']
+        stockVal = 1
+        if stockhelper.get_info(self.company_code):
+            stockVal = stockhelper.get_info(self.company_code)['regularMarketPrice']
+        
+        return self.volume * stockVal 
 
     @property
     def return_value(self):
