@@ -296,7 +296,7 @@ const Dashboard = () => {
                       <React.Fragment>
                         <Typography color="inherit">Stocks</Typography>
                         {"Here you can search stocks, and view their performance. "}
-                        {"Below, you can find the stock name, stock code, price and daily percentage growth. "}
+                        {"Below, you can find the stock name, stock code, price and daily percentage growth for each stock. "}
                         {"Just enter a stock name to get started!"}
                       </React.Fragment>
                     }>
