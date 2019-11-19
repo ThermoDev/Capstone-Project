@@ -30,3 +30,11 @@ Wrote up pytests for user repository and portfolio repository which will test th
 Week 8 
 
 Started working on the report. Wrote up information on third party functionalities (SQLite), implementation challenges involving data modelling, finance content (background and calculations) and created ER and relational diagrams for the database we used.  Those were my main tasks for the report content so after i finished off that i started on some presentation slides we would be using in week 10. 
+
+Week 9 
+
+This week I focused on getting the presentation sldies finished so that they were ready for the demo. 
+
+Week 10 
+
+Our group split up the presentation so everyone knew what part they would be responsible for. I was allocated to present the introuduction and market research sections, so i prepared myself for that. 
