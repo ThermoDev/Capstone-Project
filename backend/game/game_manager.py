@@ -30,6 +30,7 @@ class GameManager:
 
         portfolios = []
         for user in users:
+            print(initial_cash)
             portfolio = self._portfolio_manager.create_portfolio_for_user(user.user_id,
                                                                           f'{name} (Game)',
                                                                           initial_cash)
