@@ -69,7 +69,7 @@ export default function CreatePortfolioForm(props) {
   const [volume, setVolume] = useState(1);
   const { portfolioName, portfolioId, portfolioCash, symbolData } = props;
   const [value, setValue] = React.useState('Buy');
-  const { state, postProcessTransaction, getStock } = useApi();
+  const { state, postProcessTransaction, getStock, getPortfolios } = useApi();
   const { processTransaction, stock } = state;
 
 
@@ -114,6 +114,8 @@ export default function CreatePortfolioForm(props) {
         volume,
         price: value === 'Buy' ? price : -1 * price,
       });
+      setOpen(false);
+      getPortfolios();
     } else {
       
     }
