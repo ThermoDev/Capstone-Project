@@ -50,21 +50,8 @@ const CenterBox = styled.div`
   align-items: center;
 `;
 
-const gameData = [{
-	"game_id": 1,
-	"name": "It's a game!",
-	"start_date": "2019-11-10T10:00:00.007Z",
-	"end_date": "2019-11-20T10:00:00.007Z",
-	"users": ["ant", "em"],
-	"portfolios": [
-	],
-	"leaderboard": [
-		["ant", 1000],
-		["em", 1000]
-	]
-}];
 
-const Dashboard = () => {
+const Play = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
   const { user, isAuthenticated } = useAuth();
   const { state, getPortfolios, getStockSymbols, getGames} = useApi();
@@ -156,7 +143,7 @@ const Dashboard = () => {
                       </TableBody>
                     </Table>
                   </Paper>
-                  <PortfolioItem m={10} data={game.portfolios} disableTrade={gameStillValid(game.end_date)} symbolData={symbolData}/>
+                  <PortfolioItem m={10} data={game.portfolios} disableTrade={gameStillValid(game.end_date)} symbolData={symbolData} isGame={true}/>
         
                 </ColorBox>
               );})}              
@@ -172,4 +159,4 @@ const Dashboard = () => {
   );
 };
 
-export default memo(Dashboard);
+export default memo(Play);

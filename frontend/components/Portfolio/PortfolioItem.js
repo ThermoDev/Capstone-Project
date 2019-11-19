@@ -103,7 +103,7 @@ const mapLabelToColors = labels => {
 
 const PortfolioItem = props => {
   const [expanded, setExpanded] = useState(null);
-  const { data, symbolData, disableTrade } = props;
+  const { data, symbolData, disableTrade, isGame } = props;
   const symbolDict = {};
   if (symbolData){
     symbolData.forEach( (i) =>{
@@ -120,12 +120,6 @@ const PortfolioItem = props => {
   }
 
   const handleClose = () => setOpen('');
-
-  useEffect(() => {
-
-
-  }, [data]);
-
 
   const handleChange = val => {
     if (expanded === val) {
@@ -147,7 +141,7 @@ const PortfolioItem = props => {
             id="panel1a-header"
           >
             <Typography component="h1" variant="h4">
-              {item.name}
+              {isGame ? (<div>{item.holder}'s Portfolio</div>) : item.name}
             </Typography>
             <StyledDiv>
               {item.percentage_growth !== 0 && (
@@ -208,7 +202,7 @@ const PortfolioItem = props => {
                 </Typography>
               </StyledSubDiv>
               <StyledSubDiv>
-                {item.stock_weightings ? <Doughnut
+                {JSON.stringify(item.stock_weightings) !== '{}' ? <Doughnut
                   data={{
                     labels: Object.keys(item.stock_weightings),
                     datasets: [
@@ -220,7 +214,7 @@ const PortfolioItem = props => {
                       },
                     ],
                   }}
-                />: <Typography color="error">Click 'Trade' to see more!</Typography>}
+                />: (<Typography color="error">Click 'Trade' to see more!</Typography>)}
               </StyledSubDiv>
             </StyledDiv>
             {Object.keys(item.stock_holdings).map(key => {

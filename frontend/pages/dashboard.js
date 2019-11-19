@@ -6,7 +6,10 @@ import {
   useMediaQuery,
   Typography,
   Card,
+  Tooltip,
+  IconButton,
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Router from 'next/router';
 import get from 'lodash.get';
@@ -28,6 +31,23 @@ const ColorBox = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+const StyledHeaderDiv = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+
+const StyledHtmlTooltip = styled(Tooltip)`
+  tooltip: {
+    background-color: #f5f5f9,
+    color: rgba(0, 0, 0, 0.87),
+    max-width: 220,
+    border: 1px solid #dadde9,
+  },
 `;
 
 const StyledTypography = styled(Typography)`
@@ -184,9 +204,24 @@ const Dashboard = () => {
           <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
             <Grid item xs={12}>
               <ColorBox>
-                <StyledTypography component="h1" variant="h6">
-                  Portfolio
-                </StyledTypography>
+                <StyledHeaderDiv>
+                  <div>
+                    <StyledTypography component="h1" variant="h6">
+                      Portfolio 
+                    </StyledTypography>
+                  </div>
+                  <StyledHtmlTooltip title={
+                      <React.Fragment>
+                        <Typography color="inherit">Portfolios</Typography>
+                        {"Creating portfolios lets you simulate trading with "}<em>{"live"}</em>
+                        {" data. You may want to keep different portfolios to track the performance "}
+                        {"of "} <b>{'stable'}</b>{" blue chip stocks or "}<b>{'riskier'}</b>
+                        {" investments such as new startups. To get started, simply click "}<b>{'"+"'}</b>
+                      </React.Fragment>
+                    }>
+                    <IconButton><InfoIcon /></IconButton>
+                  </StyledHtmlTooltip>
+                </StyledHeaderDiv>
                 {portfoliosError && (
                   <div>
                     <p>{`Error: ${portfolios.error.message}`}</p>
@@ -208,9 +243,24 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={8}>
               <ColorBox>
-                <StyledTypography component="h1" variant="h6">
-                  Newsfeed
-                </StyledTypography>
+                <StyledHeaderDiv>
+                  <div>
+                    <StyledTypography component="h1" variant="h6">
+                      Newsfeed
+                    </StyledTypography>
+                  </div>
+                  <StyledHtmlTooltip title={
+                      <React.Fragment>
+                        <Typography color="inherit">Newsfeed</Typography>
+                        {"Being up-to-date with news around the world is "}<em>{"essential"}</em>
+                        {" to tracking your portfolio. Stock prices are easily affected by events "}
+                        {" and you can read news, and search relevant stocks to see trends. "}
+                        {" Using this newsfeed, you might decide to buy or sell a stock, or even just get an insight into the industry. "}
+                      </React.Fragment>
+                    }>
+                    <IconButton><InfoIcon /></IconButton>
+                  </StyledHtmlTooltip>
+                </StyledHeaderDiv>
                 <Grid
                   container
                   spacing={1}
@@ -236,9 +286,23 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={12} sm={4}>
               <ColorBox>
-                <StyledTypography component="h1" variant="h6">
-                  Stocks
-                </StyledTypography>
+              <StyledHeaderDiv>
+                  <div>
+                  <StyledTypography component="h1" variant="h6">
+                    Stocks
+                  </StyledTypography>
+                  </div>
+                  <StyledHtmlTooltip title={
+                      <React.Fragment>
+                        <Typography color="inherit">Stocks</Typography>
+                        {"Here you can search stocks, and view their performance. "}
+                        {"Below, you can find the stock name, stock code, price and daily percentage growth. "}
+                        {"Just enter a stock name to get started!"}
+                      </React.Fragment>
+                    }>
+                    <IconButton><InfoIcon /></IconButton>
+                  </StyledHtmlTooltip>
+                </StyledHeaderDiv>
                 <Grid container spacing={1}>
                   <Grid item xs={12}>
                     <SearchBar placeholder="Search" onSearch={setSearchValue} symbolData={symbolData}/>
