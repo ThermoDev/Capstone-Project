@@ -53,11 +53,7 @@ def create():
 
     if user_id not in usernames:
         usernames.append(user_id)
-    print (name)
-    print (start_date)
-    print (end_date)
-    print(usernames)
-    print(initial_cash)
+
     game = game_manager.create_game(name, start_date, end_date, usernames, initial_cash)
 
     return jsonify(_serialise_and_obscure_game(game, user_id)), 201
@@ -65,7 +61,6 @@ def create():
 
 def _serialise_and_obscure_game(game: Game, user_id: str) -> dict:
     serialised = serialise_properties(game)
-    print (game.end_date)
     if datetime.now() < datetime.strptime(game.end_date, '%Y-%m-%d %H:%M:%S%z').replace(tzinfo=None):
         for serialised_portfolio in serialised['portfolios']:
             if serialised_portfolio['holder'] != user_id:
