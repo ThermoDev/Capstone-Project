@@ -113,11 +113,13 @@ const PortfolioItem = props => {
 
 
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState('');
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (code) => {
+    setOpen(code);
+  }
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => setOpen('');
 
   useEffect(() => {
 
@@ -148,7 +150,7 @@ const PortfolioItem = props => {
               {item.name}
             </Typography>
             <StyledDiv>
-              {item.percentage_growth && (
+              {item.percentage_growth !== 0 && (
                 <>
                   <Typography component="h1" variant="subtitle1">
                     {`${
@@ -173,6 +175,7 @@ const PortfolioItem = props => {
                   portfolioId={item.portfolio_id}
                   portfolioCash={item.cash}
                   symbolData={symbolData}
+                  stocks={item.stock_holdings}
                 />) : null
               }
 
@@ -217,7 +220,7 @@ const PortfolioItem = props => {
                       },
                     ],
                   }}
-                />: null}
+                />: <Typography color="error">Click 'Trade' to see more!</Typography>}
               </StyledSubDiv>
             </StyledDiv>
             {Object.keys(item.stock_holdings).map(key => {
@@ -225,7 +228,7 @@ const PortfolioItem = props => {
               return (
                 <div key={stock.company_code}>
                   <StyledCard  >
-                    <CardActionArea  onClick={handleOpen}>
+                    <CardActionArea  onClick={(e) => handleOpen(stock.company_code)}>
                       <ColorBox>
                         <div style={{
                           display: "flex",
@@ -271,7 +274,7 @@ const PortfolioItem = props => {
                     </CardActionArea>
                   </StyledCard>
                   <StockModal
-                    open={open}
+                    open={open===stock.company_code}
                     handleClose={handleClose}
                     name={symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name: ''}
                     ticker={stock.company_code}

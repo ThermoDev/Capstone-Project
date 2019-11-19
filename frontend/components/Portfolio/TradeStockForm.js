@@ -17,7 +17,6 @@ import Typography from '@material-ui/core/Typography';
 import get from 'lodash.get';
 import useApi from '../../lib/useApi';
 import SearchBar from '../SearchBar';
-import { InlineError } from '../Error';
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -67,8 +66,9 @@ export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [volume, setVolume] = useState(1);
-  const { portfolioName, portfolioId, portfolioCash, symbolData } = props;
+  const { portfolioName, portfolioId, portfolioCash, symbolData, stocks } = props;
   const [value, setValue] = React.useState('Buy');
+  const [ error, setError ] = useState('');
   const { state, postProcessTransaction, getStock, getPortfolios } = useApi();
   const { processTransaction, stock } = state;
 
@@ -82,6 +82,7 @@ export default function CreatePortfolioForm(props) {
   useEffect(() => {
     if (searchValue) {
       getStock(searchValue);
+      setError('');
     }
   }, [searchValue]);
 
@@ -104,20 +105,35 @@ export default function CreatePortfolioForm(props) {
     setOpen(false);
     setVolume(1);
     setSearchValue('');
+    setError('');
   };
 
   const handleSubmit = () => {
-    if (stock && volume ){
-      const price = stock.data[0].Price;
+
+    if (!stock) {
+      setError('Please select a stock')
+      return;
+    } 
+
+    if (!volume){
+      setError('Please enter a volume')
+      return;
+    }
+
+    const price = stock.data[0].Price;
+    if (price*volume > portfolioCash && value === 'Buy'){
+      setError('Insufficient funds')
+      //Handle if insufficient cash
+    } else if (value === 'Sell' && volume > stocks[stock.data[0].Ticker].volume){
+      setError('Insufficient stocks')
+    } else if (stock && volume ){
       postProcessTransaction(portfolioId, {
         company_code: searchValue,
-        volume,
-        price: value === 'Buy' ? price : -1 * price,
+        volume: value === 'Buy' ? volume : -1 * volume,
+        price,
       });
       setOpen(false);
       getPortfolios();
-    } else {
-      
     }
   };
 
@@ -148,7 +164,7 @@ export default function CreatePortfolioForm(props) {
                 margin="normal"
               />
               <SearchBarDiv>
-                <SearchBar placeholder="Stock" onSearch={setSearchValue} symbolData={symbolData} />
+                <SearchBar placeholder="Stock" onSearch={setSearchValue} symbolData={value === 'Buy' ? symbolData : symbolData.filter((i) => Object.keys(stocks).indexOf(i.Ticker) > -1) } />
               </SearchBarDiv>
             </div>
             <StyledDiv2>
@@ -156,7 +172,7 @@ export default function CreatePortfolioForm(props) {
                 <StyledTextField
                   id="standard-disabled"
                   label="Cash"
-                  defaultValue={portfolioCash}
+                  defaultValue={portfolioCash.toFixed(2)}
                   margin="normal"
                   InputProps={{
                     startAdornment: (
@@ -186,13 +202,15 @@ export default function CreatePortfolioForm(props) {
                 margin="normal"
                 type="number"
                 value={volume}
-                onInput={e => setVolume(e.target.value)}
+                onInput={e => {
+                  setVolume(e.target.value);
+                  setError('');
+                }}
                 fullWidth
               />
             </StyledDiv2>
           </StyledDiv>
-          <InlineError error={transactionError}/>
-
+                {error !== '' ? (<Typography color="error">ERROR: {error}</Typography>) : null}
         </DialogContent>
         <DialogActions>
           <ColorBox>

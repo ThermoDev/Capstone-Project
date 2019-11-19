@@ -74,13 +74,11 @@ const StockModal = props => {
           .add(-1, 'year')
           .format('x');
         setDataPoints(filtered(stocksData));
-        console.log(stocksData)
 
         break;
       case 'All':
         setXLabels(Object.keys(stocksData).filter(key => key >= limit).map(i => (new Date(i*1).toLocaleDateString())));
         setDataPoints(Object.values(stocksData).map(item => item.Close));
-        console.log(stocksData)
         break;
       default:
     }

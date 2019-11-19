@@ -93,7 +93,6 @@ const SearchBar = props => {
   const { placeholder, onSearch, symbolData } = props;
   const [modified, setModified] = useState(false);
 
-
   const isModified = e => setModified(!!e.target.value);
 
   const onChangeHandler = e => {
