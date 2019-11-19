@@ -1,4 +1,4 @@
-import useApi from './useApi';
+import { useApi } from './useApi';
 
 export { ApiProvider } from './ApiProvider';
 export default useApi;

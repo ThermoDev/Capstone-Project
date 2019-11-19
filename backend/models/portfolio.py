@@ -31,17 +31,17 @@ class Portfolio:
                  portfolio_id: Optional[int],
                  holder: str,
                  name: str,
-                 cash: float,
+                 initial_cash: float,
                  stock_transactions: List[StockTransaction]):
         self._portfolio_id = portfolio_id
         self._holder = holder
         self._name = name
-        self._initial_cash = cash
-        self._cash = cash
+        self._initial_cash = initial_cash
+        self._cash = initial_cash
         self._stock_transactions = stock_transactions
 
         self._stock_holdings = {}
-        self._build_stock_holdings()
+        self._replay_transactions()
 
     @property
     def portfolio_id(self) -> int:
@@ -73,7 +73,8 @@ class Portfolio:
 
     @property
     def portfolio_value(self) -> float:
-        return  self.cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
+        cash = 0 if not self._cash else self._cash
+        return cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
 
     @property
     def portfolio_return(self) -> float:
@@ -97,14 +98,16 @@ class Portfolio:
         self._portfolio_id = generated_id
 
     def process_transaction(self, transaction: StockTransaction):
-        cash_required = transaction.volume * transaction.price
+        volume = int(transaction.volume)
+        price = float(transaction.price)
+        cash_required = volume * price
         if self.cash < cash_required:
             raise InsufficientCashError(self.portfolio_id)
 
-        if transaction.volume < 0:
+        if volume < 0:
             if transaction.company_code not in self._stock_holdings:
                 raise NoHoldingsInPortfolio(self.portfolio_id, transaction.company_code)
-            elif self.stock_holdings[transaction.company_code].volume + transaction.volume < 0:
+            elif self.stock_holdings[transaction.company_code].volume + volume < 0:
                 raise ExceedStockHoldingVolumeError(self.portfolio_id, transaction.company_code)
 
         self._cash -= cash_required
@@ -112,11 +115,15 @@ class Portfolio:
 
         self._update_stock_holdings(transaction)
 
-    def _build_stock_holdings(self):
+    def _replay_transactions(self):
         for transaction in self._stock_transactions:
+            self._update_cash(transaction)
             self._update_stock_holdings(transaction)
 
-    def _update_stock_holdings(self, transaction):
+    def _update_cash(self, transaction: StockTransaction):
+        self._cash -= transaction.volume * transaction.price
+
+    def _update_stock_holdings(self, transaction: StockTransaction):
         company_code = transaction.company_code
         stock_holding = self._stock_holdings.setdefault(company_code, StockHolding(company_code))
         stock_holding.add_transaction(transaction)

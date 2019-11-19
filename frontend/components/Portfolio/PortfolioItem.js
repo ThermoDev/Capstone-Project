@@ -1,9 +1,12 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   ExpansionPanel,
   ExpansionPanelDetails,
-  Paper,
+  Card,
+  Paper,  
+  CardActionArea,
+  CardContent,
 } from '@material-ui/core';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
@@ -14,86 +17,26 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import { Doughnut } from 'react-chartjs-2';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import RemoveIcon from '@material-ui/icons/Remove';
 import TradeStockForm from './TradeStockForm';
+import useApi from '../../lib/useApi';
+import StockModal from '../StockModal';
+import get from 'lodash.get';
 
-// const data = [
-//   {
-//     portfolio_id: 1,
-//     holder: 'janesmith',
-//     name: 'p1',
-//     cash: 8531.91,
-//     amount_invested: 1468.0900000000001,
-//     stock_transactions: [
-//       {
-//         transaction_id: 1,
-//         portfolio_id: 1,
-//         company_code: 'AAPL',
-//         price: 234.4,
-//         volume: 2,
-//         transaction_time: '2019-10-30T14:33:11.076849',
-//       },
-//       {
-//         transaction_id: 2,
-//         portfolio_id: 1,
-//         company_code: 'NFLX',
-//         price: 218.56,
-//         volume: 10,
-//         transaction_time: '2019-10-30T14:33:11.076866',
-//       },
-//       {
-//         transaction_id: 3,
-//         portfolio_id: 1,
-//         company_code: 'AAPL',
-//         price: 209.29,
-//         volume: 1,
-//         transaction_time: '2019-10-30T14:33:11.076869',
-//       },
-//       {
-//         transaction_id: 4,
-//         portfolio_id: 1,
-//         company_code: 'NFLX',
-//         price: 279.12,
-//         volume: -5,
-//         transaction_time: '2019-10-30T14:33:11.076909',
-//       },
-//     ],
-//     stock_holdings: {
-//       AAPL: {
-//         company_code: 'AAPL',
-//         volume: 3,
-//         amount_invested: 678.09,
-//         market_value: 729.8699798583984,
-//         return_value: 51.779979858398406,
-//         percentage_growth: 0.07636151522423042,
-//       },
-//       NFLX: {
-//         company_code: 'NFLX',
-//         volume: 5,
-//         amount_invested: 790.0,
-//         market_value: 1406.0499572753906,
-//         return_value: 616.0499572753906,
-//         percentage_growth: 0.7798100725004945,
-//       },
-//     },
-//     portfolio_value: 2135.919937133789,
-//     portfolio_return: 667.829937133789,
-//     percentage_growth: 0.4548971365064737,
-//     stock_weightings: {
-//       AAPL: 0.4618858516848422,
-//       NFLX: 0.5381141483151577,
-//     },
-//   },
-// ];
 
-const ColorBox = styled(Paper)`
+const StyledCard = styled(Card)`
+  background-color: ${({ theme }) => `${theme.turquoise}`};
+  margin-top: 0.5em;
+`;
+
+const ColorBox = styled(CardContent)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
   color: white;
   padding: 0.5em 0.75em;
-  margin-top: 0.5em;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  flex-direction: row;
+  flex-direction: column;
 `;
 
 const StyledDiv = styled.div`
@@ -124,7 +67,6 @@ const StyledExpansionPanelSummary = styled(ExpansionPanelSummary)`
   min-height: 56;
   width: 100%;
   padding: 0;
-
   .MuiExpansionPanelSummary-content {
     display: flex;
     margin: 0.5em 1em;
@@ -161,7 +103,27 @@ const mapLabelToColors = labels => {
 
 const PortfolioItem = props => {
   const [expanded, setExpanded] = useState(null);
-  const { data } = props;
+  const { data, symbolData, disableTrade } = props;
+  const symbolDict = {};
+  if (symbolData){
+    symbolData.forEach( (i) =>{
+      symbolDict[i.Ticker] = i;
+    });
+  }
+
+
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
+
+  useEffect(() => {
+
+
+  }, [data]);
+
 
   const handleChange = val => {
     if (expanded === val) {
@@ -189,16 +151,31 @@ const PortfolioItem = props => {
               {item.percentage_growth && (
                 <>
                   <Typography component="h1" variant="subtitle1">
-                    {`${item.percentage_growth.toFixed(4)}%`}
+                    {`${
+                      item.percentage_growth
+                        ? item.percentage_growth.toFixed(4)
+                        : null
+                    }%`}
                   </Typography>
                   {item.percentage_growth > 0 ? (
                     <ArrowDropUpIcon color="primary" />
-                  ) : (
+                  ) : item.percentage_growth < 0 ? (
                     <ArrowDropDownIcon color="error" />
+                  ) : (
+                    <RemoveIcon />
                   )}
                 </>
               )}
-              <TradeStockForm />
+              {
+                !disableTrade ?
+                (<TradeStockForm
+                  portfolioName={item.name}
+                  portfolioId={item.portfolio_id}
+                  portfolioCash={item.cash}
+                  symbolData={symbolData}
+                />) : null
+              }
+
               <IconButton onClick={() => handleChange(item.portfolio_id)}>
                 {expanded === item.portfolio_id ? (
                   <ExpandLessIcon />
@@ -215,58 +192,91 @@ const PortfolioItem = props => {
                   Portfolio value:
                 </Typography>
                 <Typography variant="h6">
-                  ${item.portfolio_value.toFixed(2)}
+                  $
+                  {item.portfolio_value
+                    ? item.portfolio_value.toFixed(2)
+                    : null}
                 </Typography>
                 <Typography variant="h5" color="primary">
                   Cash:
                 </Typography>
-                <Typography variant="h6">${item.cash.toFixed(2)}</Typography>
+                <Typography variant="h6">
+                  ${item.cash ? item.cash.toFixed(2) : null}
+                </Typography>
               </StyledSubDiv>
               <StyledSubDiv>
-                <ColorBox />
-              </StyledSubDiv>
-              <StyledSubDiv>
-                <Doughnut
+                {item.stock_weightings ? <Doughnut
                   data={{
-                    labels: Object.keys(item.stock_value_weightings),
+                    labels: Object.keys(item.stock_weightings),
                     datasets: [
                       {
-                        data: Object.values(item.stock_value_weightings),
+                        data: Object.values(item.stock_weightings),
                         backgroundColor: mapLabelToColors(
-                          Object.keys(item.stock_value_weightings)
+                          Object.keys(item.stock_weightings)
                         ),
                       },
                     ],
                   }}
-                />
+                />: null}
               </StyledSubDiv>
             </StyledDiv>
-            {Object.keys(item.stock_holdings).map((key, index) => {
+            {Object.keys(item.stock_holdings).map(key => {
               const stock = item.stock_holdings[key];
               return (
-                <ColorBox key={stock.company_code}>
-                  <StyledSubDiv>
-                    <StyledTypography variant="h6">
-                      {stock.company_code}
-                    </StyledTypography>
-                    <Typography variant="subtitle2">
-                      {stock.volume} share{stock.volume > 1 ? 's' : null}
-                    </Typography>
-                  </StyledSubDiv>
-                  <StyledSubDiv2>
-                    <StyledTypography2 variant="h6">
-                      ${stock.market_value.toFixed(2)}
-                    </StyledTypography2>
-                    <StyledTypography variant="subtitle2">
-                      {stock.percentage_growth.toFixed(4)}%
-                      {stock.percentage_growth > 0 ? (
-                        <ArrowDropUpIcon color="secondary" />
-                      ) : (
-                        <ArrowDropDownIcon color="error" />
-                      )}
-                    </StyledTypography>
-                  </StyledSubDiv2>
-                </ColorBox>
+                <div key={stock.company_code}>
+                  <StyledCard  >
+                    <CardActionArea  onClick={handleOpen}>
+                      <ColorBox>
+                        <div style={{
+                          display: "flex",
+                          flexDirection:"row",
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start",
+                          width: "100%",}}>
+                          <StyledSubDiv>
+                            <StyledTypography variant="h6">
+                              {symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name:''}
+                              ({stock.company_code})
+                            </StyledTypography>
+                            <Typography variant="subtitle2">
+                              {stock.volume} share{stock.volume > 1 ? 's' : null}
+                            </Typography>
+                            <Typography color="secondary">{ symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Industry : '' }</Typography>
+                          </StyledSubDiv>
+                          <StyledSubDiv2>
+                            <StyledTypography2 variant="h6">
+                              $
+                              {stock.market_value
+                                ? stock.market_value.toFixed(2)
+                                : null}
+                            </StyledTypography2>
+                            <StyledTypography variant="subtitle2">
+                              {stock.percentage_growth
+                                ? stock.percentage_growth.toFixed(4)
+                                : 0}
+                              %
+                              {// eslint-disable-next-line no-nested-ternary
+                              stock.percentage_growth > 0 ? (
+                                <ArrowDropUpIcon color="secondary" />
+                              ) : stock.percentage_growth < 0 ? (
+                                <ArrowDropDownIcon color="error" />
+                              ) : (
+                                <RemoveIcon />
+                              )}
+                            </StyledTypography>
+                          </StyledSubDiv2>
+                        </div>
+
+                      </ColorBox>
+                    </CardActionArea>
+                  </StyledCard>
+                  <StockModal
+                    open={open}
+                    handleClose={handleClose}
+                    name={symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name: ''}
+                    ticker={stock.company_code}
+                  />
+                </div>
               );
             })}
           </StyledExpansionPanelDetails>
@@ -280,4 +290,4 @@ PortfolioItem.propTypes = {
   data: PropTypes.array.isRequired,
 };
 
-export default memo(PortfolioItem);
+export default PortfolioItem;

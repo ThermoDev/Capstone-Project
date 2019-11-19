@@ -42,6 +42,17 @@ export const apiReducer = (state, action) => {
         },
       };
     }
+    case 'RESET': {
+      const { api } = action;
+      return {
+        ...state,
+        [api]: {
+          isLoading: false,
+          isError: false,
+          data: undefined,
+        },
+      };
+    }
     default:
       return state;
   }

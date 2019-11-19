@@ -17,8 +17,6 @@ const Sample = () => {
 
   const { isLoading, isError, data } = state;
 
-  console.log(auth.user);
-
   return (
     <div>
       {!auth.user ? (

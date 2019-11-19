@@ -22,6 +22,12 @@ class UserManager:
         except UserNotFoundError as e:
             raise e
 
+    def check_user(self, user_id: str) -> bool:
+        return self._user_repository.has_user(user_id)
+
+    def get_all_usernames(self) -> List[str]:
+        return self._user_repository.get_all_usernames()
+
     def create_new_user(self, user_id: str, first_name: str, last_name: str, email: str, password: str) -> User:
         if self._user_repository.has_user(user_id):
             raise UserAlreadyExistsError(user_id)

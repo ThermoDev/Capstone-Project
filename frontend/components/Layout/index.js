@@ -54,8 +54,8 @@ const Layout = props => {
     <ThemeProvider>
       {isAuthenticated() ? (
         <StyledPage>
-          <Meta />
           <Header />
+          <Meta />
           <Inner>{children}</Inner>
         </StyledPage>
       ) : (

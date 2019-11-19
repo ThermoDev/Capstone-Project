@@ -1,12 +1,9 @@
 import re
 from datetime import datetime
 from typing import Optional
-
 from data_pipeline import stockhelper
-from exception.game.game_ended_transaction_error import GameEndedTransactionError
 from exception.portfolio.invalid_transaction_price_error import InvalidTransactionPriceError
 from exception.portfolio.portfolio_access_denied_error import PortfolioAccessDeniedError
-from game.game_manager import GameManager
 from models.portfolio import Portfolio
 from models.stock_transaction import StockTransaction
 from repository.portfolio_repository import PortfolioRepository
@@ -16,10 +13,10 @@ class PortfolioManager:
     def __init__(self):
         self._portfolio_repository = PortfolioRepository()
 
-        self._game_manager = GameManager(self)
-
     def get_all_portfolios_for_user(self, user_id: str) -> [Portfolio]:
-        return self._portfolio_repository.get_all_portfolios_for_user(user_id)
+        all_portfolios = self._portfolio_repository.get_all_portfolios_for_user(user_id)
+
+        return [portfolio for portfolio in all_portfolios if not re.search("(Game)", portfolio.name)]
 
     def get_portfolio_for_user_by_id(self, user_id: str, portfolio_id: int) -> Portfolio:
         portfolio = self._portfolio_repository.get_portfolio_by_id(portfolio_id)
@@ -55,7 +52,7 @@ class PortfolioManager:
         if not transaction_time:
             transaction_time = datetime.now()
         transaction = StockTransaction(None, portfolio_id, company_code, price, volume, transaction_time)
-        self._validate_transaction(user_id, transaction)
+        _validate_transaction(transaction)
 
         portfolio.process_transaction(transaction)
 
@@ -63,12 +60,7 @@ class PortfolioManager:
 
         return portfolio
 
-    def _validate_transaction(self, user_id: str, transaction: StockTransaction):
-        if transaction.price == stockhelper.get_cur_close_price(transaction.company_code):
-            raise InvalidTransactionPriceError(transaction.company_code, transaction.price)
 
-        game_id = self._portfolio_repository.get_game_id_for_portfolio_id(transaction.portfolio_id)
-        if game_id:
-            game = self._game_manager.get_game_for_user_by_id(user_id, game_id)
-            if datetime.now() > game.end_date:
-                raise GameEndedTransactionError(game.name)
+def _validate_transaction(transaction: StockTransaction):
+    if transaction.price == stockhelper.get_cur_close_price(transaction.company_code):
+        raise InvalidTransactionPriceError(transaction.company_code, transaction.price)

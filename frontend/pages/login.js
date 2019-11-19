@@ -39,7 +39,7 @@ const StyledLargeLogo = styled(LargeLogo)`
 `;
 
 const SubmitButton = styled(Button)`
-  margin: ${({ theme }) => theme.mui.spacing(3, 0, 2)};
+  margin: ${({ theme }) => theme.mui.spacing(1, 0, 1)};
 `;
 
 const StyledTextField = styled(TextField)`
@@ -47,7 +47,7 @@ const StyledTextField = styled(TextField)`
 `;
 
 const Login = () => {
-  const { login, user, isAuthenticated, isLoading, isError, error } = useAuth();
+  const { login, user, isAuthenticated, isLoading, isError, error, isSuccess } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -74,9 +74,6 @@ const Login = () => {
         <StyledPaper>
           {(isLoading && (
             <>
-              <Typography component="h1" variant="h4">
-                Signing in
-              </Typography>
               <CircularProgress />
             </>
           )) || (
@@ -110,6 +107,7 @@ const Login = () => {
                   error={isError}
                 />
                 {isError && <InlineError error={error} />}
+                {isSuccess && <Typography color="primary" variant="body2">Account created!</Typography>}
                 <SubmitButton
                   type="submit"
                   fullWidth

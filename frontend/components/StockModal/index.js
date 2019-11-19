@@ -26,7 +26,7 @@ const ModalContainer = styled(Paper)`
 
 const StockModal = props => {
   const { open, handleClose, name, ticker } = props;
-  const [filter, setFilter] = useState('Annual');
+  const [filter, setFilter] = useState('All');
   const [xLabels, setXLabels] = useState([]);
   const [dataPoints, setDataPoints] = useState([]);
   const { state, getYearlyStockHistory } = useApi();
@@ -43,14 +43,13 @@ const StockModal = props => {
 
     const filtered = rawObj => {
       const newObj = Object.keys(rawObj).filter(key => key >= limit);
-      setXLabels(newObj);
+      setXLabels(newObj.map(i => (new Date(i*1).toLocaleDateString())));
       const filteredData = newObj.reduce(
         (obj, key) => ({ ...obj, [key]: stocksData[key] }),
         {}
       );
       return Object.values(filteredData).map(item => item.Close);
     };
-
     switch (filterOption) {
       case 'Weekly':
         limit = moment()
@@ -71,10 +70,17 @@ const StockModal = props => {
         setDataPoints(filtered(stocksData));
         break;
       case 'Annual':
-        setXLabels(Object.keys(stocksData).filter(key => key >= limit));
-        setDataPoints(Object.values(stocksData).map(item => item.Close));
+        limit = moment()
+          .add(-1, 'year')
+          .format('x');
+        setDataPoints(filtered(stocksData));
+        console.log(stocksData)
+
         break;
       case 'All':
+        setXLabels(Object.keys(stocksData).filter(key => key >= limit).map(i => (new Date(i*1).toLocaleDateString())));
+        setDataPoints(Object.values(stocksData).map(item => item.Close));
+        console.log(stocksData)
         break;
       default:
     }
@@ -135,7 +141,7 @@ const StockModal = props => {
                 <Button onClick={() => setFilter('Quarterly')}>3 Months</Button>
                 <Button onClick={() => setFilter('Biannual')}>6 Months</Button>
                 <Button onClick={() => setFilter('Annual')}>1 Year</Button>
-                {/* <Button onClick={() => setFilter('All')}>All</Button> */}
+                <Button onClick={() => setFilter('All')}>5 Years</Button>
               </ButtonGroup>
             </Grid>
           </Grid>

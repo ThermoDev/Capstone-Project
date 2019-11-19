@@ -29,129 +29,127 @@ const dataFetcher = (url, payload = null) => {
   return fetch(`${endpoint}${url}`, defaultArgs).then(checkStatus);
 };
 
-const useApi = () => {
+export const useApi = () => {
   const { state, dispatch } = useContext(ApiContext);
 
-  const getRandomNews = () => {
-    dispatch({ type: 'FETCH_INIT', api: 'news' });
-    dataFetcher('news/')
-      .then(result =>
-        result
-          .json()
-          .then(data => dispatch({ type: 'SET_DATA', api: 'news', data }))
-      )
-      .catch(err =>
+  const errorHandler = (err, api) => {
+    try {
+      err.response.text().then(body => {
         dispatch({
           type: 'ERROR',
-          api: 'news',
-          errorType: 'news',
-          message: err.message,
-        })
-      )
-      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'news' }));
+          errorType: api,
+          error: body,
+        });
+      });
+    } catch {
+      dispatch({
+        type: 'ERROR',
+        api,
+        errorType: api,
+        message: err.message,
+      });
+    }
   };
 
-  const getRandomStocks = () => {
-    dispatch({ type: 'FETCH_INIT', api: 'randomStocks' });
-    dataFetcher('stock/random/')
+  const callApi = (url, apiName, payload = null) => {
+    dispatch({ type: 'FETCH_INIT', api: apiName });
+    dataFetcher(url, payload)
       .then(result =>
         result
           .json()
-          .then(data =>
-            dispatch({ type: 'SET_DATA', api: 'randomStocks', data })
-          )
+          .then(data => dispatch({ type: 'SET_DATA', api: apiName, data }))
       )
-      .catch(err =>
-        dispatch({
-          type: 'ERROR',
-          api: 'randomStocks',
-          errorType: 'randomStocks',
-          message: err.message,
-        })
-      )
-      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'randomStocks' }));
+      .catch(err => errorHandler(err, apiName))
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: apiName }));
   };
 
-  const getPortfolios = () => {
-    dispatch({ type: 'FETCH_INIT', api: 'portfolios' });
-    dataFetcher('portfolios')
-      .then(result =>
-        result
-          .json()
-          .then(data => dispatch({ type: 'SET_DATA', api: 'portfolios', data }))
-      )
-      .catch(err =>
-        dispatch({
-          type: 'ERROR',
-          api: 'portfolios',
-          errorType: 'portfolios',
-          message: err.message,
-        })
-      )
-      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'portfolios' }));
-  };
+  // Use this endpoint when you have a component that access a blank api state each time it renders
+  const resetApiData = api => dispatch({ type: 'RESET', api });
+
+  const getRandomNews = () => callApi('news/', 'news');
+
+  const getRandomStocks = () => callApi('stock/random/', 'randomStocks');
+
+  const getPortfolios = () => callApi('portfolios', 'portfolios');
+
+  const getGames = () => callApi('games', 'games');
+
 
   const getStockHistory = (symbol, startDate, endDate = null) => {
     const url = endDate
       ? `stock/?symbol=${symbol}&start=${startDate}&end=${endDate}`
       : `stock/?symbol=${symbol}&start=${startDate}`;
-    dispatch({ type: 'FETCH_INIT', api: 'stockHistory' });
-    dataFetcher(url)
-      .then(result =>
-        result
-          .json()
-          .then(data =>
-            dispatch({ type: 'SET_DATA', api: 'stockHistory', data })
-          )
-      )
-      .catch(err =>
-        dispatch({
-          type: 'ERROR',
-          api: 'stockHistory',
-          errorType: 'stockHistory',
-          message: err.message,
-        })
-      )
-      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: 'stockHistory' }));
+    callApi(url, 'stockHistory');
   };
 
   const getYearlyStockHistory = symbol => {
     const lastYear = moment()
-      .add(-1, 'year')
+      .add(-5, 'year')
       .format('YYYY-MM-DD');
     getStockHistory(symbol, lastYear);
   };
 
   const createPortfolio = (portfolioName, startingCash) => {
-    dispatch({ type: 'FETCH_INIT', api: 'createPortfolio' });
-    dataFetcher('portfolios/create', {
+    callApi('portfolios/create', 'createPort', {
       name: portfolioName,
       cash: startingCash,
-    })
-      .catch(err =>
-        err.response.text().then(body => {
-          dispatch({
-            type: 'error',
-            errorType: 'createPortfolio',
-            error: body,
-          });
-        })
-      )
-      .finally(() => {
-        dispatch({ type: 'FETCH_COMPLETE', api: 'createPortfolio' });
-      });
-    // Update portfolios seen by app
+    });
     getPortfolios();
   };
 
+  const postProcessTransaction = (portfolioId, transactionObject) => {
+    callApi('portfolios/process-transaction', 'processTransaction', {
+      portfolio_id: portfolioId,
+      transaction: transactionObject,
+    });
+  };
+
+  const postCreateGame = (name, startDate, endDate, userNames, initialCash) =>{
+    callApi('games/create', 'createGame', {
+      name,
+      start_date: startDate,
+      end_date: endDate,
+      usernames: userNames,
+      initial_cash: initialCash,
+    });
+    getGames()
+  };
+
+  const postCheckUser = (userId) => {
+    callApi('login/check-user', 'checkUser', {
+      user_id: userId
+    });
+  };
+
+  const getStockSymbols = () => callApi('stock/getallsymbols', 'symbols');
+
+  const searchStocks = (query = null) => {
+    const url = query ? `stock/search/${query}` : `stock/search/`;
+    callApi(url, 'search');
+  };
+
+  const getStockInfo = stockTicker =>
+    callApi(`stock/infos/${stockTicker}`, 'stockInfo');
+
+  // ! this is a workaround to prevent anything relying on getStockInfo from updating when its called from a different component
+  const getStock = stockTicker =>
+    callApi(`stock/infos/${stockTicker}`, 'stock');
+
   return {
     state,
+    resetApiData,
     getRandomNews,
     getRandomStocks,
     getPortfolios,
     getYearlyStockHistory,
     createPortfolio,
+    postProcessTransaction,
+    postCreateGame,
+    postCheckUser,
+    getStockSymbols,
+    searchStocks,
+    getStockInfo,
+    getStock,
+    getGames,
   };
 };
-
-export default useApi;

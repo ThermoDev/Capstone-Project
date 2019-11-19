@@ -169,9 +169,21 @@ class PortfolioRepository(BaseRepository):
             else:
                 return None
 
+    def get_portfolio_ids_in_games(self) -> List[int]:
+        portfolios_in_games = []
+
+        with sqlite3.connect(self._db_path) as connection:
+            cursor = connection.cursor()
+            query = self.build_select_all_query(table=GameMemberships.TABLE_NAME)
+            output = cursor.execute(query)
+            for row in output:
+                portfolios_in_games.append(row[1])
+
+        return portfolios_in_games
+
 
 def _unpack_portfolio(portfolio: Portfolio) -> tuple:
-    return portfolio.holder, portfolio.name, portfolio.cash
+    return portfolio.holder, portfolio.name, portfolio._initial_cash
 
 
 def _unpack_transaction(transaction: StockTransaction) -> tuple:

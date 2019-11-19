@@ -1,6 +1,6 @@
 from datetime import datetime
+from dateutil import parser as dateparser
 
-import dateutil
 from exception.game.game_not_found_error import GameNotFoundError
 from exception.game.user_not_member_of_game_error import UserNotMemberOfGameError
 from flask import (
@@ -8,6 +8,7 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from game.game_manager import GameManager
+from portfolio.portfolio_manager import PortfolioManager
 from models.game import Game
 from utils.serialiser import serialise_properties
 
@@ -45,10 +46,10 @@ def create():
     user_id = current_user.get_id()
 
     name = request.json.get('name')
-    start_date = dateutil.parser.parse(request.json.get('start_date'))
-    end_date = dateutil.parser.parse(request.json.get('end_date'))
-    usernames = request.json.get('usernames')
-    initial_cash = request.json.get('cash')
+    start_date = dateparser.parse(request.json.get('start_date'))
+    end_date = dateparser.parse(request.json.get('end_date'))
+    usernames = request.json.get('usernames') if request.json.get('usernames') else []
+    initial_cash = request.json.get('initial_cash')
 
     if user_id not in usernames:
         usernames.append(user_id)
@@ -60,9 +61,11 @@ def create():
 
 def _serialise_and_obscure_game(game: Game, user_id: str) -> dict:
     serialised = serialise_properties(game)
-    if datetime.now() < game.end_date:
+    if datetime.now() < datetime.strptime(game.end_date, '%Y-%m-%d %H:%M:%S%z').replace(tzinfo=None):
         for serialised_portfolio in serialised['portfolios']:
             if serialised_portfolio['holder'] != user_id:
                 serialised['portfolios'].remove(serialised_portfolio)
+                            # 2019-11-18 09:39:27.074000+00:00
+
 
     return serialised

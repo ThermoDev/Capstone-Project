@@ -26,3 +26,7 @@ Allocated next set of tasks in our lab. As a group we discussed key portfolio pe
 Week 7 
 
 Wrote up pytests for user repository and portfolio repository which will test the functionalities of the database. Other than that my, tasks for the backend are pretty much done. My next task was to set up the final report and detail what needs to be written in the report.   
+
+Week 8 
+
+Started working on the report. Wrote up information on third party functionalities (SQLite), implementation challenges involving data modelling, finance content (background and calculations) and created ER and relational diagrams for the database we used.  Those were my main tasks for the report content so after i finished off that i started on some presentation slides we would be using in week 10. 
