@@ -42,7 +42,6 @@ export default function CreatePortfolioForm() {
 
   const handleSubmit = () => {
     const { name, cash } = form;
-    // async api call
     createPortfolio(name, cash);
   };
 

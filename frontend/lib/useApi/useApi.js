@@ -102,8 +102,6 @@ export const useApi = () => {
       portfolio_id: portfolioId,
       transaction: transactionObject,
     });
-    // ! this could be getting called before the above request finishes?
-    getPortfolios();
   };
 
   const postCreateGame = (name, startDate, endDate, userNames, initialCash) =>{

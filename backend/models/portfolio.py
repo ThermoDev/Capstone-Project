@@ -73,7 +73,8 @@ class Portfolio:
 
     @property
     def portfolio_value(self) -> float:
-        return self._cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
+        cash = 0 if not self._cash else self._cash
+        return cash + sum(stock_holding.market_value for stock_holding in self.stock_holdings.values())
 
     @property
     def portfolio_return(self) -> float:

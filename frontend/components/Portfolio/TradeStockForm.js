@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import get from 'lodash.get';
 import useApi from '../../lib/useApi';
 import SearchBar from '../SearchBar';
+import { InlineError } from '../Error';
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -68,8 +69,28 @@ export default function CreatePortfolioForm(props) {
   const [volume, setVolume] = useState(1);
   const { portfolioName, portfolioId, portfolioCash, symbolData } = props;
   const [value, setValue] = React.useState('Buy');
-  const { state, postProcessTransaction, getStock } = useApi();
+  const { state, postProcessTransaction, getStock, getPortfolios } = useApi();
   const { processTransaction, stock } = state;
+
+
+  const transactionData = get(processTransaction, 'data', '');
+
+  const transactionLoading = get(processTransaction, 'isLoading', false);
+
+  const transactionError = get(processTransaction, 'isError', false);
+
+  useEffect(() => {
+    if (searchValue) {
+      getStock(searchValue);
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
+    if (searchValue) {
+      getStock(searchValue);
+    }
+  }, [transactionError]);
+
 
   const handleChange = event => {
     setValue(event.target.value);
@@ -86,19 +107,20 @@ export default function CreatePortfolioForm(props) {
   };
 
   const handleSubmit = () => {
-    const price = stock.data[0].Price;
-    postProcessTransaction(portfolioId, {
-      company_code: searchValue,
-      volume,
-      price: value === 'Buy' ? price : -1 * price,
-    });
+    if (stock && volume ){
+      const price = stock.data[0].Price;
+      postProcessTransaction(portfolioId, {
+        company_code: searchValue,
+        volume,
+        price: value === 'Buy' ? price : -1 * price,
+      });
+      setOpen(false);
+      getPortfolios();
+    } else {
+      
+    }
   };
 
-  useEffect(() => {
-    if (searchValue) {
-      getStock(searchValue);
-    }
-  }, [searchValue]);
 
   return (
     <div>
@@ -169,7 +191,8 @@ export default function CreatePortfolioForm(props) {
               />
             </StyledDiv2>
           </StyledDiv>
-          <div />
+          <InlineError error={transactionError}/>
+
         </DialogContent>
         <DialogActions>
           <ColorBox>
