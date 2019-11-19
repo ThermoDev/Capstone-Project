@@ -15,7 +15,10 @@ class PortfolioManager:
         self._portfolio_repository = PortfolioRepository()
 
     def get_all_portfolios_for_user(self, user_id: str) -> [Portfolio]:
-        return self._portfolio_repository.get_all_portfolios_for_user(user_id)
+        all_portfolios = self._portfolio_repository.get_all_portfolios_for_user(user_id)
+        portfolios_in_games = self._portfolio_repository.get_portfolio_ids_in_games()
+
+        return [portfolio for portfolio in all_portfolios if portfolio not in portfolios_in_games]
 
     def get_portfolio_for_user_by_id(self, user_id: str, portfolio_id: int) -> Portfolio:
         portfolio = self._portfolio_repository.get_portfolio_by_id(portfolio_id)
