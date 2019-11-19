@@ -36,7 +36,7 @@ const StyledTypography = styled(Typography)`
 
 const Dashboard = () => {
   const isSmall = useMediaQuery('(max-width: 600px)');
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const {
     state,
     getPortfolios,
@@ -178,7 +178,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      {isAuthenticated() && (
+      { isLoading ? <div></div> :
+      (isAuthenticated() && (
         <Container maxWidth="lg">
           <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
             <Grid item xs={12}>
@@ -255,7 +256,8 @@ const Dashboard = () => {
             </Grid>
           </Grid>
         </Container>
-      )}
+      ))
+    }
     </div>
   );
 };

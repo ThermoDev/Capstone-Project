@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -9,13 +9,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import useApi from '../../lib/useApi';
+import { useAuth } from '../../lib/useAuth';
 import DateFnsUtils from '@date-io/date-fns';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Chip from '@material-ui/core/Chip'
 import 'date-fns';
+import get from 'lodash.get';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
@@ -31,48 +32,80 @@ const StyledDiv = styled.div`
 
 
 export default function CreateGameForm() {
-  const [state, setState] = React.useState({ open: false, name: '', cash: 0 , date: new Date(), friend:'', friends: []});
-  const { postCreateGame } = useApi();
-  
+  const [values, setValues] = React.useState({ open: false, name: '', cash: 0 , date: new Date(), friend:'', friends: []});
+  const [ invalidUser, setInvalidUser] = React.useState(false);
+  const { postCreateGame, postCheckUser, state, resetApiData } = useApi();
+  const { createGame, checkUser } = state;
+  const {  user } = useAuth();
+
+  const userLoading = get(checkUser, 'isLoading', true);
+
+  const userError = get(checkUser, 'isError', false);
+
+  // data extraction
+  const userData = get(checkUser, 'data', null);
+
+
+
+  useEffect(() => {
+    if (userData === true && values.friend !== '' ){
+      var newList = values.friends.concat(values.friend);
+      setValues({ ...values, friends: newList, friend: ''});
+      setInvalidUser(false);
+
+    } else if (userData === false && values.friend !== ''){   
+      setInvalidUser(true);
+      setValues({ ...values,  friend: ''});
+
+    }
+ 
+    resetApiData(checkUser)
+  }, [userLoading]);
+
+
+  useEffect(() => {
+    if (userError) {
+      var newList = values.friends.concat(values.friend);
+      setValues({ ...values, friends: newList, friend: ''});
+    }
+  }, [userData]);
 
   const handleClickOpen = () => {
-    setState({ ...state, open: true });
+    setValues({ ...values, open: true });
   };
 
   const handleClose = () => {
-    setState({ ...state, open: false });
+    setValues({ ...values, open: false });
   };
 
   const handleTextFieldChange = e => {
-    setState({ ...state, [e.target.id]: e.target.value });
+    setValues({ ...values, [e.target.id]: e.target.value });
   
   };
 
   const handleCashChange = e => {
-    setState({ ...state, cash: e.target.value });
+    setValues({ ...values, cash: e.target.value });
   };
 
   const handleDateChange = date => {
-    setState({ ...state, date});
+    setValues({ ...values, date});
   };
 
   const handleAddFriend = () => {
-    var newList = state.friends.concat(state.friend);
-
-    setState({ ...state, friends: newList, friend: ''});
-
+    postCheckUser(values.friend);
+    
   }
 
   const handleDelete = (val) => {
-    var filteredFriends = state.friends.filter(e => e != val.friend)
-    setState({ ...state, friends: filteredFriends});
+    var filteredFriends = values.friends.filter(e => e != val.friend)
+    setValues({ ...values, friends: filteredFriends});
   }
 
   const handleSubmit = () => {
-    const { name, cash, date, friends } = state;
+    const { name, cash, date, friends } = values;
 
-    postCreateGame(name, new Date().toISOString(), date.toISOString(), friends, cash);
-    setState({ ...state, open: false });
+    postCreateGame(name, new Date().toISOString(), date.toISOString(), friends, new Number(cash));
+    setValues({ ...values, open: false });
   };
 
   return (
@@ -86,7 +119,7 @@ export default function CreateGameForm() {
         <AddIcon />
       </Fab>
       <Dialog
-        open={state.open}
+        open={values.open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
@@ -110,8 +143,8 @@ export default function CreateGameForm() {
                 format="dd/MM/yyyy"
                 margin="normal"
                 id="date-picker-inline"
-                label="Date picker inline"
-                value={state.date}
+                label="End date"
+                value={values.date}
                 onChange={handleDateChange}
                 KeyboardButtonProps={{
                   'aria-label': 'change date',
@@ -143,15 +176,17 @@ export default function CreateGameForm() {
               name="friend"
               label="Friend"
               fullWidth
-              value={state.friend}
+              value={values.friend}
               onChange={handleTextFieldChange}
+              error={invalidUser}
+              helperText={invalidUser? 'Unable to find user':''}
             />
             <Button color="primary" variant="contained" onClick={handleAddFriend} >
               <AddIcon/>
             </Button>  
           </StyledDiv>
           <div>
-            { state.friends.map((friend, index )=>{
+            { values.friends.map((friend, index )=>{
               return(<Chip label={friend} onDelete={handleDelete.bind(this, {friend})} key={index}  />);
             })}
             
