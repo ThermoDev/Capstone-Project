@@ -67,20 +67,28 @@ export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [volume, setVolume] = useState(1);
-  const { portfolioName, portfolioId, portfolioCash, symbolData } = props;
+  const {
+    portfolioName,
+    portfolioId,
+    portfolioCash,
+    symbolData,
+    stocks,
+  } = props;
   const [value, setValue] = React.useState('Buy');
-  const { state, postProcessTransaction, getStock, getPortfolios } = useApi();
+  const [error, setError] = useState('');
+  const { state, postProcessTransaction, getStock } = useApi();
   const { processTransaction, stock } = state;
 
-  const transactionData = get(processTransaction, 'data', '');
+  // const transactionData = get(processTransaction, 'data', '');
 
-  const transactionLoading = get(processTransaction, 'isLoading', false);
+  // const transactionLoading = get(processTransaction, 'isLoading', false);
 
   const transactionError = get(processTransaction, 'isError', false);
 
   useEffect(() => {
     if (searchValue) {
       getStock(searchValue);
+      setError('');
     }
   }, [searchValue]);
 
@@ -102,15 +110,34 @@ export default function CreatePortfolioForm(props) {
     setOpen(false);
     setVolume(1);
     setSearchValue('');
+    setError('');
   };
 
   const handleSubmit = () => {
-    if (stock && volume) {
-      const price = stock.data[0].Price;
+    if (!stock) {
+      setError('Please select a stock');
+      return;
+    }
+
+    if (!volume) {
+      setError('Please enter a volume');
+      return;
+    }
+
+    const price = stock.data[0].Price;
+    if (price * volume > portfolioCash && value === 'Buy') {
+      setError('Insufficient funds');
+      // Handle if insufficient cash
+    } else if (
+      value === 'Sell' &&
+      volume > stocks[stock.data[0].Ticker].volume
+    ) {
+      setError('Insufficient stocks');
+    } else if (stock && volume) {
       postProcessTransaction(portfolioId, {
         company_code: searchValue,
-        volume,
-        price: value === 'Buy' ? price : -1 * price,
+        volume: value === 'Buy' ? volume : -1 * volume,
+        price,
       });
       setOpen(false);
     }
@@ -145,7 +172,13 @@ export default function CreatePortfolioForm(props) {
                 <SearchBar
                   placeholder="Stock"
                   onSearch={setSearchValue}
-                  symbolData={symbolData}
+                  symbolData={
+                    value === 'Buy'
+                      ? symbolData
+                      : symbolData.filter(
+                          i => Object.keys(stocks).indexOf(i.Ticker) > -1
+                        )
+                  }
                 />
               </SearchBarDiv>
             </div>
@@ -154,7 +187,7 @@ export default function CreatePortfolioForm(props) {
                 <StyledTextField
                   id="standard-disabled"
                   label="Cash"
-                  defaultValue={portfolioCash}
+                  defaultValue={portfolioCash.toFixed(2)}
                   margin="normal"
                   InputProps={{
                     startAdornment: (
@@ -184,12 +217,17 @@ export default function CreatePortfolioForm(props) {
                 margin="normal"
                 type="number"
                 value={volume}
-                onInput={e => setVolume(e.target.value)}
+                onInput={e => {
+                  setVolume(e.target.value);
+                  setError('');
+                }}
                 fullWidth
               />
             </StyledDiv2>
           </StyledDiv>
-          {transactionError && <InlineError error={processTransaction.error} />}
+          {transactionError && (
+            <InlineError error={{ errMessage: error, errType: 'Trade' }} />
+          )}
         </DialogContent>
         <DialogActions>
           <ColorBox>
@@ -219,4 +257,5 @@ CreatePortfolioForm.propTypes = {
   portfolioId: PropTypes.number.isRequired,
   portfolioCash: PropTypes.number.isRequired,
   symbolData: PropTypes.array.isRequired,
+  stocks: PropTypes.array.isRequired,
 };

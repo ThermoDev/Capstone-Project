@@ -1,10 +1,10 @@
-import { useState, memo, useEffect } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   ExpansionPanel,
   ExpansionPanelDetails,
   Card,
-  Paper,  
+  Paper,
   CardActionArea,
   CardContent,
 } from '@material-ui/core';
@@ -19,10 +19,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import RemoveIcon from '@material-ui/icons/Remove';
 import TradeStockForm from './TradeStockForm';
-import useApi from '../../lib/useApi';
 import StockModal from '../StockModal';
-import get from 'lodash.get';
-
 
 const StyledCard = styled(Card)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -103,27 +100,21 @@ const mapLabelToColors = labels => {
 
 const PortfolioItem = props => {
   const [expanded, setExpanded] = useState(null);
-  const { data, symbolData, disableTrade } = props;
+  const { data, symbolData, disableTrade, isGame } = props;
   const symbolDict = {};
-  if (symbolData){
-    symbolData.forEach( (i) =>{
+  if (symbolData) {
+    symbolData.forEach(i => {
       symbolDict[i.Ticker] = i;
     });
   }
 
+  const [open, setOpen] = useState('');
 
+  const handleOpen = code => {
+    setOpen(code);
+  };
 
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
-
-  useEffect(() => {
-
-
-  }, [data]);
-
+  const handleClose = () => setOpen('');
 
   const handleChange = val => {
     if (expanded === val) {
@@ -145,10 +136,10 @@ const PortfolioItem = props => {
             id="panel1a-header"
           >
             <Typography component="h1" variant="h4">
-              {item.name}
+              {isGame ? <div>{item.holder}'s Portfolio</div> : item.name}
             </Typography>
             <StyledDiv>
-              {item.percentage_growth && (
+              {item.percentage_growth !== 0 && (
                 <>
                   <Typography component="h1" variant="subtitle1">
                     {`${
@@ -157,7 +148,8 @@ const PortfolioItem = props => {
                         : null
                     }%`}
                   </Typography>
-                  {item.percentage_growth > 0 ? (
+                  {// eslint-disable-next-line no-nested-ternary
+                  item.percentage_growth > 0 ? (
                     <ArrowDropUpIcon color="primary" />
                   ) : item.percentage_growth < 0 ? (
                     <ArrowDropDownIcon color="error" />
@@ -166,15 +158,15 @@ const PortfolioItem = props => {
                   )}
                 </>
               )}
-              {
-                !disableTrade ?
-                (<TradeStockForm
+              {!disableTrade ? (
+                <TradeStockForm
                   portfolioName={item.name}
                   portfolioId={item.portfolio_id}
                   portfolioCash={item.cash}
                   symbolData={symbolData}
-                />) : null
-              }
+                  stocks={item.stock_holdings}
+                />
+              ) : null}
 
               <IconButton onClick={() => handleChange(item.portfolio_id)}>
                 {expanded === item.portfolio_id ? (
@@ -205,43 +197,61 @@ const PortfolioItem = props => {
                 </Typography>
               </StyledSubDiv>
               <StyledSubDiv>
-                {item.stock_weightings ? <Doughnut
-                  data={{
-                    labels: Object.keys(item.stock_weightings),
-                    datasets: [
-                      {
-                        data: Object.values(item.stock_weightings),
-                        backgroundColor: mapLabelToColors(
-                          Object.keys(item.stock_weightings)
-                        ),
-                      },
-                    ],
-                  }}
-                />: null}
+                {JSON.stringify(item.stock_weightings) !== '{}' ? (
+                  <Doughnut
+                    data={{
+                      labels: Object.keys(item.stock_weightings),
+                      datasets: [
+                        {
+                          data: Object.values(item.stock_weightings),
+                          backgroundColor: mapLabelToColors(
+                            Object.keys(item.stock_weightings)
+                          ),
+                        },
+                      ],
+                    }}
+                  />
+                ) : (
+                  <Typography color="error">
+                    Click 'Trade' to see more!
+                  </Typography>
+                )}
               </StyledSubDiv>
             </StyledDiv>
             {Object.keys(item.stock_holdings).map(key => {
               const stock = item.stock_holdings[key];
               return (
                 <div key={stock.company_code}>
-                  <StyledCard  >
-                    <CardActionArea  onClick={handleOpen}>
+                  <StyledCard>
+                    <CardActionArea
+                      onClick={() => handleOpen(stock.company_code)}
+                    >
                       <ColorBox>
-                        <div style={{
-                          display: "flex",
-                          flexDirection:"row",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                          width: "100%",}}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            alignItems: 'flex-start',
+                            width: '100%',
+                          }}
+                        >
                           <StyledSubDiv>
                             <StyledTypography variant="h6">
-                              {symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name:''}
+                              {symbolDict && symbolDict[stock.company_code]
+                                ? symbolDict[stock.company_code].Name
+                                : ''}
                               ({stock.company_code})
                             </StyledTypography>
                             <Typography variant="subtitle2">
-                              {stock.volume} share{stock.volume > 1 ? 's' : null}
+                              {stock.volume} share
+                              {stock.volume > 1 ? 's' : null}
                             </Typography>
-                            <Typography color="secondary">{ symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Industry : '' }</Typography>
+                            <Typography color="secondary">
+                              {symbolDict && symbolDict[stock.company_code]
+                                ? symbolDict[stock.company_code].Industry
+                                : ''}
+                            </Typography>
                           </StyledSubDiv>
                           <StyledSubDiv2>
                             <StyledTypography2 variant="h6">
@@ -266,14 +276,17 @@ const PortfolioItem = props => {
                             </StyledTypography>
                           </StyledSubDiv2>
                         </div>
-
                       </ColorBox>
                     </CardActionArea>
                   </StyledCard>
                   <StockModal
-                    open={open}
+                    open={open === stock.company_code}
                     handleClose={handleClose}
-                    name={symbolDict && symbolDict[stock.company_code] ? symbolDict[stock.company_code].Name: ''}
+                    name={
+                      symbolDict && symbolDict[stock.company_code]
+                        ? symbolDict[stock.company_code].Name
+                        : ''
+                    }
                     ticker={stock.company_code}
                   />
                 </div>
@@ -288,6 +301,9 @@ const PortfolioItem = props => {
 
 PortfolioItem.propTypes = {
   data: PropTypes.array.isRequired,
+  symbolData: PropTypes.array.isRequired,
+  disableTrade: PropTypes.bool.isRequired,
+  isGame: PropTypes.bool.isRequired,
 };
 
 export default PortfolioItem;
