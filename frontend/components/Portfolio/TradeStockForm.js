@@ -257,5 +257,5 @@ CreatePortfolioForm.propTypes = {
   portfolioId: PropTypes.number.isRequired,
   portfolioCash: PropTypes.number.isRequired,
   symbolData: PropTypes.array.isRequired,
-  stocks: PropTypes.array.isRequired,
+  stocks: PropTypes.object.isRequired,
 };
