@@ -149,7 +149,7 @@ const PortfolioItem = props => {
                   <Typography component="h1" variant="subtitle1">
                     {`${
                       item.percentage_growth
-                        ? item.percentage_growth.toFixed(4)
+                        ? Math.abs(item.percentage_growth.toFixed(4))
                         : null
                     }%`}
                   </Typography>
@@ -249,7 +249,7 @@ const PortfolioItem = props => {
                             </StyledTypography2>
                             <StyledTypography variant="subtitle2">
                               {stock.percentage_growth
-                                ? stock.percentage_growth.toFixed(4)
+                                ? Math.abs(stock.percentage_growth.toFixed(4))
                                 : 0}
                               %
                               {// eslint-disable-next-line no-nested-ternary

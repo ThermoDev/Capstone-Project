@@ -61,7 +61,7 @@ def create():
 
 def _serialise_and_obscure_game(game: Game, user_id: str) -> dict:
     serialised = serialise_properties(game)
-    if datetime.now() < datetime.strptime(game.end_date, '%Y-%m-%d %H:%M:%S%z').replace(tzinfo=None):
+    if datetime.now() < datetime.strptime(game.end_date[:19], '%Y-%m-%d %H:%M:%S').replace(tzinfo=None):
         for serialised_portfolio in serialised['portfolios']:
             if serialised_portfolio['holder'] != user_id:
                 serialised['portfolios'].remove(serialised_portfolio)
