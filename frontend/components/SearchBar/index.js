@@ -106,8 +106,6 @@ const SearchBar = props => {
     }
   };
 
- 
-
   return (
     <Autocomplete
       classes={classes}
@@ -138,6 +136,7 @@ SearchBar.defaultProps = {
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
   onSearch: PropTypes.func,
+  symbolData: PropTypes.array.isRequired,
 };
 
 export default SearchBar;

@@ -43,7 +43,7 @@ const StockModal = props => {
 
     const filtered = rawObj => {
       const newObj = Object.keys(rawObj).filter(key => key >= limit);
-      setXLabels(newObj.map(i => (new Date(i*1).toLocaleDateString())));
+      setXLabels(newObj.map(i => new Date(i * 1).toLocaleDateString()));
       const filteredData = newObj.reduce(
         (obj, key) => ({ ...obj, [key]: stocksData[key] }),
         {}
@@ -77,7 +77,11 @@ const StockModal = props => {
 
         break;
       case 'All':
-        setXLabels(Object.keys(stocksData).filter(key => key >= limit).map(i => (new Date(i*1).toLocaleDateString())));
+        setXLabels(
+          Object.keys(stocksData)
+            .filter(key => key >= limit)
+            .map(i => new Date(i * 1).toLocaleDateString())
+        );
         setDataPoints(Object.values(stocksData).map(item => item.Close));
         break;
       default:

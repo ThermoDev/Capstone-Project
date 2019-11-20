@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import get from 'lodash.get';
 import useApi from '../../lib/useApi';
 import SearchBar from '../SearchBar';
+import { InlineError } from '../Error';
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -59,23 +60,28 @@ const StyledFormControl = styled(FormControl)`
 const SearchBarDiv = styled.div`
   margin-top: 16px;
   margin-bottom: 8px;
-  margin-right: 16px; 
+  margin-right: 16px;
 `;
 
 export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [volume, setVolume] = useState(1);
-  const { portfolioName, portfolioId, portfolioCash, symbolData, stocks } = props;
+  const {
+    portfolioName,
+    portfolioId,
+    portfolioCash,
+    symbolData,
+    stocks,
+  } = props;
   const [value, setValue] = React.useState('Buy');
-  const [ error, setError ] = useState('');
-  const { state, postProcessTransaction, getStock, getPortfolios } = useApi();
+  const [error, setError] = useState('');
+  const { state, postProcessTransaction, getStock } = useApi();
   const { processTransaction, stock } = state;
 
+  // const transactionData = get(processTransaction, 'data', '');
 
-  const transactionData = get(processTransaction, 'data', '');
-
-  const transactionLoading = get(processTransaction, 'isLoading', false);
+  // const transactionLoading = get(processTransaction, 'isLoading', false);
 
   const transactionError = get(processTransaction, 'isError', false);
 
@@ -91,7 +97,6 @@ export default function CreatePortfolioForm(props) {
       getStock(searchValue);
     }
   }, [transactionError]);
-
 
   const handleChange = event => {
     setValue(event.target.value);
@@ -109,34 +114,34 @@ export default function CreatePortfolioForm(props) {
   };
 
   const handleSubmit = () => {
-
     if (!stock) {
-      setError('Please select a stock')
+      setError('Please select a stock');
       return;
-    } 
+    }
 
-    if (!volume){
-      setError('Please enter a volume')
+    if (!volume) {
+      setError('Please enter a volume');
       return;
     }
 
     const price = stock.data[0].Price;
-    if (price*volume > portfolioCash && value === 'Buy'){
-      setError('Insufficient funds')
-      //Handle if insufficient cash
-    } else if (value === 'Sell' && volume > stocks[stock.data[0].Ticker].volume){
-      setError('Insufficient stocks')
-    } else if (stock && volume ){
+    if (price * volume > portfolioCash && value === 'Buy') {
+      setError('Insufficient funds');
+      // Handle if insufficient cash
+    } else if (
+      value === 'Sell' &&
+      volume > stocks[stock.data[0].Ticker].volume
+    ) {
+      setError('Insufficient stocks');
+    } else if (stock && volume) {
       postProcessTransaction(portfolioId, {
         company_code: searchValue,
         volume: value === 'Buy' ? volume : -1 * volume,
         price,
       });
       setOpen(false);
-      getPortfolios();
     }
   };
-
 
   return (
     <div>
@@ -164,7 +169,17 @@ export default function CreatePortfolioForm(props) {
                 margin="normal"
               />
               <SearchBarDiv>
-                <SearchBar placeholder="Stock" onSearch={setSearchValue} symbolData={value === 'Buy' ? symbolData : symbolData.filter((i) => Object.keys(stocks).indexOf(i.Ticker) > -1) } />
+                <SearchBar
+                  placeholder="Stock"
+                  onSearch={setSearchValue}
+                  symbolData={
+                    value === 'Buy'
+                      ? symbolData
+                      : symbolData.filter(
+                          i => Object.keys(stocks).indexOf(i.Ticker) > -1
+                        )
+                  }
+                />
               </SearchBarDiv>
             </div>
             <StyledDiv2>
@@ -210,7 +225,9 @@ export default function CreatePortfolioForm(props) {
               />
             </StyledDiv2>
           </StyledDiv>
-                {error !== '' ? (<Typography color="error">ERROR: {error}</Typography>) : null}
+          {transactionError && (
+            <InlineError error={{ errMessage: error, errType: 'Trade' }} />
+          )}
         </DialogContent>
         <DialogActions>
           <ColorBox>
@@ -239,4 +256,6 @@ CreatePortfolioForm.propTypes = {
   portfolioName: PropTypes.string.isRequired,
   portfolioId: PropTypes.number.isRequired,
   portfolioCash: PropTypes.number.isRequired,
+  symbolData: PropTypes.array.isRequired,
+  stocks: PropTypes.array.isRequired,
 };
