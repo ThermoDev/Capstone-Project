@@ -302,8 +302,8 @@ const PortfolioItem = props => {
 PortfolioItem.propTypes = {
   data: PropTypes.array.isRequired,
   symbolData: PropTypes.array.isRequired,
-  disableTrade: PropTypes.bool.isRequired,
-  isGame: PropTypes.bool.isRequired,
+  disableTrade: PropTypes.bool,
+  isGame: PropTypes.bool,
 };
 
 export default PortfolioItem;

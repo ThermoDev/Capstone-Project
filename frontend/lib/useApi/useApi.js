@@ -114,6 +114,7 @@ export const useApi = () => {
       transaction: transactionObject,
     });
     getPortfolios();
+    getGames();
   };
 
   const postCreateGame = async (
