@@ -60,7 +60,7 @@ const StyledFormControl = styled(FormControl)`
 const SearchBarDiv = styled.div`
   margin-top: 16px;
   margin-bottom: 8px;
-  margin-right: 16px; 
+  margin-right: 16px;
 `;
 
 export default function CreatePortfolioForm(props) {
@@ -71,7 +71,6 @@ export default function CreatePortfolioForm(props) {
   const [value, setValue] = React.useState('Buy');
   const { state, postProcessTransaction, getStock, getPortfolios } = useApi();
   const { processTransaction, stock } = state;
-
 
   const transactionData = get(processTransaction, 'data', '');
 
@@ -91,7 +90,6 @@ export default function CreatePortfolioForm(props) {
     }
   }, [transactionError]);
 
-
   const handleChange = event => {
     setValue(event.target.value);
   };
@@ -107,7 +105,7 @@ export default function CreatePortfolioForm(props) {
   };
 
   const handleSubmit = () => {
-    if (stock && volume ){
+    if (stock && volume) {
       const price = stock.data[0].Price;
       postProcessTransaction(portfolioId, {
         company_code: searchValue,
@@ -115,12 +113,8 @@ export default function CreatePortfolioForm(props) {
         price: value === 'Buy' ? price : -1 * price,
       });
       setOpen(false);
-      getPortfolios();
-    } else {
-      
     }
   };
-
 
   return (
     <div>
@@ -148,7 +142,11 @@ export default function CreatePortfolioForm(props) {
                 margin="normal"
               />
               <SearchBarDiv>
-                <SearchBar placeholder="Stock" onSearch={setSearchValue} symbolData={symbolData} />
+                <SearchBar
+                  placeholder="Stock"
+                  onSearch={setSearchValue}
+                  symbolData={symbolData}
+                />
               </SearchBarDiv>
             </div>
             <StyledDiv2>
@@ -191,8 +189,7 @@ export default function CreatePortfolioForm(props) {
               />
             </StyledDiv2>
           </StyledDiv>
-          <InlineError error={transactionError}/>
-
+          {transactionError && <InlineError error={processTransaction.error} />}
         </DialogContent>
         <DialogActions>
           <ColorBox>
@@ -221,4 +218,5 @@ CreatePortfolioForm.propTypes = {
   portfolioName: PropTypes.string.isRequired,
   portfolioId: PropTypes.number.isRequired,
   portfolioCash: PropTypes.number.isRequired,
+  symbolData: PropTypes.array.isRequired,
 };

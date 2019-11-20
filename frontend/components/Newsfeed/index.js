@@ -11,7 +11,7 @@ import {
 import he from 'he';
 
 const DEFAULT_IMAGE =
-  'https://res.cloudinary.com/dzowh11b5/image/upload/v1565325720/sickfits/t5dehhuwwlcfkpyatfoo.jpg';
+  'https://res.cloudinary.com/dzowh11b5/image/upload/v1574161785/1_rLE1jm-KN5RjNsHmMfQfag_dzwtjg.jpg';
 
 const NewsCard = styled(Card)`
   background-color: ${({ theme }) => theme.mui.palette.background.paper};
@@ -25,7 +25,6 @@ const NewsItem = props => {
   const { title, urlToImage, description, url } = item;
   return (
     <NewsCard>
-
       <div style={{ display: 'flex' }}>
         <CardMedia
           title="news image"
@@ -37,13 +36,17 @@ const NewsItem = props => {
             <Typography gutterBottom variant="h5" component="h2">
               {he.decode(title)}
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p" align="justify">
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+              align="justify"
+            >
               {he.decode(description)}
             </Typography>
           </CardContent>
         </CardActionArea>
       </div>
-
     </NewsCard>
   );
 };

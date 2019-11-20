@@ -63,6 +63,18 @@ export const useApi = () => {
       .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: apiName }));
   };
 
+  const apiPromise = (url, apiName, payload = null) => {
+    dispatch({ type: 'FETCH_INIT', api: apiName });
+    return dataFetcher(url, payload)
+      .then(result =>
+        result
+          .json()
+          .then(data => dispatch({ type: 'SET_DATA', api: apiName, data }))
+      )
+      .catch(err => errorHandler(err, apiName))
+      .finally(() => dispatch({ type: 'FETCH_COMPLETE', api: apiName }));
+  };
+
   // Use this endpoint when you have a component that access a blank api state each time it renders
   const resetApiData = api => dispatch({ type: 'RESET', api });
 
@@ -73,7 +85,6 @@ export const useApi = () => {
   const getPortfolios = () => callApi('portfolios', 'portfolios');
 
   const getGames = () => callApi('games', 'games');
-
 
   const getStockHistory = (symbol, startDate, endDate = null) => {
     const url = endDate
@@ -89,35 +100,42 @@ export const useApi = () => {
     getStockHistory(symbol, lastYear);
   };
 
-  const createPortfolio = (portfolioName, startingCash) => {
-    callApi('portfolios/create', 'createPort', {
+  const createPortfolio = async (portfolioName, startingCash) => {
+    await apiPromise('portfolios/create', 'createPort', {
       name: portfolioName,
       cash: startingCash,
     });
     getPortfolios();
   };
 
-  const postProcessTransaction = (portfolioId, transactionObject) => {
-    callApi('portfolios/process-transaction', 'processTransaction', {
+  const postProcessTransaction = async (portfolioId, transactionObject) => {
+    await apiPromise('portfolios/process-transaction', 'processTransaction', {
       portfolio_id: portfolioId,
       transaction: transactionObject,
     });
+    getPortfolios();
   };
 
-  const postCreateGame = (name, startDate, endDate, userNames, initialCash) =>{
-    callApi('games/create', 'createGame', {
+  const postCreateGame = async (
+    name,
+    startDate,
+    endDate,
+    userNames,
+    initialCash
+  ) => {
+    await apiPromise('games/create', 'createGame', {
       name,
       start_date: startDate,
       end_date: endDate,
       usernames: userNames,
       initial_cash: initialCash,
     });
-    getGames()
+    getGames();
   };
 
-  const postCheckUser = (userId) => {
+  const postCheckUser = userId => {
     callApi('login/check-user', 'checkUser', {
-      user_id: userId
+      user_id: userId,
     });
   };
 

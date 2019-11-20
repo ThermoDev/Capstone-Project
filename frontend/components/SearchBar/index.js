@@ -93,7 +93,6 @@ const SearchBar = props => {
   const { placeholder, onSearch, symbolData } = props;
   const [modified, setModified] = useState(false);
 
-
   const isModified = e => setModified(!!e.target.value);
 
   const onChangeHandler = e => {
@@ -106,8 +105,6 @@ const SearchBar = props => {
       setModified(false);
     }
   };
-
- 
 
   return (
     <Autocomplete
@@ -139,6 +136,7 @@ SearchBar.defaultProps = {
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
   onSearch: PropTypes.func,
+  symbolData: PropTypes.array.isRequired,
 };
 
 export default SearchBar;
