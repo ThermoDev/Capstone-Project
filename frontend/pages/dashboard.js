@@ -45,9 +45,8 @@ const Dashboard = () => {
     getStockInfo,
     getStockSymbols,
   } = useApi();
-  const { portfolios, news, randomStocks, stockInfo, symbols} = state;
+  const { portfolios, news, randomStocks, stockInfo, symbols } = state;
   const [searchValue, setSearchValue] = useState('');
-
 
   // loading variables
   const portfoliosLoading = get(portfolios, 'isLoading', true);
@@ -67,7 +66,6 @@ const Dashboard = () => {
   const singularStockData = get(stockInfo, 'data', {});
   const symbolData = get(symbols, 'data', []);
 
-
   useEffect(() => {
     if (isAuthenticated()) {
       getPortfolios();
@@ -78,7 +76,6 @@ const Dashboard = () => {
       }
     }
   }, []);
-
 
   useEffect(() => {
     if (searchValue) {
@@ -93,7 +90,6 @@ const Dashboard = () => {
   }, [user]);
 
   const stockSearchRender = () => {
-
     if (stocksLoading || infoLoading) {
       return (
         <Grid item xs={12} align="middle">
@@ -130,9 +126,7 @@ const Dashboard = () => {
       );
     }
 
-
-    if (searchValue && singularStockData.length ) {
-
+    if (searchValue && singularStockData.length) {
       return (
         <Grid item xs={12}>
           <StockItem
@@ -178,86 +172,100 @@ const Dashboard = () => {
 
   return (
     <div>
-      { isLoading ? <div></div> :
-      (isAuthenticated() && (
-        <Container maxWidth="lg">
-          <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
-            <Grid item xs={12}>
-              <ColorBox>
-                <StyledTypography component="h1" variant="h6">
-                  Portfolio
-                </StyledTypography>
-                {portfoliosError && (
-                  <div>
-                    <p>{`Error: ${portfolios.error.message}`}</p>
-                  </div>
-                )}
-                {portfoliosLoading ? (
-                  <>
-                    <Card
-                      style={{ width: '100%', height: '73px', margin: '16px' }}
-                    >
-                      <Skeleton variant="rect" height={200} />
-                    </Card>
-                  </>
-                ) : (
-                  <PortfolioItem m={10} data={portfoliosData} symbolData={symbolData} />
-                )}
-                <CreatePortfolioForm />
-              </ColorBox>
-            </Grid>
-            <Grid item xs={12} sm={8}>
-              <ColorBox>
-                <StyledTypography component="h1" variant="h6">
-                  Newsfeed
-                </StyledTypography>
-                <Grid
-                  container
-                  spacing={1}
-                  style={{ height: 500, overflowY: 'scroll' }}
-                >
-                  {newsLoading ? (
-                    <Card style={{ width: '100%', height: '300px' }}>
-                      <Skeleton variant="rect" height={200} />
-                      <div style={{ padding: '0 0.5rem' }}>
-                        <Skeleton />
-                        <Skeleton />
-                      </div>
-                    </Card>
-                  ) : (
-                    newsData.map((item, idx) => (
-                      <Grid item xs={12} key={idx}>
-                        <NewsItem item={item} />
-                      </Grid>
-                    ))
+      {isLoading ? (
+        <div />
+      ) : (
+        isAuthenticated() && (
+          <Container maxWidth="lg">
+            <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
+              <Grid item xs={12}>
+                <ColorBox>
+                  <StyledTypography component="h1" variant="h6">
+                    Portfolio
+                  </StyledTypography>
+                  {portfoliosError && (
+                    <div>
+                      <p>{`Error: ${portfolios.error.message}`}</p>
+                    </div>
                   )}
-                </Grid>
-              </ColorBox>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <ColorBox>
-                <StyledTypography component="h1" variant="h6">
-                  Stocks
-                </StyledTypography>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <SearchBar placeholder="Search" onSearch={setSearchValue} symbolData={symbolData}/>
-                  </Grid>
+                  {portfoliosLoading ? (
+                    <>
+                      <Card
+                        style={{
+                          width: '100%',
+                          height: '73px',
+                          margin: '16px',
+                        }}
+                      >
+                        <Skeleton variant="rect" height={200} />
+                      </Card>
+                    </>
+                  ) : (
+                    <PortfolioItem
+                      m={10}
+                      data={portfoliosData}
+                      symbolData={symbolData}
+                    />
+                  )}
+                  <CreatePortfolioForm />
+                </ColorBox>
+              </Grid>
+              <Grid item xs={12} sm={8}>
+                <ColorBox>
+                  <StyledTypography component="h1" variant="h6">
+                    Newsfeed
+                  </StyledTypography>
                   <Grid
-                    item
                     container
                     spacing={1}
-                    style={{ height: 440, overflowY: 'scroll' }}
+                    style={{ height: 500, overflowY: 'scroll' }}
                   >
-                    {stockSearchRender()}
+                    {newsLoading ? (
+                      <Card style={{ width: '100%', height: '300px' }}>
+                        <Skeleton variant="rect" height={200} />
+                        <div style={{ padding: '0 0.5rem' }}>
+                          <Skeleton />
+                          <Skeleton />
+                        </div>
+                      </Card>
+                    ) : (
+                      newsData.map((item, idx) => (
+                        <Grid item xs={12} key={idx}>
+                          <NewsItem item={item} />
+                        </Grid>
+                      ))
+                    )}
                   </Grid>
-                </Grid>
-              </ColorBox>
+                </ColorBox>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <ColorBox>
+                  <StyledTypography component="h1" variant="h6">
+                    Stocks
+                  </StyledTypography>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <SearchBar
+                        placeholder="Search"
+                        onSearch={setSearchValue}
+                        symbolData={symbolData}
+                      />
+                    </Grid>
+                    <Grid
+                      item
+                      container
+                      spacing={1}
+                      style={{ height: 440, overflowY: 'scroll' }}
+                    >
+                      {stockSearchRender()}
+                    </Grid>
+                  </Grid>
+                </ColorBox>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
-      ))
-    }
+          </Container>
+        )
+      )}
     </div>
   );
 };
