@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Container,
@@ -6,7 +6,10 @@ import {
   useMediaQuery,
   Typography,
   Card,
+  Tooltip,
+  IconButton,
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Router from 'next/router';
 import get from 'lodash.get';
@@ -28,6 +31,22 @@ const ColorBox = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+const StyledHeaderDiv = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const StyledHtmlTooltip = styled(Tooltip)`
+  tooltip: {
+    background-color: #f5f5f9,
+    color: rgba(0, 0, 0, 0.87),
+    max-width: 220,
+    border: 1px solid #dadde9,
+  },
 `;
 
 const StyledTypography = styled(Typography)`
@@ -170,104 +189,172 @@ const Dashboard = () => {
     );
   };
 
-  return (
-    <div>
-      {isLoading ? (
-        <div />
-      ) : (
-        isAuthenticated() && (
-          <Container maxWidth="lg">
-            <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
-              <Grid item xs={12}>
-                <ColorBox>
+  if (isLoading) return <div />;
+  if (isAuthenticated()) {
+    return (
+      <Container maxWidth="lg">
+        <Grid container spacing={3} direction={isSmall ? 'column' : 'row'}>
+          <Grid item xs={12}>
+            <ColorBox>
+              <StyledHeaderDiv>
+                <div>
                   <StyledTypography component="h1" variant="h6">
                     Portfolio
                   </StyledTypography>
-                  {portfoliosError && (
-                    <div>
-                      <p>{`Error: ${portfolios.error.message}`}</p>
-                    </div>
-                  )}
-                  {portfoliosLoading ? (
+                </div>
+                <StyledHtmlTooltip
+                  title={
                     <>
-                      <Card
-                        style={{
-                          width: '100%',
-                          height: '73px',
-                          margin: '16px',
-                        }}
-                      >
-                        <Skeleton variant="rect" height={200} />
-                      </Card>
+                      <Typography color="inherit">Portfolios</Typography>
+                      Creating portfolios lets you simulate trading with{' '}
+                      <em>live</em>
+                      {
+                        ' data. You may want to keep different portfolios to track the performance '
+                      }
+                      {'of '} <b>stable</b>
+                      blue chip stocks or
+                      <b>riskier</b>
+                      investments such as new startups. To get started, simply
+                      click <b>"+"</b>
                     </>
-                  ) : (
-                    <PortfolioItem
-                      m={10}
-                      data={portfoliosData}
-                      symbolData={symbolData}
-                    />
-                  )}
-                  <CreatePortfolioForm />
-                </ColorBox>
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <ColorBox>
+                  }
+                >
+                  <IconButton>
+                    <InfoIcon />
+                  </IconButton>
+                </StyledHtmlTooltip>
+              </StyledHeaderDiv>
+              {portfoliosError && (
+                <div>
+                  <p>{`Error: ${portfolios.error.message}`}</p>
+                </div>
+              )}
+              {portfoliosLoading ? (
+                <>
+                  <Card
+                    style={{ width: '100%', height: '73px', margin: '16px' }}
+                  >
+                    <Skeleton variant="rect" height={200} />
+                  </Card>
+                </>
+              ) : (
+                <PortfolioItem
+                  m={10}
+                  data={portfoliosData}
+                  symbolData={symbolData}
+                />
+              )}
+              <CreatePortfolioForm />
+            </ColorBox>
+          </Grid>
+          <Grid item xs={12} sm={8}>
+            <ColorBox>
+              <StyledHeaderDiv>
+                <div>
                   <StyledTypography component="h1" variant="h6">
                     Newsfeed
                   </StyledTypography>
-                  <Grid
-                    container
-                    spacing={1}
-                    style={{ height: 500, overflowY: 'scroll' }}
-                  >
-                    {newsLoading ? (
-                      <Card style={{ width: '100%', height: '300px' }}>
-                        <Skeleton variant="rect" height={200} />
-                        <div style={{ padding: '0 0.5rem' }}>
-                          <Skeleton />
-                          <Skeleton />
-                        </div>
-                      </Card>
-                    ) : (
-                      newsData.map((item, idx) => (
-                        <Grid item xs={12} key={idx}>
-                          <NewsItem item={item} />
-                        </Grid>
-                      ))
-                    )}
-                  </Grid>
-                </ColorBox>
+                </div>
+                <StyledHtmlTooltip
+                  title={
+                    <>
+                      <Typography color="inherit">Newsfeed</Typography>
+                      Being up-to-date with news around the world is{' '}
+                      <em>essential</em>
+                      {
+                        ' to tracking your portfolio. Stock prices are easily affected by events '
+                      }
+                      {
+                        ' and you can read news, and search relevant stocks to see trends. '
+                      }
+                      {
+                        ' Using this newsfeed, you might decide to buy or sell a stock, or even just get an insight into the industry. '
+                      }
+                    </>
+                  }
+                >
+                  <IconButton>
+                    <InfoIcon />
+                  </IconButton>
+                </StyledHtmlTooltip>
+              </StyledHeaderDiv>
+              <Grid
+                container
+                spacing={1}
+                style={{ height: 500, overflowY: 'scroll' }}
+              >
+                {newsLoading ? (
+                  <Card style={{ width: '100%', height: '300px' }}>
+                    <Skeleton variant="rect" height={200} />
+                    <div style={{ padding: '0 0.5rem' }}>
+                      <Skeleton />
+                      <Skeleton />
+                    </div>
+                  </Card>
+                ) : (
+                  newsData.map((item, idx) => (
+                    <Grid item xs={12} key={idx}>
+                      <NewsItem item={item} />
+                    </Grid>
+                  ))
+                )}
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <ColorBox>
+            </ColorBox>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <ColorBox>
+              <StyledHeaderDiv>
+                <div>
                   <StyledTypography component="h1" variant="h6">
                     Stocks
                   </StyledTypography>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <SearchBar
-                        placeholder="Search"
-                        onSearch={setSearchValue}
-                        symbolData={symbolData}
-                      />
-                    </Grid>
-                    <Grid
-                      item
-                      container
-                      spacing={1}
-                      style={{ height: 440, overflowY: 'scroll' }}
-                    >
-                      {stockSearchRender()}
-                    </Grid>
+                </div>
+                <StyledHtmlTooltip
+                  title={
+                    <>
+                      <Typography color="inherit">Stocks</Typography>
+                      {
+                        'Here you can search stocks, and view their performance. '
+                      }
+                      {
+                        'Below, you can find the stock name, stock code, price and daily percentage growth for each stock. '
+                      }
+                      {'Just enter a stock name to get started!'}
+                    </>
+                  }
+                >
+                  <IconButton>
+                    <InfoIcon />
+                  </IconButton>
+                </StyledHtmlTooltip>
+              </StyledHeaderDiv>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Grid>
+                    <SearchBar
+                      placeholder="Search"
+                      onSearch={setSearchValue}
+                      symbolData={symbolData}
+                    />
                   </Grid>
-                </ColorBox>
+                  <Grid
+                    item
+                    container
+                    spacing={1}
+                    style={{ height: 440, overflowY: 'scroll' }}
+                  >
+                    {stockSearchRender()}
+                  </Grid>
+                </Grid>
               </Grid>
-            </Grid>
-          </Container>
-        )
-      )}
-    </div>
-  );
+            </ColorBox>
+          </Grid>
+        </Grid>
+      </Container>
+    );
+  }
+
+  return <div />;
 };
 
 export default Dashboard;
