@@ -1,11 +1,4 @@
-   - what was planned for the period since the last work diary entry
-    - what was finished
-    - what were the main technical and non-technical obstacles and how
-    they were overcome (or what was tried and did not work)
-    - what was not finished, why this happened, how this affects the overall
-    project progress and what adjustments (if any) are needed so the success
-    of the project is not endangered
-    - what is planned for the next period (e.g., next week)
+
     
 Week 2 
   - Group formed and project decided (Stock trading portfolio)
@@ -57,4 +50,12 @@ Week 8
 Week 9
    - Wrote user functionalities in report, compared proposed epics with epics completed
    - Created page for the gamification 
+   - Dummy data gamification implemented
    - Fixed up miscellaneous styling issues and bugs on the platform
+   
+Week 10
+   - Integrated game page with backend
+   - Fixed up some styling error handling
+   - Delegated roles for presentation
+   - Edited trading functionality to check for errors
+   
