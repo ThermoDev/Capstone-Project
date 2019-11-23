@@ -73,7 +73,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (isSuccess){
+    if (isSuccess && !isError){
       Router.push('/login');
     }
   }, [isSuccess]);

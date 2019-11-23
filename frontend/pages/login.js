@@ -107,7 +107,7 @@ const Login = () => {
                   error={isError}
                 />
                 {isError && <InlineError error={error} />}
-                {isSuccess && <Typography color="primary" variant="body2">Account created!</Typography>}
+                {isSuccess && !isError && <Typography color="primary" variant="body2">Account created!</Typography>}
                 <SubmitButton
                   type="submit"
                   fullWidth
