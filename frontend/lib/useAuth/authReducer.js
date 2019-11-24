@@ -1,5 +1,8 @@
-import Cookies from 'js-cookie';
-
+/**
+ * Reducer function that is used to modify state for Authentication
+ * @param {string} state - initial state
+ * @param {string} action - operation to perform on state
+ */
 export const authReducer = (state, action) => {
   switch (action.type) {
     case 'login': {
@@ -48,7 +51,7 @@ export const authReducer = (state, action) => {
       return {
         ...state,
         success: 'true',
-      }
+      };
     case 'error': {
       const { errorType, error } = action;
       return {

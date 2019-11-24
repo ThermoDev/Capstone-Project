@@ -3,6 +3,10 @@ import fetch from 'isomorphic-unfetch';
 import { AuthContext } from './AuthProvider';
 import { endpoint } from '../../config';
 
+/**
+ * Checks if response from server is successful else rejects the promise.
+ * @param {Object} response
+ */
 function checkStatus(response) {
   if (response.ok) {
     return response;
@@ -12,9 +16,18 @@ function checkStatus(response) {
   return Promise.reject(error);
 }
 
+/**
+ * useAuth() implements the module design pattern by
+ * only exporting public functions used to modify the auth state
+ */
 export const useAuth = () => {
   const { state, dispatch } = useContext(AuthContext);
 
+  /**
+   * Log the user into the application.
+   * @param {string} username
+   * @param {string} password
+   */
   const login = (username, password) => {
     dispatch({ type: 'startAuthenticating' });
     fetch(`${endpoint}login`, {
@@ -40,6 +53,9 @@ export const useAuth = () => {
       });
   };
 
+  /**
+   * Logs the user out of the application.
+   */
   const logout = () => {
     dispatch({ type: 'startAuthenticating' });
     fetch(`${endpoint}login/logout`, {
@@ -62,6 +78,13 @@ export const useAuth = () => {
       });
   };
 
+  /**
+   * Register a new user.
+   * @param {string} email
+   * @param {string} firstname
+   * @param {string} lastname
+   * @param {string} password
+   */
   const register = (email, firstname, lastname, password) => {
     dispatch({ type: 'startAuthenticating' });
     fetch(`${endpoint}login/register`, {
@@ -79,7 +102,7 @@ export const useAuth = () => {
       }),
     })
       .then(checkStatus)
-      .then( dispatch({type: 'success'}))
+      .then(dispatch({ type: 'success' }))
       .catch(err =>
         err.response.text().then(body => {
           dispatch({ type: 'error', errorType: 'regFail', error: body });
@@ -88,9 +111,11 @@ export const useAuth = () => {
       .finally(() => dispatch({ type: 'stopAuthenticating' }));
   };
 
+  /**
+   * Check if user is authenticated into the app.
+   */
   const isAuthenticated = () =>
     !!(state.expiresAt && new Date().getTime() < state.expiresAt);
-
 
   const resetErrors = () => {
     dispatch({ type: 'resetErrors' });
@@ -108,6 +133,6 @@ export const useAuth = () => {
       ? { message: state.error, errorType: state.errorType }
       : null,
     isError: !!state.error,
-    isSuccess: state.success
+    isSuccess: state.success,
   };
 };
