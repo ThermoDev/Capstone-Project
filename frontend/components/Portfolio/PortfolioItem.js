@@ -294,7 +294,7 @@ const PortfolioItem = props => {
                     </CardActionArea>
                   </StyledCard>
                   <StockModal
-                    open={open === stock.company_code}
+                    open={open !== '' && open === stock.company_code}
                     handleClose={handleClose}
                     name={
                       symbolDict && symbolDict[stock.company_code]

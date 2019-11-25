@@ -106,7 +106,6 @@ export default function CreatePortfolioForm(props) {
 
 
   const transactionError = get(processTransaction, 'isError', false);
-
   useEffect(() => {
     if (searchValue) {
       getStock(searchValue);
@@ -135,8 +134,9 @@ export default function CreatePortfolioForm(props) {
     setError('');
   };
 
+
   const handleSubmit = () => {
-    if (!stock) {
+    if (searchValue === '') {
       setError('Please select a stock');
       return;
     }
@@ -268,6 +268,7 @@ export default function CreatePortfolioForm(props) {
           {transactionError && (
             <InlineError error={{ errMessage: error, errType: 'Trade' }} />
           )}
+          {error && <Typography color="error">{error}</Typography>}
         </DialogContent>
         <DialogActions>
           <ColorBox>
