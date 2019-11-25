@@ -20,6 +20,19 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
+
+/*
+  Create Game Form
+
+  Component Type: Dialog Box, triggered by button
+
+  Description:
+  - Form for users to fill in Game creation details
+  - Contains error handling
+
+
+*/
+
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
 `;
@@ -33,9 +46,10 @@ const StyledDiv = styled.div`
 
 export default function CreateGameForm() {
   const [values, setValues] = React.useState({ open: false, name: '', cash: 0 , date: new Date(), friend:'', friends: []});
+  const [error , setError ] = React.useState({name: '', cash: '', friends:'' })
   const [ invalidUser, setInvalidUser] = React.useState(false);
   const { postCreateGame, postCheckUser, state, resetApiData } = useApi();
-  const { createGame, checkUser } = state;
+  const {  checkUser } = state;
   const {  user } = useAuth();
 
   const userLoading = get(checkUser, 'isLoading', true);
@@ -75,16 +89,14 @@ export default function CreateGameForm() {
   };
 
   const handleClose = () => {
-    setValues({ ...values, open: false });
+    setValues({ open: false, name: '', cash: 0 , date: new Date(), friend:'', friends: []});
+    setError({name: '', cash: '', friends:'' })
   };
 
   const handleTextFieldChange = e => {
+    setError({name: '', cash: '', friends:'' })
     setValues({ ...values, [e.target.id]: e.target.value });
   
-  };
-
-  const handleCashChange = e => {
-    setValues({ ...values, cash: e.target.value });
   };
 
   const handleDateChange = date => {
@@ -92,7 +104,11 @@ export default function CreateGameForm() {
   };
 
   const handleAddFriend = () => {
-    postCheckUser(values.friend);
+    if ( values.friend === user.email){
+      setInvalidUser(true);
+    } else {
+      postCheckUser(values.friend);
+    }
     
   }
 
@@ -103,9 +119,18 @@ export default function CreateGameForm() {
 
   const handleSubmit = () => {
     const { name, cash, date, friends } = values;
+    if ( name === '' || cash < 1000 || friends.length === 0){
+      setError({...error, 
+        name: name === '' ?'Enter a name': '', 
+        cash: cash < 1000 ?'Budget value must be 1000 or more': '',
+        friends: friends.length === 0 ? 'Choose a friend': ''
+       })
 
-    postCreateGame(name, new Date().toISOString(), date.toISOString(), friends, new Number(cash));
-    setValues({ ...values, open: false });
+    } else {
+
+      postCreateGame(name, new Date().toISOString(), date.toISOString(), friends, new Number(cash));
+      setValues({ ...values, open: false });
+    }
   };
 
   return (
@@ -134,6 +159,8 @@ export default function CreateGameForm() {
             label="Name"
             fullWidth
             onChange={handleTextFieldChange}
+            error={error.name !== ''}
+            helperText={error.name !== ''? error.name: ''}
           />
           <StyledDiv>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -166,6 +193,8 @@ export default function CreateGameForm() {
               InputProps={{
                 startAdornment: <InputAdornment position="start">$</InputAdornment>,
               }}
+              error={error.cash !== ''}
+              helperText={error.cash !== ''? error.cash: ''}
             />
           </StyledDiv>
           <StyledDiv>
@@ -178,8 +207,8 @@ export default function CreateGameForm() {
               fullWidth
               value={values.friend}
               onChange={handleTextFieldChange}
-              error={invalidUser}
-              helperText={invalidUser? 'Unable to find user':''}
+              error={invalidUser || error.friends !== ''}
+              helperText={invalidUser? 'Invalid user':error.friends? error.friends: ''}
             />
             <Button color="primary" variant="contained" onClick={handleAddFriend} >
               <AddIcon/>
@@ -191,7 +220,6 @@ export default function CreateGameForm() {
             })}
             
           </div>
-
 
         </DialogContent>
         <DialogActions>

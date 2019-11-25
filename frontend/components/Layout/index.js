@@ -9,6 +9,7 @@ import ThemeProvider from './ThemeProvider';
 import { useAuth } from '../../lib/useAuth';
 
 // Progress Bar
+
 Router.onRouteChangeStart = () => {
   NProgress.start();
 };
@@ -45,6 +46,7 @@ const Layout = props => {
   const { children, router } = props;
   const { pathname } = router;
   const { isAuthenticated, resetErrors } = useAuth();
+  
 
   useEffect(() => {
     resetErrors();

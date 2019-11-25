@@ -19,8 +19,20 @@ import useApi from '../lib/useApi';
 import StockItem from '../components/Stocks';
 import NewsItem from '../components/Newsfeed';
 import SearchBar from '../components/SearchBar';
-
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
+
+/*
+  Dashboard page
+
+  Component Type: Main Page
+
+  Description:
+  - Displays users stocks, portfolios, a newsfeed and stock module
+  - contains helpers
+
+
+*/
+
 
 const ColorBox = styled.div`
   background-color: #e1e1e1;

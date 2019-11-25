@@ -16,6 +16,18 @@ import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
 import { InlineError } from '../components/Error';
 
+/*
+  Login page
+
+  Component Type: Login Form
+
+  Description:
+  - Users can enter Username and password
+  - Users can navigate to sign up page
+
+
+*/
+
 const StyledPaper = styled(Paper)`
   display: flex;
   flex-direction: column;
