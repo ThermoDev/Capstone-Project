@@ -60,3 +60,9 @@ Week 8
 Week 9
 	- Finished setting page
 	- Finished Overview section of the report and User Documentation on how to use our website
+
+Week 10
+	- Added extra feature on settings page- Delete account
+	- Changed Textbox of Change Password to a Textbox where the text is hidden when you type it, but you can reveal the password if you wish
+	- changed minor layout things on the Setting Page
+Finishing the Report, add extra stuff to the Overview and to the User Documentation
