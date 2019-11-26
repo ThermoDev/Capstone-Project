@@ -41,6 +41,19 @@ Week 7
 - Added some code docs
 - Started work on the report to highlight the APIs being used
 
+Week 8
+- Created ability to specific fetch stock info for one or more stocks
+- Wrote Implementation Challenges section of the report
 
+Week 9 
+- Fixed errors with fetching a single stock info from /infos endpoint
+- Updated report with NewsFeed Functionalities section
 
+Week 10
+- Updated Report with minor details on my relevant sections
+- Presented project
+- Bug triaging
+
+Week 11
+- Resolved comments on my parts of the report, which needed fixing.
 
