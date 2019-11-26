@@ -107,9 +107,11 @@ const Play = () => {
                   <SportsEsportsIcon fontSize="inherit" /> Games
                 </Typography>
               </ColorBox>
-              {gamesLoading? <LinearProgress style={{margin: '3em'}}/>:
+              {gamesLoading ? (
+                <LinearProgress style={{ margin: '3em' }} />
+              ) : (
                 gameData.map(game => (
-                  <ColorBox 
+                  <ColorBox
                     key={game.game_id}
                     style={
                       gameStillValid(game.end_date)
@@ -195,7 +197,7 @@ const Play = () => {
                     />
                   </ColorBox>
                 ))
-              }
+              )}
 
               <CenterBox>
                 <CreateGameForm />

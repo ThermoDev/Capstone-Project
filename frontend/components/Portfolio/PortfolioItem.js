@@ -34,7 +34,6 @@ import StockModal from '../StockModal';
 
 */
 
-
 const StyledCard = styled(Card)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
   margin-top: 0.5em;
