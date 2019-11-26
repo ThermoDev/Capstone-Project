@@ -48,3 +48,6 @@ I also finalised the game/simulation module for multiple users to compete with e
 
 Week 9:
 This week I was mostly tending to the report and being on standby in case there were any issues or bugs with any of the backend modules since we are getting to the point of finalising the integration and more vigorously testing functionality.
+
+Week 10:
+This week was spent bug fixing minor issues we had with some of the JSON return values from the backend endpoints for the finishing touches on the frontend. I also spent time on the presentation for our class on Wednesday and moved on to finalising the report for submission next week.
