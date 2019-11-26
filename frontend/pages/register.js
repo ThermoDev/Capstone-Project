@@ -15,7 +15,6 @@ import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
 import { InlineError } from '../components/Error';
 
-
 /*
   Register Page
 
@@ -59,7 +58,14 @@ const Register = () => {
     invalidFirstName: false,
     invalidLastName: false,
   });
-  const { user, isAuthenticated, register, isError, error, isSuccess } = useAuth();
+  const {
+    user,
+    isAuthenticated,
+    register,
+    isError,
+    error,
+    isSuccess,
+  } = useAuth();
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -87,7 +93,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && !isError){
+    if (isSuccess && !isError) {
       Router.push('/login');
     }
   }, [isSuccess]);
@@ -116,7 +122,9 @@ const Register = () => {
                 label="First Name"
                 autoFocus
                 error={values.invalidFirstName}
-                helperText={values.invalidFirstName? 'Must only contain characters.' : ''}
+                helperText={
+                  values.invalidFirstName ? 'Must only contain characters.' : ''
+                }
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -129,7 +137,9 @@ const Register = () => {
                 name="lastName"
                 autoComplete="lname"
                 error={values.invalidLastName}
-                helperText={values.invalidLastName ? 'Must only contain characters.' : ''}
+                helperText={
+                  values.invalidLastName ? 'Must only contain characters.' : ''
+                }
               />
             </Grid>
             <Grid item xs={12}>

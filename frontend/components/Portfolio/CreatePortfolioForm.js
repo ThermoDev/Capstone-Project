@@ -24,7 +24,6 @@ import { InlineError } from '../Error';
 
 */
 
-
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
 `;

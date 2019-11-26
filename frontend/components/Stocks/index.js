@@ -66,14 +66,16 @@ const StockItem = props => {
             >
               {`${name} (${ticker})`}
             </Typography>
-            <Typography color="secondary" variant="subtitle1" component="h2">{industry}</Typography>
+            <Typography color="secondary" variant="subtitle1" component="h2">
+              {industry}
+            </Typography>
             <div className="price-box">
               <div className="item">
                 <Typography className="price" variant="h5" component="h2">
                   {`$${price.toFixed(2)}`}
                 </Typography>
               </div>
-              
+
               <div className="item">
                 <Typography className="percent" variant="h5" component="h2">
                   {`${Math.abs(percentageChange.toFixed(2))}%`}
@@ -104,6 +106,7 @@ StockItem.propTypes = {
   price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   percentageChange: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     .isRequired,
+  industry: PropTypes.string.isRequired,
 };
 
 export default memo(StockItem);

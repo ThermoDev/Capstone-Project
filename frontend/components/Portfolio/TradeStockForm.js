@@ -104,7 +104,6 @@ export default function CreatePortfolioForm(props) {
   const { state, postProcessTransaction, getStock } = useApi();
   const { processTransaction, stock } = state;
 
-
   const transactionError = get(processTransaction, 'isError', false);
   useEffect(() => {
     if (searchValue) {
@@ -133,7 +132,6 @@ export default function CreatePortfolioForm(props) {
     setSearchValue('');
     setError('');
   };
-
 
   const handleSubmit = () => {
     if (searchValue === '') {
@@ -174,23 +172,22 @@ export default function CreatePortfolioForm(props) {
       >
         Trade
         <StyledHtmlTooltip
-                  title={
-                    <>
-                      <Typography color="inherit">Trade</Typography>
-                      
-                      <em>essential</em>
-                      {
-                        'To get your portfolio started, click trade to buy or sell stocks. '
-                      }
-                      {
-                        'You can search what stock you want and look at the prices before you buy!'
-                      }
+          title={
+            <>
+              <Typography color="inherit">Trade</Typography>
 
-                    </>
-                  }
-                >
-                  <InfoIcon />
-                </StyledHtmlTooltip>
+              <em>essential</em>
+              {
+                'To get your portfolio started, click trade to buy or sell stocks. '
+              }
+              {
+                'You can search what stock you want and look at the prices before you buy!'
+              }
+            </>
+          }
+        >
+          <InfoIcon />
+        </StyledHtmlTooltip>
       </StyledButton>
       <Dialog
         open={open}

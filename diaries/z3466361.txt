@@ -5,3 +5,7 @@ Week 4: Submitted proposal. Had a sprint planning session and finally assigned t
 Week 5: Implemented authentication hook for frontend. Setup base layout and styling packages for frontend. Worked with backend to reorganise the structure of the application. Discussed features to be implemented during scheduled class time and set tasks on the Github issues tracker.
 Week 6: Fixed issues with authentication hook and fixed merge conflicts on Emily's branch. Integrated these changes into the frontend.
 Week 7: Implemented api hooks and reformatted some of the styling found in the frontend. Discussed switching over to discord during the meeting. Established that our group needed to get all the basic functionality done by this sprint.
+Week 8: Rewrote api hooks as original implementation had performance issues with caching. Created stock search and news display module. Started planning presentation and report content.
+Week 9: Fixed bugs with creation of new portfolios and trading. Assigned individual sections for group members to complete for the final report.
+Week: 10: Worked on final report. Summarised dependencies used and technical challenges related to my contributions.
+Week 11: Finalised report and cleaned up final code submission.

@@ -59,14 +59,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const handleChange = prop => event => {
-  setValues({ ...values, [prop]: event.target.value });
-};
-
-const handleClickShowPassword = () => {
-  setValues({ ...values, showPassword: !values.showPassword });
-};
-
 const handleMouseDownPassword = event => {
   event.preventDefault();
 };
@@ -83,6 +75,14 @@ const Settings = () => {
     showPassword: false,
   });
 
+  const handleChange = prop => event => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
+
   useEffect(() => {
     if (!isAuthenticated()) {
       Router.push('/');
@@ -98,12 +98,12 @@ const Settings = () => {
               Settings
             </StyledTypography>
           </ColorBox>
-          <br/>
+          <br />
           <ColorBox>
             <StyledTypography component="h1" variant="h6">
               Change Username
             </StyledTypography>
-            <br/>
+            <br />
             <Card style={{ width: '100%', height: '50px', align: 'center' }}>
               Current Username
             </Card>
@@ -131,7 +131,7 @@ const Settings = () => {
               </div>
             </form>
           </ColorBox>
-          <br/>
+          <br />
           <ColorBox>
             <StyledTypography component="h1" variant="h6">
               Change Password
@@ -192,12 +192,12 @@ const Settings = () => {
               />
             </FormControl>
           </ColorBox>
-          <br/>
+          <br />
           <ColorBox>
             <StyledTypography component="h1" variant="h6">
               Change Email
             </StyledTypography>
-            <br/>
+            <br />
             <Card style={{ width: '100%', height: '50px' }}>Current Email</Card>
             <form className={classes.container} noValidate autoComplete="off">
               <div>
@@ -223,7 +223,7 @@ const Settings = () => {
               </div>
             </form>
           </ColorBox>
-          <br/>
+          <br />
           <ColorBox>
             <Button
               variant="contained"
