@@ -8,11 +8,18 @@ const DEFAULT_STATE = {
   isAuthenticating: false,
 };
 
+/**
+ * Creates a React Context object with a default state and dispatch function.
+ */
 export const AuthContext = createContext({
   state: DEFAULT_STATE,
   dispatch: () => {},
 });
 
+/**
+ * Create a new React Provider object that child React components can access through closure.
+ * @param {Object} children
+ */
 export const AuthProvider = ({ children }) => {
   // holds authentication state
   const [state, dispatch] = useReducer(authReducer, DEFAULT_STATE);

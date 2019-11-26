@@ -1,3 +1,8 @@
+/**
+ * The reducer used to modify api state.
+ * @param {Object} state - initial state
+ * @param {String} action - operation to perform on state
+ */
 export const apiReducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_INIT': {
