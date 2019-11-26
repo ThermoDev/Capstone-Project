@@ -58,4 +58,5 @@ Week 10
    - Fixed up some styling error handling
    - Delegated roles for presentation
    - Edited trading functionality to check for errors
-   
+   - User Documentation written
+   - Error handling with game form creation
