@@ -13,6 +13,18 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import useApi from '../../lib/useApi';
 import { InlineError } from '../Error';
 
+/*
+  Create Portfolio Form
+
+  Component Type: Form
+
+  Description:
+  - Allows users to enter details to create a form
+  - Has error handling
+
+*/
+
+
 const StyledTitle = styled(DialogTitle)`
   padding-bottom: 0px;
 `;

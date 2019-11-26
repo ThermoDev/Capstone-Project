@@ -8,7 +8,7 @@ import {
   Paper,
   Toolbar,
 } from '@material-ui/core';
-import Skeleton from '@material-ui/lab/Skeleton';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 import Router from 'next/router';
 import get from 'lodash.get';
@@ -21,6 +21,19 @@ import useApi from '../lib/useApi';
 import { useAuth } from '../lib/useAuth';
 import PortfolioItem from '../components/Portfolio/PortfolioItem';
 import CreateGameForm from '../components/Game/CreateGameForm';
+
+/*
+  Game Page
+
+  Component Type: Main Page
+
+  Description:
+  - Displays Users games
+  - Allows users to create game
+  - Users are able to interact with game
+
+
+*/
 
 const ColorBox = styled.div`
   background-color: #00ced1;
@@ -94,18 +107,9 @@ const Play = () => {
                   <SportsEsportsIcon fontSize="inherit" /> Games
                 </Typography>
               </ColorBox>
-              {gamesLoading ? (
-                <>
-                  <ColorBox>
-                    <Paper style={{ backgroundColor: 'white' }}>
-                      <Skeleton height={300} variant="rect" />
-                    </Paper>
-                  </ColorBox>
-                </>
-              ) : (
-                gameData &&
+              {gamesLoading? <LinearProgress style={{margin: '3em'}}/>:
                 gameData.map(game => (
-                  <ColorBox
+                  <ColorBox 
                     key={game.game_id}
                     style={
                       gameStillValid(game.end_date)
@@ -191,7 +195,7 @@ const Play = () => {
                     />
                   </ColorBox>
                 ))
-              )}
+              }
 
               <CenterBox>
                 <CreateGameForm />

@@ -9,6 +9,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
+import Tooltip from '@material-ui/core/Tooltip';
+import InfoIcon from '@material-ui/icons/Info';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -18,6 +20,18 @@ import get from 'lodash.get';
 import useApi from '../../lib/useApi';
 import SearchBar from '../SearchBar';
 import { InlineError } from '../Error';
+
+/*
+  Trade Stock Form
+
+  Component Type: Dialog Box, triggered by button
+
+  Description:
+  - Form for users to fill in trade details
+  - Contains error handling
+
+
+*/
 
 const ColorBox = styled(Paper)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
@@ -38,6 +52,8 @@ const StyledTitle = styled(DialogTitle)`
 
 const StyledButton = styled(Button)`
   margin: 0 ${({ theme }) => `${theme.mui.spacing(1)}px`};
+  display: flex;
+  justify-content: space-between;
 `;
 
 const StyledDiv = styled.div`
@@ -63,6 +79,15 @@ const SearchBarDiv = styled.div`
   margin-right: 16px;
 `;
 
+const StyledHtmlTooltip = styled(Tooltip)`
+  tooltip: {
+    background-color: #f5f5f9,
+    color: rgba(0, 0, 0, 0.87),
+    max-width: 220,
+    border: 1px solid #dadde9,
+  },
+`;
+
 export default function CreatePortfolioForm(props) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -79,12 +104,8 @@ export default function CreatePortfolioForm(props) {
   const { state, postProcessTransaction, getStock } = useApi();
   const { processTransaction, stock } = state;
 
-  // const transactionData = get(processTransaction, 'data', '');
-
-  // const transactionLoading = get(processTransaction, 'isLoading', false);
 
   const transactionError = get(processTransaction, 'isError', false);
-
   useEffect(() => {
     if (searchValue) {
       getStock(searchValue);
@@ -113,8 +134,9 @@ export default function CreatePortfolioForm(props) {
     setError('');
   };
 
+
   const handleSubmit = () => {
-    if (!stock) {
+    if (searchValue === '') {
       setError('Please select a stock');
       return;
     }
@@ -151,6 +173,24 @@ export default function CreatePortfolioForm(props) {
         onClick={handleClickOpen}
       >
         Trade
+        <StyledHtmlTooltip
+                  title={
+                    <>
+                      <Typography color="inherit">Trade</Typography>
+                      
+                      <em>essential</em>
+                      {
+                        'To get your portfolio started, click trade to buy or sell stocks. '
+                      }
+                      {
+                        'You can search what stock you want and look at the prices before you buy!'
+                      }
+
+                    </>
+                  }
+                >
+                  <InfoIcon />
+                </StyledHtmlTooltip>
       </StyledButton>
       <Dialog
         open={open}
@@ -228,6 +268,7 @@ export default function CreatePortfolioForm(props) {
           {transactionError && (
             <InlineError error={{ errMessage: error, errType: 'Trade' }} />
           )}
+          {error && <Typography color="error">{error}</Typography>}
         </DialogContent>
         <DialogActions>
           <ColorBox>

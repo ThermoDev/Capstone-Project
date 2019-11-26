@@ -21,6 +21,20 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import TradeStockForm from './TradeStockForm';
 import StockModal from '../StockModal';
 
+/*
+  Portfolio item
+
+  Component Type: Reusable portfolio component
+
+  Description:
+  - Displays users portfolios
+  - Displays statistics
+  - Users are able to see progress
+
+
+*/
+
+
 const StyledCard = styled(Card)`
   background-color: ${({ theme }) => `${theme.turquoise}`};
   margin-top: 0.5em;
@@ -280,7 +294,7 @@ const PortfolioItem = props => {
                     </CardActionArea>
                   </StyledCard>
                   <StockModal
-                    open={open === stock.company_code}
+                    open={open !== '' && open === stock.company_code}
                     handleClose={handleClose}
                     name={
                       symbolDict && symbolDict[stock.company_code]

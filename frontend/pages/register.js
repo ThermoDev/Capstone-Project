@@ -15,6 +15,20 @@ import { LargeLogo } from '../components/Logo';
 import { useAuth } from '../lib/useAuth';
 import { InlineError } from '../components/Error';
 
+
+/*
+  Register Page
+
+  Component Type: Sign up Form
+
+  Description:
+  - Users can enter details to sign up
+  - Catches errors
+  - Can navigate to Sign up page
+
+
+*/
+
 const StyledPaper = styled(Paper)`
   display: flex;
   flex-direction: column;
@@ -73,7 +87,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (isSuccess){
+    if (isSuccess && !isError){
       Router.push('/login');
     }
   }, [isSuccess]);
